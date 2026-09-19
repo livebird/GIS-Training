@@ -1,0 +1,105 @@
+/* Chapter 11 — rules specific to this chapter, loaded after /assets/theme.css */
+
+/* map drawing */
+svg .g500 { stroke: rgba(31,42,68,.10); stroke-width: 2; }
+svg .ward.faded { opacity: .35; }
+svg .ward.study { stroke: var(--ok); stroke-width: 7; }
+svg .ward.zone1 { fill: #d9ecdf; stroke: var(--ok); }
+svg .ward.zone2 { fill: #fbf3d8; stroke: #8a6a12; }
+svg .ward.merged { stroke-width: 8; }
+svg .road.ghost { opacity: .25; stroke-dasharray: 18 14; }
+svg .road.kept { stroke: var(--ok); stroke-width: 18; }
+svg .road.partA { stroke: var(--ok); stroke-width: 18; }
+svg .road.partB { stroke: #8a6a12; stroke-width: 18; }
+svg .buffer path { fill: rgba(47,125,79,.18); stroke: rgba(47,125,79,.75); stroke-width: 4; }
+svg .buffer.overlap path { fill: rgba(211,84,31,.16); stroke: rgba(211,84,31,.7); }
+svg .buffer.merged path { fill: rgba(47,125,79,.28); stroke: none; }
+svg .buffer.cut path { fill: rgba(47,125,79,.35); stroke: var(--ok); stroke-width: 5; }
+svg .req.out { fill: #c9c1b3; }
+svg .req.in { fill: var(--ok); }
+svg .req.edge { fill: var(--select); stroke: var(--ink); }
+svg .req.gone { opacity: .25; }
+svg .req.dup { fill: var(--warn); }
+svg .cutline { stroke: var(--warn); stroke-width: 5; stroke-dasharray: 18 12; fill: none; }
+svg .piece { fill: rgba(47,125,79,.35); stroke: var(--ok); stroke-width: 5; }
+svg .piece.b { fill: rgba(138,106,18,.25); stroke: #8a6a12; }
+svg .piece.drop { fill: none; stroke: var(--warn); stroke-width: 4; stroke-dasharray: 14 10; }
+svg .arrow { stroke: var(--ink); stroke-width: 4; fill: none; }
+svg .arrow.two { stroke: var(--warn); }
+svg .note-text { font-size: 30px; }
+
+/* raster */
+svg .cell { stroke: var(--ink); stroke-width: 3; }
+svg .cell.nodata { stroke-dasharray: 10 8; }
+svg .cellv { font-family: var(--font-mono); font-size: 34px; fill: var(--ink); font-weight: 600; }
+svg .cellv.nd { font-size: 22px; fill: var(--warn); font-weight: 400; }
+svg .cellmark { font-family: var(--font-mono); font-size: 26px; fill: var(--ink); }
+.raster-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+@media (max-width: 720px) { .raster-wrap { grid-template-columns: 1fr; } }
+.raster-wrap .map-fig { max-width: 420px; }
+
+/* attribute cards (record stacks) */
+.recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: .8rem; margin: .8rem 0; }
+.rec { border: 1.5px solid var(--ink); border-radius: 8px; background: #fff; padding: .6rem .8rem; font-size: .9rem; }
+.rec h5 { margin: 0 0 .3rem; font-family: var(--font-mono); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.rec .kv { display: grid; grid-template-columns: auto 1fr; gap: .1rem .6rem; }
+.rec .kv b { font-family: var(--font-mono); font-weight: 500; color: var(--ink-soft); }
+.rec .stale { color: var(--warn); font-weight: 700; text-decoration: line-through; }
+.rec .fresh { color: var(--ok); font-weight: 700; }
+.rec.new { border-color: var(--ok); box-shadow: 0 0 0 3px var(--ok-soft); }
+.rec.gone { opacity: .35; border-style: dashed; }
+
+/* tabs (same as other chapters) */
+.tabs { display: flex; flex-wrap: wrap; gap: .3rem; border-bottom: 2px solid var(--ink); margin-top: 1rem; }
+.tabs button { font: inherit; font-size: .9rem; border: 1px solid var(--rule); border-bottom: 0; background: var(--paper-2); padding: .4rem .8rem; border-radius: 8px 8px 0 0; cursor: pointer; font-family: var(--font-mono); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tabpanel { display: none; background: #fff; border: 1px solid var(--rule); border-top: 0; padding: 1rem 1.2rem; border-radius: 0 0 var(--radius) var(--radius); }
+.tabpanel.show { display: block; }
+pre.listing, .copywrap pre { background: #1f2a44; color: #f7f2e8; padding: .9rem 1.1rem; border-radius: 8px; font-family: var(--font-mono); font-size: .82rem; line-height: 1.5; overflow-x: auto; white-space: pre; margin: .4rem 0 .8rem; }
+.copywrap { position: relative; }
+.copywrap .btn { position: absolute; right: .6rem; top: .6rem; }
+
+/* worksheet */
+.ws { width: 100%; }
+.ws tr.struck td { text-decoration: line-through; color: var(--ink-faint); background: var(--warn-soft); }
+.ws td.noc { color: var(--warn); font-weight: 700; }
+.ws .btn { padding: .15rem .5rem; font-size: .8rem; }
+
+/* four kinds chooser */
+.kinds { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; }
+.kind { border: 2px solid var(--rule); border-radius: var(--radius); background: #fff; padding: .8rem 1rem; }
+.kind h4 { margin: 0 0 .3rem; }
+.kind.k1 { border-color: var(--ward-line); } .kind.k2 { border-color: var(--ok); } .kind.k3 { border-color: var(--accent); } .kind.k4 { border-color: #8a6a12; }
+.kind .eg { font-size: .88rem; color: var(--ink-soft); }
+
+/* sums and reconciliation */
+.sum-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .6rem; margin: .6rem 0; }
+.sum-box .t { border: 1.5px solid var(--rule); border-radius: 8px; background: #fff; padding: .6rem .8rem; text-align: center; }
+.sum-box .t .n { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; display: block; }
+.sum-box .t.bad .n { color: var(--warn); } .sum-box .t.good .n { color: var(--ok); }
+.sum-box .t .l { font-size: .82rem; color: var(--ink-soft); }
+.chip { display: inline-block; padding: .1rem .5rem; border-radius: 6px; font-family: var(--font-mono); font-size: .8rem; }
+.chip.yes { background: var(--ok-soft); color: var(--ok); } .chip.no { background: var(--warn-soft); color: var(--warn); } .chip.q { background: var(--note-soft); color: var(--ward-line); } .chip.tie { background: #fff6d6; color: #8a6a12; }
+.verdict { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.verdict.ok { color: var(--ok); } .verdict.no { color: var(--warn); }
+
+/* compare columns */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
+.compare .col { border: 1.5px solid var(--rule); border-radius: var(--radius); background: #fff; overflow: hidden; }
+.compare .col h4 { margin: 0; padding: .6rem 1rem; background: var(--paper-2); border-bottom: 1px solid var(--rule); }
+.compare .col .body { padding: .8rem 1rem; font-size: .95rem; }
+.compare .col.good h4 { background: var(--ok-soft); } .compare .col.bad h4 { background: var(--warn-soft); }
+
+/* checklist & scenario boxes */
+.scen { border: 1.5px solid var(--rule); border-radius: var(--radius); background: #fff; padding: 1rem 1.2rem; margin: 1rem 0; }
+.steps-list li { margin-bottom: .7rem; }
+.badge-step { font-family: var(--font-mono); font-size: .75rem; background: var(--ink); color: #fff; border-radius: 999px; padding: .05rem .5rem; margin-right: .3rem; }
+.pred-table input[type=text] { width: 100%; font: inherit; font-size: .88rem; padding: .25rem .4rem; border: 1px solid var(--rule); border-radius: 6px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .6rem; margin: .6rem 0; }
+.tile { border: 1.5px solid var(--rule); border-radius: 8px; background: #fff; padding: .6rem .8rem; }
+.tile .big { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; display: block; }
+.tile .lab { font-size: .8rem; color: var(--ink-soft); }
+.tile.hot { border-color: var(--warn); } .tile.cool { border-color: var(--ok); }
+
+svg .rastertitle { font-family: var(--font-mono); font-size: 19px; fill: var(--ink-soft); }
