@@ -16,9 +16,9 @@
         <div class="eyebrow">GIS Phase 1 · Chapter 1 · Interactive tutorial</div>
       </div>
       <h1 class="big">Start with a <em>decision</em>,<br>not a map.</h1>
-      <p class="lead">This chapter teaches what a GIS is, how to turn a business question into a spatial question, and how to spot the limits of an answer. It is written for developers who have never used GIS.</p>
+      <p class="lead">This chapter teaches what a GIS (Geographic Information System) is, how to turn a business question into a question about <em>where</em>, and how to spot the limits of an answer. It is written for developers who have never used GIS.</p>
       <p><a class="btn primary" href="m1-decision.html">Begin module 1.1 →</a> &nbsp; <a class="btn ghost" href="glossary.html">Glossary</a></p>
-      <p class="small">No software is needed. Every map on these pages is a <span class="synthetic">synthetic training grid</span>, drawn from the chapter’s fixture. Your progress is saved in this browser only.</p>
+      <p class="small">No software is needed. Every map on these pages uses <span class="synthetic">made-up practice data</span> from the chapter document — a small imaginary town, not a real place. Your progress is saved in this browser only.</p>
     </div>
     <figure class="map-fig fade-up" id="heroMap"></figure>
   </section>
@@ -26,7 +26,7 @@
   <h2 style="border-top:0;margin-top:1rem"><span class="mod">The scenario</span>A small town, two wards, one road, six requests</h2>
   <div class="grid-2">
     <div class="card">
-      <p>A fictional municipality maintains <dfn title="A physical thing the municipality maintains, like a streetlight or a drain.">assets</dfn>, keeps <dfn title="Road centrelines.">roads</dfn>, divides its territory into <dfn title="Administrative areas defined by an authority.">wards</dfn>, and receives <dfn title="A report from the public about a problem.">service requests</dfn>. Inspection teams visit requests and write <dfn title="A record of a visit.">inspections</dfn>.</p>
+      <p>An imaginary city office (think of a Municipal Corporation or Nagar Palika) looks after <strong>assets</strong> (things it maintains: streetlights, drains, trees), keeps a list of <strong>roads</strong>, divides the city into <strong>wards</strong> (the same wards you vote in), and receives <strong>service requests</strong> — what most Indian cities call <em>complaints</em> or <em>grievances</em> from citizens (“streetlight not working”, “pothole”, “drain blocked”). Field teams visit each request and write an <strong>inspection</strong> (a note of what they found).</p><p class="small">We use the word <em>request</em> throughout, but read it as “citizen complaint” if that is more familiar.</p>
       <p>The question that runs through the whole course is:</p>
       <p style="font-family:var(--font-display);font-size:1.3rem;font-weight:600">“Which unresolved service requests should an inspection team investigate first?”</p>
     </div>
@@ -38,6 +38,7 @@
         <li>Ward A and Ward B are each 1,000 m squares (1 km² each). They share the edge at x = 1000.</li>
         <li>Road R1 runs from (0, 500) to (2000, 500) and <strong>stops there</strong>.</li>
         <li>It has <strong>no real-world location</strong>. Think of it as graph paper.</li>
+        <li>Dates are written year-month-day: <code>2026-09-02</code> means 2 September 2026.</li>
       </ul>
     </div>
   </div>
@@ -45,12 +46,22 @@
   <h2><span class="mod">Modules</span>Work through them in order</h2>
   <div class="modcards" id="modcards"></div>
 
+  <h2><span class="mod">Plain words</span>A few words you will see everywhere</h2>
+  <div class="card"><table>
+    <tr><th>GIS</th><td>Geographic Information System — software plus data plus people, for working with information that has a location. Not just “a map”.</td></tr>
+    <tr><th>Record</th><td>One row in a table: one request, one streetlight, one ward.</td></tr>
+    <tr><th>Layer</th><td>One kind of record drawn on the map — the Requests layer, the Roads layer. You can switch each on or off.</td></tr>
+    <tr><th>Crew / field team</th><td>The workers who go out and fix things. Their base is called the depot.</td></tr>
+    <tr><th>Policy</th><td>Here it simply means <em>the rules the office decides</em> (“high priority first”) — not an insurance or government policy.</td></tr>
+    <tr><th>Practice data</th><td>The made-up town used in every example. The chapter document calls it the “fixture”.</td></tr>
+  </table></div>
+
   <h2><span class="mod">Outcomes</span>What you will be able to do</h2>
   <div class="card">
     <table>
       <tr><th>LO1</th><td>Explain what a GIS is and does beyond drawing a map.</td></tr>
-      <tr><th>LO2</th><td>Turn a decision into answerable spatial questions with every vague word defined.</td></tr>
-      <tr><th>LO3</th><td>Recognise the six kinds of spatial question; tell straight-line distance from travel distance.</td></tr>
+      <tr><th>LO2</th><td>Turn a decision into clear “where” questions, with every vague word pinned down.</td></tr>
+      <tr><th>LO3</th><td>Recognise the six kinds of “where” question; tell straight-line distance (as the crow flies) from travel distance by road.</td></tr>
       <tr><th>LO4</th><td>List the data a question needs, who made it, and what it leaves out.</td></tr>
       <tr><th>LO5</th><td>Use a prepared map (show/hide layers, pan, zoom, select) and explain why hiding is not deleting.</td></tr>
       <tr><th>LO6</th><td>Name a limitation of a spatial conclusion and offer an alternative explanation.</td></tr>
@@ -61,10 +72,10 @@
 <script src="assets/app.js"></script>
 <script>
 function pageInit() {
-  renderMap(document.getElementById("heroMap"), { layers: { wards: true, roads: true, requests: true, assets: true }, caption: "Synthetic training grid · metres · no real location" });
+  renderMap(document.getElementById("heroMap"), { layers: { wards: true, roads: true, requests: true, assets: true }, caption: "Practice data (made up) · metres · not a real place" });
   const prog = getProgress();
   const blurbs = {
-    "1.1": "Why the words “near”, “urgent”, “unresolved” and “service area” must be defined before any software is opened.",
+    "1.1": "Why the words “near”, “urgent”, “unresolved” and “service area” must be pinned down before any software is opened.",
     "1.2": "Data, software, hardware, people. Capture, store, analyse, communicate. And why a PDF map is not a GIS.",
     "1.3": "Six kinds of spatial question. Absolute vs relative location. Straight line vs road.",
     "1.4": "Where, what, when in one record. Events, assets and boundaries are different things.",

@@ -12,9 +12,9 @@
   <div class="page-head fade-up">
     <div class="eyebrow">Module 1.7 · Guided lab</div>
     <h1>Write a spatial problem brief</h1>
-    <p class="lead">No software. Take a short scenario and turn it into three answerable spatial questions, each with inputs, rules, output, and a way to check it.</p>
+    <p class="lead">No software. Take a short scenario and turn it into three clear “where” questions, each with inputs, rules, output, and a way to check it. A problem brief is simply a one-page written plan.</p>
     <div class="outcomes"><h4>Objective</h4>
-      <ul><li>Produce a one-page problem brief and an annotated sketch.</li>
+      <ul><li>Produce a one-page problem brief and a sketch with notes on it.</li>
       <li>Prerequisites: modules 1.1–1.6. Time: about 60–90 minutes.</li>
       <li>You can fill the brief in on this page; it saves in your browser. Print it to submit.</li></ul></div>
   </div>
@@ -24,27 +24,27 @@
     <p><strong>Decision-maker:</strong> the Inspection Team Lead for Wards A and B.<br>
     <strong>Date of the brief:</strong> 18 September 2026.<br>
     <strong>Date range of interest:</strong> requests reported from <strong>1 August 2026 to 15 September 2026</strong>, inclusive.<br>
-    <strong>Study area:</strong> Wards A and B. A request on the shared boundary counts as inside both wards. A request outside both wards is out of scope unless a question says otherwise.</p>
-    <p><strong>Situation:</strong> one crew is available tomorrow. It starts at the west end of Main Road, at (0, 500), and can work anywhere along the road corridor. The Team Lead wants to know which requests to visit first and whether any request needs attention from someone other than the crew (for example a duplicate to reconcile, or a request outside the area to pass on).</p>
+    <strong>Study area:</strong> Wards A and B. A request on the shared boundary counts as inside both wards. A request outside both wards is not part of this task unless a question says otherwise.</p>
+    <p><strong>Situation:</strong> one field team is available tomorrow. It starts at the west end of Main Road, at (0, 500), and can work anywhere along the road (“the road corridor” — the strip of land along it). The Team Lead wants to know which requests to visit first, and whether any request needs someone other than the team (for example a duplicate report to sort out, or a request outside the area to pass to another office).</p>
     <p><strong>Data available:</strong> the wards, road, requests, and assets tables from the chapter. Distances are straight-line, in metres, on the training grid.</p>
   </div>
   <details class="reveal"><summary>Show the request table</summary><div id="labTable"></div></details>
 
   <h2><span class="mod">1.7.3</span>Steps</h2>
   <ol>
-    <li><strong>Underline every vague term.</strong> Expect at least: “first”, “attention”, “road corridor”, the implied “unresolved”, “needs”.</li>
-    <li><strong>Write the decision in one sentence</strong> beginning “Tomorrow the crew will…”.</li>
+    <li><strong>Underline every vague word.</strong> Expect at least: “first”, “needs someone”, “road corridor”, and the unstated “unresolved”.</li>
+    <li><strong>Write the decision in one sentence</strong> beginning “Tomorrow the team will…”.</li>
     <li><strong>Draft three questions</strong>, each of a different type (for example one proximity, one containment, one change through time). Each must be answerable from the tables <em>after</em> you define its terms.</li>
     <li><strong>Fill the four-part card</strong> for each: inputs, selection rules (exact status values, distance, unit, whether the boundary counts), output, validation.</li>
-    <li><strong>Apply your own rules by hand</strong> and write the resulting IDs. This exposes an unanswerable question.</li>
-    <li><strong>Draw the sketch</strong>: use the helper below, then annotate it (or draw your own).</li>
-    <li><strong>Assemble the one-page brief</strong> and add a limitations line of at most three sentences.</li>
+    <li><strong>Apply your own rules by hand</strong> and write the resulting IDs. If you cannot, the question is not answerable yet — that is a useful discovery.</li>
+    <li><strong>Draw the sketch</strong>: use the helper below, then add your notes to it (or draw your own).</li>
+    <li><strong>Put the one-page brief together</strong> and add a “limitations” line of at most three sentences (what the answer does not tell you).</li>
     <li><strong>Self-check</strong> with the list at the bottom before submitting.</li>
   </ol>
 
   <div class="try lab-form">
     <span class="tag">Your brief</span>
-    <label for="decision">Decision sentence (“Tomorrow the crew will…”)</label>
+    <label for="decision">Decision sentence (“Tomorrow the team will…”)</label>
     <input type="text" id="decision" data-k="decision">
     <div id="cards"></div>
     <label for="limits">Limitations (max three sentences)</label>
@@ -54,7 +54,7 @@
 
   <div class="try">
     <span class="tag">Sketch helper</span>
-    <h3>Annotated sketch</h3>
+    <h3>Sketch with notes</h3>
     <p>Set the distance you used on your proximity card. The band along the road must match the number on the card. P5 and P6 are marked because each needs an explicit rule.</p>
     <div class="controls">
       <label>Distance band: <input type="range" id="sk" min="0" max="500" step="10" value="300"> <strong><span id="skVal">300</span> m</strong></label>
@@ -80,15 +80,15 @@
     <tbody>
       <tr><td>Two people applying your rules get different IDs</td><td>A term is still vague (usually the boundary value or the status list)</td><td>Rewrite with “≤” or “&lt;” and an explicit status set</td></tr>
       <tr><td>Your proximity question selects P6 but you “meant” to exclude it</td><td>The study-area condition was assumed, not written</td><td>Add the containment condition, or accept P6 and say why</td></tr>
-      <tr><td>You cannot decide which ward P5 belongs to</td><td>That is a policy, not a data fact</td><td>Write the policy on the card; note that raw geometry gives two matches</td></tr>
-      <tr><td>A question needs travel time</td><td>The fixture has no network</td><td>Mark it “not answerable with current data”; do not substitute straight-line distance silently</td></tr>
+      <tr><td>You cannot decide which ward P5 belongs to</td><td>That is a rule to be decided, not a fact in the data</td><td>Write the rule on the card; note that pure geometry gives two matches</td></tr>
+      <tr><td>A question needs travel time</td><td>The practice data has no road network</td><td>Mark it “not answerable with current data”; do not quietly use straight-line distance instead</td></tr>
       <tr><td>The sketch shows the road continuing past x = 2000</td><td>Misreading the road table</td><td>R1 is finite; P6’s distance is measured to the end point</td></tr>
     </tbody></table></div>
 
   <h2><span class="mod">1.7.6</span>Deliverables</h2>
   <ol>
-    <li>The one-page problem brief (decision sentence, three cards with hand-derived results, limitations line).</li>
-    <li>The annotated sketch.</li>
+    <li>The one-page problem brief (decision sentence, three cards with results worked out by hand, limitations line).</li>
+    <li>The sketch with notes.</li>
     <li>The observation log from module 1.5 for all six requests.</li>
   </ol>
 </main>

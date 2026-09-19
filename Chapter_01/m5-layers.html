@@ -12,16 +12,16 @@
   <div class="page-head fade-up">
     <div class="eyebrow">Module 1.5</div>
     <h1>Layers and map interaction</h1>
-    <p class="lead">A layer is a view of stored records. Turn it off and the records are still there.</p>
+    <p class="lead">A layer is one kind of record drawn on the map. Turn it off and the records are still there.</p>
     <div class="outcomes"><h4>In this module you will</h4>
       <ul><li>Toggle layers, pan, zoom, and select a record on a practice map.</li>
       <li>Explain the difference between hiding, removing, and deleting.</li>
-      <li>Keep an observation log: what the map suggests, what the table confirms, what stays uncertain.</li></ul></div>
+      <li>Keep an observation log (a short set of notes): what the map suggests, what the table confirms, what stays uncertain.</li></ul></div>
   </div>
 
   <h2><span class="mod">1.5.1</span>Layers, and a first walk around a map</h2>
-  <p>A <dfn title="A set of records of one kind, drawn together on a map from a referenced dataset.">layer</dfn> is a set of records of one kind drawn together. The <em>Gentle Introduction to GIS</em> says map layers “are stored as files on a disk or as records in a database”, each representing “something in the real world — a roads layer for example”; when several are added, “the layers are overlaid on top of each other”; and the layers list lets you “re-order, hide, show and group layers”. The ArcGIS Pro documentation states the key principle: <strong>“Layers in a map reference the source dataset, but do not control the data.”</strong></p>
-  <p>The practice map below imitates a GIS window: a layer list on the left, the map on the right, and the attribute table underneath. It is a simulation, not real GIS software — but every behaviour it shows is the one you will meet in ArcGIS Pro or QGIS.</p>
+  <p>A <dfn title="A set of records of one kind, drawn together on a map from a referenced dataset.">layer</dfn> is a set of records of one kind drawn together. The <em>Gentle Introduction to GIS</em> says map layers “are stored as files on a disk or as records in a database”, each representing “something in the real world — a roads layer for example”; when several are added, “the layers are overlaid on top of each other”; and the layers list lets you “re-order, hide, show and group layers”. The ArcGIS Pro documentation states the key principle: <strong>“Layers in a map reference the source dataset, but do not control the data.”</strong> In plain words: a layer <em>points to</em> the stored table; it is not a copy of it.</p>
+  <p>The practice map below imitates a GIS window: a layer list on the left, the map on the right, and the <strong>attribute table</strong> (the table of values behind the map) underneath. It is a simulation, not real GIS software — but every behaviour it shows is the one you will meet in ArcGIS Pro or QGIS.</p>
 
   <div class="try">
     <span class="tag">Practice map</span>
@@ -37,10 +37,10 @@
         <div class="controls" style="margin-top:.8rem;flex-direction:column;align-items:stretch;gap:.4rem">
           <button class="btn small" id="zin">Zoom in</button>
           <button class="btn small" id="zout">Zoom out</button>
-          <button class="btn small" id="zfull">Full extent</button>
+          <button class="btn small" id="zfull">Full extent (show everything)</button>
           <button class="btn small" id="zsel">Zoom to selection</button>
           <button class="btn small ghost" id="clearSel">Clear selection</button>
-          <p class="small" style="margin:.3rem 0 0">Drag the map to pan. Scroll to zoom. Click a request to select it.</p>
+          <p class="small" style="margin:.3rem 0 0">Drag the map to pan (move around). Scroll to zoom. Click a request to select it.</p>
         </div>
       </div>
       <div>
@@ -58,7 +58,7 @@
     <li><strong>Look at the layer list.</strong> The order in the list is the drawing order — the top layer draws on top.</li>
     <li><strong>Turn Wards off, then on.</strong> Requests and road do not move. Nothing was deleted.</li>
     <li><strong>Turn Roads off.</strong> P5 now looks like an ordinary dot on the ward edge. The fact that it is <em>on the road</em> disappears from view. Hidden information changes what a map seems to say.</li>
-    <li><strong>Zoom in on P5.</strong> The dot still sits on the ward edge, but the symbol has a size in screen pixels, not metres. “On the line” is a claim about coordinates, not the picture.</li>
+    <li><strong>Zoom in on P5.</strong> The dot still sits on the ward edge, but the dot’s size is in screen pixels, not metres — it does not shrink as you zoom. “On the line” is a claim about the coordinates, not about the picture.</li>
     <li><strong>Pan east to P6.</strong> It is beyond both wards and past the end of the road.</li>
     <li><strong>Click P5.</strong> The selection count changes and the record is highlighted.</li>
     <li><strong>Tick “Show selected records only”.</strong> The table row for P5 shows exactly the same values. Map and table are two views of one record.</li>
@@ -81,7 +81,7 @@
     </ul></details>
 
   <h2><span class="mod">1.5.2</span>Hiding is not deleting</h2>
-  <p>Unchecking a layer changes what you <em>see</em>. It does not change what is <em>stored</em>. There are three distinct levels.</p>
+  <p>Unticking a layer changes what you <em>see</em>. It does not change what is <em>stored</em>. There are three different levels, and beginners mix them up.</p>
   <div class="try">
     <span class="tag">Try it</span>
     <div class="controls">
@@ -101,24 +101,24 @@
     <thead><tr><th>Action</th><th>What changes</th><th>Data still stored?</th><th>Colleague still sees it?</th><th>Reversible?</th></tr></thead>
     <tbody>
       <tr><td>Turn a layer off</td><td>Only this map’s display</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Instantly</td></tr>
-      <tr><td>Remove the layer from the map</td><td>This map no longer references the dataset</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Add it back</td></tr>
+      <tr><td>Remove the layer from the map</td><td>This map no longer points to the dataset</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Add it back</td></tr>
       <tr><td>Delete the dataset</td><td>The records are gone</td><td class="no">No</td><td class="no">No</td><td>Only from a backup</td></tr>
     </tbody></table></div>
-  <p>There is a fourth, subtler level: a <strong>filter</strong> (Chapter 10) can hide <em>some</em> records of a layer — say, only Open requests are drawn. A filtered map can look complete and be missing half the data. Any map handed to a decision-maker must say which records were excluded and why.</p>
-  <div class="callout dev"><span class="label">Developer view</span><p>Turning a layer off is collapsing a panel. Removing a layer is dropping a <em>view</em>. Deleting the dataset is dropping the <em>table</em>. Exact for the first two; weaker for the third, because GIS datasets are often single files on a shared drive with no transaction log — “drop table” can be far less recoverable than in a database.</p></div>
-  <div class="callout warn"><span class="label">Misconception</span><p>“I unchecked the duplicates, so the count on the map is right now.” The count of records has not changed; only the drawing has. Any tool that counts the layer will still count the hidden ones unless a filter or selection is applied.</p></div>
+  <p>There is a fourth, less obvious level: a <strong>filter</strong> (Chapter 10) can hide <em>some</em> records of a layer — say, only Open requests are drawn. A filtered map can look complete and be missing half the data. Any map handed to a manager must say which records were left out and why.</p>
+  <div class="callout dev"><span class="label">Developer view</span><p>Turning a layer off is collapsing a panel in the UI. Removing a layer is dropping a SQL <em>view</em>. Deleting the dataset is dropping the <em>table</em>. Exact for the first two; weaker for the third, because GIS datasets are often single files on a shared drive with no transaction log — “drop table” can be far harder to undo than in a database.</p></div>
+  <div class="callout warn"><span class="label">Misconception</span><p>“I unticked the duplicates, so the count on the map is right now.” The number of records has not changed; only the drawing has. Any tool that counts the layer will still count the hidden ones unless a filter or selection is applied.</p></div>
 
   <h2><span class="mod">1.5.3</span>The observation log</h2>
-  <p>Every time you look at a map in this course, keep a three-column log. The map <em>suggests</em>; the table <em>confirms</em>; some things remain <em>uncertain</em>. An empty third column is always wrong.</p>
+  <p>Every time you look at a map in this course, keep a three-column set of notes. The map <em>suggests</em>; the table <em>confirms</em>; some things remain <em>uncertain</em>. An empty third column is always wrong — there is always something you do not know yet.</p>
   <div class="table-wrap"><table>
     <thead><tr><th>Record</th><th>What the map suggests</th><th>What the table confirms</th><th>What remains uncertain</th></tr></thead>
     <tbody>
       <tr><td class="mono">P5</td><td>Sits on the Ward A/B edge and on Main Road</td><td>(1000, 500): x = 1000 is the shared edge; y = 500 is the road — exact coincidence, not just visual</td><td>Whether the real blockage is at drain DR-0042, 11 m away in Ward A; whether a “reopened” request counts as new or old for priority</td></tr>
-      <tr><td class="mono">P6</td><td>Isolated, east of both wards, in line with the road</td><td>(2200, 500): 200 m beyond the road’s end and Ward B’s edge; status Closed – duplicate</td><td>Where the surviving twin record is and whether <em>it</em> is unresolved; whether TR-0301 (22 m away) is the tree concerned</td></tr>
+      <tr><td class="mono">P6</td><td>Isolated, east of both wards, in line with the road</td><td>(2200, 500): 200 m beyond the road’s end and Ward B’s edge; status Closed – duplicate</td><td>Where the other copy of this report is and whether <em>it</em> is unresolved; whether TR-0301 (22 m away) is the tree concerned</td></tr>
     </tbody></table></div>
   <div class="try">
     <span class="tag">Your log</span>
-    <p>Complete the log for the other four requests. It is saved in this browser and is a deliverable for module 1.5.</p>
+    <p>Complete the log for the other four requests. It is saved in this browser, and you submit it with module 1.7.</p>
     <div class="lab-form" id="logForm"></div>
     <div class="controls"><button class="btn primary" id="saveLog">Save log</button> <span class="saved" id="logSaved"></span> <button class="btn ghost" onclick="window.print()">Print</button></div>
   </div>
@@ -143,7 +143,7 @@ function pageInit() {
   const fig = document.getElementById("pmap");
   function layers() { return { requests: lyRequests.checked, assets: lyAssets.checked, roads: lyRoads.checked, wards: lyWards.checked }; }
   function draw() {
-    const svg = renderMap(fig, { layers: layers(), selected, onSelect: id => { selected = id; draw(); }, caption: "Practice map · synthetic grid · drag to pan, scroll to zoom" });
+    const svg = renderMap(fig, { layers: layers(), selected, onSelect: id => { selected = id; draw(); }, caption: "Practice map · made-up data · drag to pan, scroll to zoom" });
     svg.setAttribute("viewBox", vb.join(" "));
     // drag to pan
     let drag = null;
