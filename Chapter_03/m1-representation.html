@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.1 The real thing and its shape on the map</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 3.1 · General GIS idea</div>
+    <h1>The real thing is not its shape on the map</h1>
+    <p class="lead">A school is a school. On a map it can be a <strong>dot</strong> or an <strong>outline</strong>. Neither one is “the school” — each is a choice made for a job. This module teaches you to see that choice, and to keep three kinds of record apart: the thing, a complaint about it, and a visit to it.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Compare the same school stored as a point and as a building outline, and see which questions each can answer.</li>
+      <li>Keep an <strong>asset</strong>, an <strong>incident</strong> at it, and an <strong>inspection</strong> of it as three separate records.</li>
+      <li>Learn what a <strong>feature</strong> is — including features you cannot see on the ground, and features with no shape yet.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">3.1.1</span>One school, two shapes</h2>
+  <p>Open any phone map app and zoom far out: your school or office is a small dot. Zoom right in: the same building becomes an outline you can walk around. The building did not change — the <strong>representation</strong> did. A representation is the shape (and the facts) we <em>choose</em> to store about a real thing.</p>
+  <p>In our practice town the school SC-01 is stored twice: as a point at (400, 700), and as a rectangle 60 m wide and 40 m tall (corners (370, 680) to (430, 720)). Which one is “right”? Wrong question. Ask instead: <strong>which questions can each one answer?</strong></p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>Pick a question, see what each shape can do</h3>
+    <div class="two-col">
+      <div>
+        <div id="qs"></div>
+      </div>
+      <div>
+        <figure class="map-fig" id="schoolFig"></figure>
+        <div class="ans" id="ans"><div class="a">Point (400, 700)</div><div class="a">Outline 60 m × 40 m</div></div>
+      </div>
+    </div>
+    <div class="result" id="qOut">Click a question on the left.</div>
+  </div>
+  <div class="callout idea"><span class="label">Rule to remember</span><p>A bigger, more detailed shape is <strong>not more true</strong> — it is <strong>different information</strong>. The outline knows the site area; the dot does not. But the outline still does not know where the gate is, because nobody captured it. Every shape holds only what was captured.</p></div>
+  <div class="callout dev"><span class="label">Developer view</span><p>Storing a customer as one geocoded pin versus storing the whole plot boundary: both are “the address”; one serves a delivery list, the other a property-tax map. <strong>Where the comparison stops:</strong> in a database you can add a column later without touching old ones. In GIS a layer holds <em>one shape type</em> (module 3.2), so “add the outline as well” means a <em>second dataset</em>, not an extra column.</p></div>
+
+  <h2><span class="mod">3.1.2</span>Asset, complaint, inspection — three records, never one</h2>
+  <p>Look near (1000, 500) in the town. Three different things sit almost on top of each other:</p>
+  <div class="tl" id="tl"></div>
+  <div class="result" id="tlOut">Click a card.</div>
+  <p style="margin-top:1rem">They must stay <strong>three separate collections</strong>. The asset and the complaint have their own point shapes. The inspection has <em>no shape at all</em> — it simply names the asset it is about (<code>asset_id = DR-0042</code>), and the asset supplies the location. If the drain’s position is corrected one day, the inspections follow automatically because they never held their own copy of the position. Chapter 8 makes this a formal relationship; for now, just keep them apart.</p>
+  <div class="callout warn"><span class="label">Misconception</span><p>“Put the latest inspection result in the asset row and you are done.” Then the second visit overwrites the first, and the trend — <em>Fair</em> in 2024, <em>Poor</em> in 2025 — is lost. That trend is exactly what a maintenance planner needs. The asset’s <code>condition</code> column is a handy summary; the inspections table is the record.</p></div>
+  <div class="quiz" data-answer="1" data-fb="A new pole is a new asset with its own installation year and its own future inspections. Changing the old row’s year (a) destroys the fact that a 2018 pole ever existed. Editing P1 to point at the new pole (c) rewrites a complaint that was made when the old pole was there.">
+    <div class="q">A crew replaces streetlight SL-0113 with a new pole at the same spot. What should happen to the records?</div>
+    <div class="opts">
+      <button class="opt">Change SL-0113’s installed year from 2018 to 2026</button>
+      <button class="opt">Retire SL-0113 and create a new asset row for the new pole</button>
+      <button class="opt">Edit complaint P1 so it points at the new pole</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <h2><span class="mod">3.1.3</span>What a feature is</h2>
+  <p>A <strong>feature</strong> is one stored thing: <strong>one shape plus its facts, kept as one row</strong>. Drain DR-0042 is a feature. Ward A is a feature. Complaint P5 is a feature. Three points matter:</p>
+  <div class="grid-3">
+    <div class="card"><h4 style="margin-top:0">1 · Features need not be visible</h4><p>A beginner’s book says a feature is “anything you can see on the landscape”. That is a good first picture, but too narrow. <strong>Ward A is a feature</strong>, and nobody can see a ward boundary on the ground. So is a PIN-code area, a “no-parking zone”, or a “300 m from the road” zone you compute later.</p></div>
+    <div class="card"><h4 style="margin-top:0">2 · A feature may have no shape</h4><p>Complaint <strong>P7</strong> was phoned in, but the caller could not say where. It is a real complaint with real facts and <em>no location yet</em>. Its row exists; its shape is empty. The GeoJSON format even has a word for this: an “unlocated” feature. Module 3.6 shows how to find such rows.</p></div>
+    <div class="card"><h4 style="margin-top:0">3 · One feature = one row</h4><p>A feature has exactly one shape value (which may be in several pieces — module 3.3) and one set of facts. “Three drains” are three features, three rows.</p></div>
+  </div>
+  <div class="callout dev"><span class="label">Developer view</span><p>A feature is a row in a table that has one column of a special type — <em>geometry</em> — beside ordinary typed columns. ArcGIS names that column <code>SHAPE</code>; PostGIS uses a column of type <code>geometry</code>. <strong>Where the comparison stops:</strong> the geometry column has its own internal structure (vertices, parts, rings) and its own validity rules, and nearly every GIS engine forces every row in the table to have the <em>same</em> shape type.</p></div>
+
+  <div class="try sorter" data-items='[{"t":"Ward B","bin":"Feature","why":"an area with facts — invisible on the ground, still a feature"},{"t":"Complaint P5","bin":"Feature","why":"a point plus its row"},{"t":"Drain DR-0042","bin":"Feature","why":"a point plus its row"},{"t":"The distance 300 m from P1 to the road","bin":"Not a feature","why":"a measured number; it could be stored as a fact about P1, but it is not a thing"},{"t":"The rule ‘within 300 m’","bin":"Not a feature","why":"a rule chosen by people (Chapter 1)"},{"t":"The x-axis of the grid","bin":"Not a feature","why":"part of the coordinate frame, not data"},{"t":"Inspection INS-0003","bin":"Row with no shape","why":"facts linked to an asset by ID; the asset gives the location"},{"t":"The park PK-01","bin":"Feature","why":"one feature, even though it is in two pieces (module 3.3)"}]'>
+    <span class="tag">Try it</span>
+    <h3>Feature or not?</h3>
+    <p>Click an item, then click the bin it belongs in.</p>
+    <div class="items"></div>
+    <div class="bins">
+      <div class="bin" data-bin="Feature"><h5>Feature (shape + facts)</h5></div>
+      <div class="bin" data-bin="Not a feature"><h5>Not a feature (a number, a rule, the grid)</h5></div>
+      <div class="bin" data-bin="Row with no shape"><h5>Row with no shape, linked by ID</h5></div>
+    </div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>A planner wants to count “schools per ward”, defined as “the ward that contains the school”. Which of the two school shapes would you use? What extra decision does the <em>other</em> shape force on you when a building sits across a ward line?</p></div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  /* 3.1.1 question explorer */
+  const QS = [
+    { q: "How many schools are in Ward A?", p: ["yes", "Count the dots inside the ward."], f: ["part", "Possible — but you must first decide what ‘inside’ means for an outline that could sit across a ward line."] },
+    { q: "Which complaints are within 300 m of the school?", p: ["yes", "Measure from the dot (400, 700). Fine for an overview."], f: ["yes", "Measure from the nearest wall. Answers differ near the building — e.g. a complaint at (400, 400) is exactly 300 m from the dot but only 280 m from the outline."] },
+    { q: "How big is the school site?", p: ["no", "A dot has no area."], f: ["yes", "60 m × 40 m = 2,400 m²."] },
+    { q: "Does the new footpath cross school land?", p: ["no", "A dot has no edges to cross."], f: ["yes", "Test whether the path enters the rectangle."] },
+    { q: "Where should the school marker go on a whole-city map (1:50,000)?", p: ["yes", "Draw the dot."], f: ["part", "At 1:50,000 the 60 m × 40 m outline is 1.2 mm × 0.8 mm on paper — too small to see as a shape."] },
+    { q: "Where is the school gate?", p: ["no", "Not captured."], f: ["no", "Not captured either — the outline is a plain rectangle. More detail does not mean every detail."] }
+  ];
+  const qsEl = document.getElementById("qs");
+  qsEl.innerHTML = QS.map((x, i) => `<button class="qbtn" data-i="${i}">${x.q}</button>`).join("");
+  function drawSchool(mode) {
+    renderTown(document.getElementById("schoolFig"), {
+      view: [150, 200, 500, 560], axes: false, labels: false,
+      visible: ["wards", "schoolFoot", "schoolPt"],
+      extra: mk => {
+        const t = mk("text", { x: 160, y: 232, class: "tag", style: "font-size:20px" }); t.textContent = "Zoomed in near (400, 700) — grid metres";
+        const l1 = mk("text", { x: 440, y: 405, class: "tag", style: "font-size:18px" }); l1.textContent = "point (400, 700)";
+        const l2 = mk("text", { x: 280, y: 455, class: "tag", style: "font-size:18px" }); l2.textContent = "outline: (370, 680) … (430, 720)";
+        if (mode === "buffer") { mk("circle", { cx: 400, cy: 400, r: 300, class: "band" }); mk("circle", { cx: 400, cy: 700, r: 8, class: "req" }); const t2 = mk("text", { x: 415, y: 705, class: "tag", style: "font-size:18px" }); t2.textContent = "complaint at (400, 400)"; }
+        if (mode === "path") { mk("polyline", { points: "250 320 400 400 560 470", class: "line thin", style: "stroke:#d3541f" }); const t3 = mk("text", { x: 255, y: 310, class: "tag", style: "font-size:18px" }); t3.textContent = "proposed footpath"; }
+      }
+    });
+  }
+  drawSchool();
+  qsEl.addEventListener("click", e => {
+    const b = e.target.closest(".qbtn"); if (!b) return;
+    qsEl.querySelectorAll(".qbtn").forEach(x => x.classList.remove("on")); b.classList.add("on");
+    const x = QS[b.dataset.i];
+    document.getElementById("ans").innerHTML = `<div class="a ${x.p[0]}"><strong>Point:</strong> ${x.p[0] === "yes" ? "Yes" : x.p[0] === "no" ? "No" : "Partly"}. ${x.p[1]}</div><div class="a ${x.f[0]}"><strong>Outline:</strong> ${x.f[0] === "yes" ? "Yes" : x.f[0] === "no" ? "No" : "Partly"}. ${x.f[1]}</div>`;
+    drawSchool(b.dataset.i == 1 ? "buffer" : b.dataset.i == 3 ? "path" : null);
+    document.getElementById("qOut").innerHTML = "Notice: the shape you store decides which questions you can answer later — and a chosen shape can change <em>which records qualify</em> under a rule such as “within 300 m”. Write the choice down.";
+  });
+
+  /* 3.1.2 three records */
+  const recs = [
+    { kind: "Asset", id: "DR-0042", sub: "a drain at (995, 510)", what: "A thing the municipality owns and looks after. It lives for years. What changes over time is its <em>current state</em> — condition, last inspection.", col: "var(--ink)" },
+    { kind: "Incident (complaint)", id: "P5 — Blocked drain", sub: "reported at (1000, 500), 5 m away", what: "Something that happened and was reported at a place and time. It opens, progresses, closes, may reopen. Its <em>status</em> changes; what was reported should never be rewritten.", col: "var(--accent)" },
+    { kind: "Inspection", id: "INS-0002", sub: "2025-11-02, found ‘Poor’, by crew01", what: "One observation made about one asset on one date. Written once, never changed. The next visit is a <em>new</em> record. It has no shape of its own — it points at DR-0042.", col: "var(--ok)" }
+  ];
+  const tl = document.getElementById("tl");
+  tl.innerHTML = recs.map((r, i) => `<div class="rec" data-i="${i}"><div class="kind" style="color:${r.col}">${r.kind}</div><div class="id">${r.id}</div><div class="small">${r.sub}</div></div>`).join("");
+  tl.addEventListener("click", e => { const c = e.target.closest(".rec"); if (!c) return; tl.querySelectorAll(".rec").forEach(x => x.classList.remove("on")); c.classList.add("on"); document.getElementById("tlOut").innerHTML = recs[c.dataset.i].what; });
+}
+</script>
+</body>
+</html>
