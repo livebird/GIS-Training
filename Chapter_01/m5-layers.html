@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.5 Layers and map interaction</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 1.5</div>
+    <h1>Layers and map interaction</h1>
+    <p class="lead">A layer is a view of stored records. Turn it off and the records are still there.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Toggle layers, pan, zoom, and select a record on a practice map.</li>
+      <li>Explain the difference between hiding, removing, and deleting.</li>
+      <li>Keep an observation log: what the map suggests, what the table confirms, what stays uncertain.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">1.5.1</span>Layers, and a first walk around a map</h2>
+  <p>A <dfn title="A set of records of one kind, drawn together on a map from a referenced dataset.">layer</dfn> is a set of records of one kind drawn together. The <em>Gentle Introduction to GIS</em> says map layers “are stored as files on a disk or as records in a database”, each representing “something in the real world — a roads layer for example”; when several are added, “the layers are overlaid on top of each other”; and the layers list lets you “re-order, hide, show and group layers”. The ArcGIS Pro documentation states the key principle: <strong>“Layers in a map reference the source dataset, but do not control the data.”</strong></p>
+  <p>The practice map below imitates a GIS window: a layer list on the left, the map on the right, and the attribute table underneath. It is a simulation, not real GIS software — but every behaviour it shows is the one you will meet in ArcGIS Pro or QGIS.</p>
+
+  <div class="try">
+    <span class="tag">Practice map</span>
+    <div class="map-with-panel">
+      <div>
+        <div class="layerlist">
+          <div class="hdr">Layers (drawing order)</div>
+          <label><input type="checkbox" id="lyRequests" checked> <span class="sw" style="background:var(--accent)"></span> Requests</label>
+          <label><input type="checkbox" id="lyAssets"> <span class="sw" style="background:#fff;border:2px solid var(--ink)"></span> Assets</label>
+          <label><input type="checkbox" id="lyRoads" checked> <span class="sw" style="background:var(--road)"></span> Roads</label>
+          <label><input type="checkbox" id="lyWards" checked> <span class="sw" style="background:var(--ward);border:2px solid var(--ward-line)"></span> Wards</label>
+        </div>
+        <div class="controls" style="margin-top:.8rem;flex-direction:column;align-items:stretch;gap:.4rem">
+          <button class="btn small" id="zin">Zoom in</button>
+          <button class="btn small" id="zout">Zoom out</button>
+          <button class="btn small" id="zfull">Full extent</button>
+          <button class="btn small" id="zsel">Zoom to selection</button>
+          <button class="btn small ghost" id="clearSel">Clear selection</button>
+          <p class="small" style="margin:.3rem 0 0">Drag the map to pan. Scroll to zoom. Click a request to select it.</p>
+        </div>
+      </div>
+      <div>
+        <figure class="map-fig" id="pmap" style="cursor:grab"></figure>
+        <div class="result" id="selCount">0 features selected</div>
+      </div>
+    </div>
+    <h4 style="margin:1rem 0 .3rem">Requests — attribute table</h4>
+    <div class="controls"><label><input type="checkbox" id="showSel"> Show selected records only</label></div>
+    <div id="ptable"></div>
+  </div>
+
+  <h3>Eight things to do and notice</h3>
+  <ol>
+    <li><strong>Look at the layer list.</strong> The order in the list is the drawing order — the top layer draws on top.</li>
+    <li><strong>Turn Wards off, then on.</strong> Requests and road do not move. Nothing was deleted.</li>
+    <li><strong>Turn Roads off.</strong> P5 now looks like an ordinary dot on the ward edge. The fact that it is <em>on the road</em> disappears from view. Hidden information changes what a map seems to say.</li>
+    <li><strong>Zoom in on P5.</strong> The dot still sits on the ward edge, but the symbol has a size in screen pixels, not metres. “On the line” is a claim about coordinates, not the picture.</li>
+    <li><strong>Pan east to P6.</strong> It is beyond both wards and past the end of the road.</li>
+    <li><strong>Click P5.</strong> The selection count changes and the record is highlighted.</li>
+    <li><strong>Tick “Show selected records only”.</strong> The table row for P5 shows exactly the same values. Map and table are two views of one record.</li>
+    <li><strong>Clear the selection.</strong></li>
+  </ol>
+
+  <details class="reveal"><summary>Doing the same in ArcGIS Pro (from the official documentation; not execution-tested)</summary>
+    <ul>
+      <li><strong>Layers:</strong> the <strong>Contents</strong> pane lists them; use the check box to turn one on or off.</li>
+      <li><strong>Navigate:</strong> on the <strong>Map</strong> tab, <strong>Navigate</strong> group, use the <strong>Explore</strong> tool. Drag to pan; mouse wheel to zoom; the Insert key zooms to full extent; right-click a layer → <strong>Zoom To Layer</strong>.</li>
+      <li><strong>Select:</strong> <strong>Map</strong> tab, <strong>Selection</strong> group. The number selected appears at the bottom of the view. <strong>Clear</strong> is in the same group.</li>
+      <li><strong>Table:</strong> right-click the layer in Contents → <strong>Attribute Table</strong> (or Ctrl+T). Use <strong>Show Selected Records</strong> / <strong>Show All Records</strong> at the bottom of the table.</li>
+    </ul></details>
+  <details class="reveal"><summary>Doing the same in QGIS 3.40 (from the official user manual; not execution-tested)</summary>
+    <ul>
+      <li><strong>Layers:</strong> the <strong>Layers</strong> panel with check boxes.</li>
+      <li><strong>Navigate:</strong> <strong>Pan Map</strong> tool — hold the left button and drag; or hold <kbd>Space</kbd> and move the mouse. Roll the wheel to zoom. <strong>Zoom Full</strong>; <strong>Zoom To Layer(s)</strong>.</li>
+      <li><strong>Select:</strong> <strong>Select Features by area or single click</strong>; clear with <strong>Deselect Features from All Layers</strong> (Ctrl+Alt+A). <strong>Identify Features</strong> (Ctrl+Shift+I / Cmd+Shift+I) reads a feature’s values without selecting it.</li>
+      <li><strong>Table:</strong> right-click the layer → <strong>Open Attribute Table</strong> (F6; Shift+F6 opens it filtered to the selection). Selecting a row selects the feature and vice versa.</li>
+    </ul></details>
+
+  <h2><span class="mod">1.5.2</span>Hiding is not deleting</h2>
+  <p>Unchecking a layer changes what you <em>see</em>. It does not change what is <em>stored</em>. There are three distinct levels.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls">
+      <button class="btn" data-lvl="0">Turn layer off</button>
+      <button class="btn" data-lvl="1">Remove layer from map</button>
+      <button class="btn" data-lvl="2">Delete the dataset</button>
+      <button class="btn ghost" data-lvl="-1">Reset</button>
+    </div>
+    <div class="grid-3" id="lvlCards">
+      <div class="card"><h4 style="margin-top:0">This map</h4><p id="c0">Shows 6 requests.</p></div>
+      <div class="card"><h4 style="margin-top:0">A colleague’s map (same dataset)</h4><p id="c1">Shows 6 requests.</p></div>
+      <div class="card"><h4 style="margin-top:0">Stored records on disk</h4><p id="c2">6 rows.</p></div>
+    </div>
+    <div class="result" id="lvlOut">Press a button.</div>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Action</th><th>What changes</th><th>Data still stored?</th><th>Colleague still sees it?</th><th>Reversible?</th></tr></thead>
+    <tbody>
+      <tr><td>Turn a layer off</td><td>Only this map’s display</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Instantly</td></tr>
+      <tr><td>Remove the layer from the map</td><td>This map no longer references the dataset</td><td class="yes">Yes</td><td class="yes">Yes</td><td>Add it back</td></tr>
+      <tr><td>Delete the dataset</td><td>The records are gone</td><td class="no">No</td><td class="no">No</td><td>Only from a backup</td></tr>
+    </tbody></table></div>
+  <p>There is a fourth, subtler level: a <strong>filter</strong> (Chapter 10) can hide <em>some</em> records of a layer — say, only Open requests are drawn. A filtered map can look complete and be missing half the data. Any map handed to a decision-maker must say which records were excluded and why.</p>
+  <div class="callout dev"><span class="label">Developer view</span><p>Turning a layer off is collapsing a panel. Removing a layer is dropping a <em>view</em>. Deleting the dataset is dropping the <em>table</em>. Exact for the first two; weaker for the third, because GIS datasets are often single files on a shared drive with no transaction log — “drop table” can be far less recoverable than in a database.</p></div>
+  <div class="callout warn"><span class="label">Misconception</span><p>“I unchecked the duplicates, so the count on the map is right now.” The count of records has not changed; only the drawing has. Any tool that counts the layer will still count the hidden ones unless a filter or selection is applied.</p></div>
+
+  <h2><span class="mod">1.5.3</span>The observation log</h2>
+  <p>Every time you look at a map in this course, keep a three-column log. The map <em>suggests</em>; the table <em>confirms</em>; some things remain <em>uncertain</em>. An empty third column is always wrong.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Record</th><th>What the map suggests</th><th>What the table confirms</th><th>What remains uncertain</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">P5</td><td>Sits on the Ward A/B edge and on Main Road</td><td>(1000, 500): x = 1000 is the shared edge; y = 500 is the road — exact coincidence, not just visual</td><td>Whether the real blockage is at drain DR-0042, 11 m away in Ward A; whether a “reopened” request counts as new or old for priority</td></tr>
+      <tr><td class="mono">P6</td><td>Isolated, east of both wards, in line with the road</td><td>(2200, 500): 200 m beyond the road’s end and Ward B’s edge; status Closed – duplicate</td><td>Where the surviving twin record is and whether <em>it</em> is unresolved; whether TR-0301 (22 m away) is the tree concerned</td></tr>
+    </tbody></table></div>
+  <div class="try">
+    <span class="tag">Your log</span>
+    <p>Complete the log for the other four requests. It is saved in this browser and is a deliverable for module 1.5.</p>
+    <div class="lab-form" id="logForm"></div>
+    <div class="controls"><button class="btn primary" id="saveLog">Save log</button> <span class="saved" id="logSaved"></span> <button class="btn ghost" onclick="window.print()">Print</button></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-fb="Layers reference the dataset; they do not control it. Unchecking changes only this map’s display. Other maps and the stored records are untouched.">
+    <div class="q">You uncheck the Requests layer and save the project. Which is true?</div>
+    <div class="opts">
+      <button class="opt">The request records are deleted.</button>
+      <button class="opt">The records are unchanged; only this map’s display changed.</button>
+      <button class="opt">The dataset is removed from disk but recoverable.</button>
+      <button class="opt">Other maps using the same dataset no longer show requests.</button>
+    </div><div class="fb"></div>
+  </div>
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>A colleague turns off the Wards layer, zooms to Ward B, takes a screenshot, and reports “there are two requests in Ward B”. List everything about that statement that cannot be verified from the screenshot, and what you would look at instead.</p></div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  // ---- practice map ----
+  const FULL = "-140 40 2560 1190";
+  let vb = FULL.split(" ").map(Number), selected = null;
+  const fig = document.getElementById("pmap");
+  function layers() { return { requests: lyRequests.checked, assets: lyAssets.checked, roads: lyRoads.checked, wards: lyWards.checked }; }
+  function draw() {
+    const svg = renderMap(fig, { layers: layers(), selected, onSelect: id => { selected = id; draw(); }, caption: "Practice map · synthetic grid · drag to pan, scroll to zoom" });
+    svg.setAttribute("viewBox", vb.join(" "));
+    // drag to pan
+    let drag = null;
+    svg.addEventListener("pointerdown", e => { if (e.target.classList && e.target.classList.contains("req")) return; drag = { x: e.clientX, y: e.clientY, vb: [...vb] }; svg.setPointerCapture(e.pointerId); fig.style.cursor = "grabbing"; });
+    svg.addEventListener("pointermove", e => { if (!drag) return; const r = svg.getBoundingClientRect(); const k = vb[2] / r.width; vb[0] = drag.vb[0] - (e.clientX - drag.x) * k; vb[1] = drag.vb[1] - (e.clientY - drag.y) * k; svg.setAttribute("viewBox", vb.join(" ")); });
+    svg.addEventListener("pointerup", () => { drag = null; fig.style.cursor = "grab"; });
+    svg.addEventListener("wheel", e => { e.preventDefault(); zoom(e.deltaY < 0 ? 0.8 : 1.25); }, { passive: false });
+    document.getElementById("selCount").textContent = selected ? `1 feature selected (${selected})` : "0 features selected";
+    drawTable();
+  }
+  function zoom(f, cx, cy) { const w = vb[2] * f, h = vb[3] * f; cx = cx ?? vb[0] + vb[2] / 2; cy = cy ?? vb[1] + vb[3] / 2; vb = [cx - w / 2, cy - h / 2, w, h]; fig.querySelector("svg").setAttribute("viewBox", vb.join(" ")); }
+  ["lyRequests", "lyAssets", "lyRoads", "lyWards"].forEach(id => document.getElementById(id).addEventListener("change", draw));
+  document.getElementById("zin").onclick = () => zoom(0.7);
+  document.getElementById("zout").onclick = () => zoom(1.4);
+  document.getElementById("zfull").onclick = () => { vb = FULL.split(" ").map(Number); fig.querySelector("svg").setAttribute("viewBox", FULL); };
+  document.getElementById("zsel").onclick = () => { if (!selected) return; const p = FIXTURE.requests.find(r => r.id === selected); vb = [SX(p.x) - 300, SY(p.y) - 150, 600, 300]; fig.querySelector("svg").setAttribute("viewBox", vb.join(" ")); };
+  document.getElementById("clearSel").onclick = () => { selected = null; draw(); };
+  function drawTable() {
+    const t = document.getElementById("ptable");
+    requestTable(t, { cols: ["id", "xy", "category", "priority", "status", "reported", "channel", "dist"] });
+    t.querySelectorAll("tbody tr").forEach(tr => {
+      const id = tr.dataset.id;
+      tr.classList.toggle("selected", id === selected);
+      if (document.getElementById("showSel").checked && id !== selected) tr.style.display = "none";
+      tr.style.cursor = "pointer"; tr.addEventListener("click", () => { selected = id; draw(); });
+    });
+  }
+  document.getElementById("showSel").addEventListener("change", drawTable);
+  draw();
+
+  // ---- three levels ----
+  const msgs = [
+    ["Shows 0 requests (layer unchecked)", "Shows 6 requests.", "6 rows.", "Only <em>this map’s display</em> changed. Check the box and they are back."],
+    ["Layer gone from the list", "Shows 6 requests.", "6 rows.", "This map no longer <em>references</em> the dataset. The data and every other map are unchanged. Add it back any time."],
+    ["Layer shows an error: source missing", "Layer shows an error: source missing", "<strong style='color:var(--warn)'>0 rows — deleted</strong>", "The records are gone for everyone. Only a backup brings them back."],
+    ["Shows 6 requests.", "Shows 6 requests.", "6 rows.", "Press a button."]
+  ];
+  document.querySelectorAll("[data-lvl]").forEach(b => b.addEventListener("click", () => { const i = +b.dataset.lvl; const m = msgs[i < 0 ? 3 : i]; document.getElementById("c0").innerHTML = m[0]; document.getElementById("c1").innerHTML = m[1]; document.getElementById("c2").innerHTML = m[2]; document.getElementById("lvlOut").innerHTML = m[3]; }));
+
+  // ---- observation log ----
+  const KEY = "gis-ch1-obslog";
+  const form = document.getElementById("logForm");
+  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+  form.innerHTML = ["P1", "P2", "P3", "P4"].map(id => `<div class="lab-card"><h4>${id}</h4><label>What the map suggests</label><textarea data-k="${id}-map">${saved[id + "-map"] || ""}</textarea><label>What the table confirms</label><textarea data-k="${id}-tab">${saved[id + "-tab"] || ""}</textarea><label>What remains uncertain</label><textarea data-k="${id}-unc">${saved[id + "-unc"] || ""}</textarea></div>`).join("");
+  document.getElementById("saveLog").addEventListener("click", () => { const o = {}; form.querySelectorAll("textarea").forEach(t => o[t.dataset.k] = t.value); localStorage.setItem(KEY, JSON.stringify(o)); document.getElementById("logSaved").textContent = "Saved " + new Date().toLocaleTimeString(); });
+}
+</script>
+</body>
+</html>

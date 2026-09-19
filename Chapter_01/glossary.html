@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 1 glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Chapter 1</div>
+    <h1>Glossary</h1>
+    <p class="lead">Terms as used in this chapter. Later chapters refine several of them.</p>
+  </div>
+  <input class="gloss-search" id="q" type="search" placeholder="Type to filter… e.g. layer, extent, provenance" aria-label="Filter glossary">
+  <dl class="gloss" id="gloss"></dl>
+  <p style="margin-top:2rem"><a class="btn ghost" href="index.html">← Chapter home</a></p>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  const terms = [
+    ["Absolute location", "A position expressed directly in a coordinate system, e.g. (995, 510) on the training grid."],
+    ["Asset", "A physical thing the municipality maintains (streetlight, drain, tree) with a current state."],
+    ["Attribute", "A descriptive, non-spatial value stored with a record (category, status, date)."],
+    ["Attribute table", "The tabular view of a layer’s records, one row per feature."],
+    ["Boundary-inclusive / strict", "Whether a value exactly on a limit (a point on a polygon edge; a distance exactly equal to the threshold) counts as inside. Must be stated for every rule."],
+    ["Capture, store, analyse, communicate", "The four functions of a GIS."],
+    ["Containment", "The question of whether one geometry lies inside another."],
+    ["Dataset", "The stored collection of records (a file or database table) that a layer draws."],
+    ["Extent (spatial extent)", "The area under consideration for a question; a decision, not a property of the data."],
+    ["Fitness for purpose", "Whether a dataset is adequate for a specific stated use, rather than “accurate” in the abstract."],
+    ["Geocoding", "Turning a text address into a position. A separate, error-prone step (Chapter 9)."],
+    ["Geometry", "The part of a record that represents space; in this chapter, a point position."],
+    ["GIS", "Geographic(al) Information System: data, software, hardware, and the people and processes that use them to capture, store, analyse, and communicate location-linked information."],
+    ["Inspection", "A record of a visit to an asset or request; formally modelled in Chapter 8."],
+    ["Layer", "A set of records of one kind drawn together on a map from a referenced dataset; can be reordered, hidden, and shown."],
+    ["Observed event", "Something that happened at a time and place as reported (a request). Its observation should not be overwritten."],
+    ["Policy versus evidence", "Rules chosen by the organisation versus facts a GIS can produce."],
+    ["Proximity", "The question of how near things are; requires a distance, a unit, and a comparison rule."],
+    ["Provenance", "Who produced a dataset, when, why, and what it omits."],
+    ["Relative location", "A place described by its relation to something else (“beside the school”)."],
+    ["Request (service request)", "A report from the public about a problem, with a reported position, attributes, and times."],
+    ["Selection", "Marking records for attention in both map and table without changing them."],
+    ["Straight-line distance", "Geometric distance between two positions; not travel distance or time."],
+    ["Validation", "Checking that an output is plausible and reproducible before acting on it."],
+    ["Ward", "An administrative area defined by an authority; here, two synthetic 1 km squares."]
+  ];
+  const g = document.getElementById("gloss");
+  function render(f) { g.innerHTML = terms.filter(t => !f || (t[0] + " " + t[1]).toLowerCase().includes(f)).map(t => `<dt>${t[0]}</dt><dd>${t[1]}</dd>`).join("") || "<dd>No matching term.</dd>"; }
+  document.getElementById("q").addEventListener("input", e => render(e.target.value.trim().toLowerCase()));
+  render("");
+}
+</script>
+</body>
+</html>

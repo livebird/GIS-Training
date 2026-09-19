@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.1 Start with a decision, not a map</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 1.1</div>
+    <h1>Start with a decision, not a map</h1>
+    <p class="lead">A GIS answers exactly the question you ask it. So the first job is to make the question precise.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Separate the <strong>policy</strong> (rules people choose) from the <strong>evidence</strong> (facts a GIS can produce).</li>
+      <li>See how vague words change the answer, using the six requests.</li>
+      <li>Compare the same records as a table and as a map.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">1.1.1</span>The recurring question</h2>
+  <p style="font-family:var(--font-display);font-size:1.4rem;font-weight:600">“Which unresolved service requests should an inspection team investigate first?”</p>
+  <p>This is a <strong>decision</strong>. Every decision has two parts, and people mix them up all the time:</p>
+  <div class="grid-2">
+    <div class="card"><h3 style="margin-top:0">Policy</h3><p>The rules the organisation <em>chooses</em>. “High priority goes first.” “Old requests get escalated.” “A team stays in its own ward.”</p><p><strong>A GIS cannot decide these.</strong> People with authority do.</p></div>
+    <div class="card"><h3 style="margin-top:0">Evidence</h3><p>Facts the rules need. <em>Where</em> is each request? <em>How far</em> from the road? <em>Which ward</em>? <em>How old</em>? <em>How many</em> per area?</p><p><strong>This is what a GIS produces, stores, and checks.</strong></p></div>
+  </div>
+  <div class="callout dev"><span class="label">Developer view</span><p>Policy is the business logic. Evidence is the data the logic reads. A GIS is like a reporting database: it can give you the balance and the outliers, but it cannot approve the loan.</p><p><strong>Where the analogy breaks:</strong> in a GIS the <em>definitions</em> of the evidence — what counts as “inside”, “near”, “the same place” — are geometric choices you must make on purpose. A financial <code>SUM</code> has one meaning. “Distance to a road” does not.</p></div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Part of the decision</th><th>Example</th><th>Who supplies it</th><th>Can a GIS produce it?</th></tr></thead>
+    <tbody>
+      <tr><td>Which requests are eligible</td><td>Only “unresolved” ones</td><td>Policy owner</td><td class="no">No — but it can <em>apply</em> the definition once given</td></tr>
+      <tr><td>Order of priority</td><td>High before Medium before Low</td><td>Policy owner</td><td class="no">No</td></tr>
+      <tr><td>Where each request is</td><td>P3 is at (1200, 250)</td><td>Data</td><td class="yes">Yes — stores and shows</td></tr>
+      <tr><td>Distance to the road</td><td>P3 is 250 m from R1</td><td>Computed by the GIS</td><td class="yes">Yes</td></tr>
+      <tr><td>Which ward contains each request</td><td>P3 is in Ward B</td><td>Computed by the GIS</td><td class="yes">Yes — given a boundary rule</td></tr>
+      <tr><td>Whether a crew <em>should</em> cross a ward line</td><td>—</td><td>Policy owner</td><td class="no">No</td></tr>
+    </tbody></table></div>
+
+  <h2><span class="mod">1.1.2</span>Why vague words give ambiguous results</h2>
+  <p>The policy usually says something like “investigate the <strong>urgent</strong>, <strong>unresolved</strong> requests <strong>near</strong> Main Road in our <strong>service area</strong>”. Each bold word changes the answer depending on a definition nobody has written down. Try it.</p>
+
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>Where does “near” end?</h3>
+    <p>Move the slider. The green band is the area within your chosen straight-line distance of Road R1. Notice what happens to P1 and P2 at exactly 300 m, and to P6, which is outside both wards.</p>
+    <div class="controls">
+      <label>Distance: <input type="range" id="thr" min="0" max="500" step="10" value="300"> <strong><span id="thrVal">300</span> m</strong></label>
+      <label><input type="radio" name="incl" value="1" checked> ≤ (boundary counts)</label>
+      <label><input type="radio" name="incl" value="0"> &lt; (strict)</label>
+      <label><input type="checkbox" id="wardReq"> Also require inside Ward A or B</label>
+    </div>
+    <figure class="map-fig" id="nearMap"></figure>
+    <div class="result" id="nearResult"></div>
+    <details class="reveal"><summary>How the distance is computed</summary><p>Road R1 is a <em>finite</em> segment. For a point with 0 ≤ x ≤ 2000, distance = |y − 500|. Beyond the ends, distance is measured to the nearest end point. P6 at (2200, 500) is 200 m from the end at (2000, 500).</p></details>
+  </div>
+
+  <h3>“Unresolved” — which statuses count?</h3>
+  <p>The six requests use five different status values. Tick the ones you would call “unresolved” and see who is in the set.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls" id="statusPick"></div>
+    <div class="result" id="statusResult"></div>
+    <p class="small">“Closed – duplicate” is the awkward one: the <em>record</em> is closed, but P6’s fallen tree may still be open under another ID that is not in this package.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h4 style="margin-top:0">“Urgent”</h4><p>Could mean Priority = High → P2, P3, P6. Or a category such as <em>Water leak</em>. Or age — the oldest unresolved request is P2 (2026-08-28). Three defensible readings, three different lists.</p></div>
+    <div class="card"><h4 style="margin-top:0">“Service area”</h4><p>Wards A and B only? Then P6 is out. Wards plus a 250 m margin? Then P6 is in. The GIS will apply either. It cannot choose.</p></div>
+  </div>
+
+  <div class="callout idea"><span class="label">The rule to remember</span><p>Before choosing any spatial operation, turn each vague word into <strong>(a)</strong> a measurable quantity, <strong>(b)</strong> a comparison rule that says whether the boundary value counts, and <strong>(c)</strong> a unit. This is true on every GIS platform.</p></div>
+  <div class="callout warn"><span class="label">Misconception</span><p>“The GIS will use a sensible default for near.” Tools do have defaults, but a default is not a decision. A result produced under an unexamined default cannot be explained to the decision-maker or reproduced by a colleague with a different tool.</p></div>
+
+  <h2><span class="mod">1.1.3</span>The same records as a table and as a map</h2>
+  <p>Here are the six requests. Switch between the two views and think about which questions each one makes easy.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls">
+      <button class="btn" id="viewTable" aria-pressed="true">Table</button>
+      <button class="btn" id="viewMap" aria-pressed="false">Map</button>
+      <button class="btn" id="viewBoth" aria-pressed="false">Both</button>
+    </div>
+    <div class="two-col" id="tmWrap">
+      <div id="tmTable"></div>
+      <figure class="map-fig" id="tmMap" style="display:none"></figure>
+    </div>
+  </div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Question</th><th>Easier in the table</th><th>Easier on the map</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>How many requests are High priority?</td><td class="yes">✔</td><td></td><td>Sort or filter. On the map you would read each label.</td></tr>
+      <tr><td>Which request is oldest?</td><td class="yes">✔</td><td></td><td>Dates are text; the map does not show them.</td></tr>
+      <tr><td>Which requests are close to Main Road?</td><td></td><td class="yes">✔</td><td>Visible at a glance. The table has no idea of “close”.</td></tr>
+      <tr><td>Is any request outside our wards?</td><td></td><td class="yes">✔</td><td>P6 stands out. In the table it is invisible.</td></tr>
+      <tr><td>Is any request <em>on</em> a ward boundary?</td><td></td><td class="yes">✔ (with care)</td><td>P5 looks “on the line”, but a drawn dot cannot prove it. The coordinates can.</td></tr>
+      <tr><td>Exactly how far is P3 from the road?</td><td></td><td></td><td>Neither. This needs a <em>computed</em> value — the “analysis” part of a GIS.</td></tr>
+    </tbody></table></div>
+  <p>Two things to take away. <strong>The map is not always better</strong>: for counting, sorting, and exact values, a table wins, and many GIS tasks end with a table. But the map reveals <strong>relationships between records</strong> — nearness, containment, outliers — that the table hides inside its coordinate columns. A GIS lets you switch between the two views and <em>compute</em> the relationships the map only suggests.</p>
+
+  <div class="quiz" data-answer="2" data-fb="P1 and P2 are exactly 300 m from R1. Whether “within 300 m” includes them is a definition the policy owner must supply — it is not something the software can know.">
+    <div class="q">The policy says “requests within 300 m of Main Road”. What must be decided before the GIS can give a definite list?</div>
+    <div class="opts">
+      <button class="opt">Nothing — 300 m is already precise.</button>
+      <button class="opt">Which map projection to use.</button>
+      <button class="opt">Whether a request at exactly 300 m counts (≤ or &lt;).</button>
+      <button class="opt">Which colour to draw the road.</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>The policy owner says: “Send the team to the urgent requests near the road in our service area.” List every term that needs a definition before the six records can be filtered, give one concrete definition for each, and state which requests your definitions select. Keep your answer for the instructor.</p></div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  // --- near explorer ---
+  const thr = document.getElementById("thr"), thrVal = document.getElementById("thrVal"), wardReq = document.getElementById("wardReq");
+  function updateNear() {
+    const t = +thr.value, incl = document.querySelector('input[name=incl]:checked').value === "1";
+    thrVal.textContent = t;
+    const hits = FIXTURE.requests.filter(p => {
+      const d = distToRoad(p.x, p.y);
+      const near = incl ? d <= t : d < t;
+      const inWard = wardsOf(p.x, p.y, true).length > 0;
+      return near && (!wardReq.checked || inWard);
+    }).map(p => p.id);
+    renderMap(document.getElementById("nearMap"), { band: t, hit: hits, dim: FIXTURE.requests.map(p => p.id).filter(i => !hits.includes(i)), caption: `Straight-line distance to R1 ${incl ? "≤" : "<"} ${t} m${wardReq.checked ? " AND inside Ward A ∪ B (shared edge inside)" : ""}` });
+    document.getElementById("nearResult").innerHTML = `Qualifying: <strong class="ids">${hits.length ? hits.join(", ") : "none"}</strong> — ${hits.length} of 6.<br><span class="small">Distances: ${FIXTURE.requests.map(p => `${p.id} = ${fmt(distToRoad(p.x, p.y))} m`).join(" · ")}</span>`;
+  }
+  thr.addEventListener("input", updateNear); wardReq.addEventListener("change", updateNear);
+  document.querySelectorAll('input[name=incl]').forEach(r => r.addEventListener("change", updateNear));
+  updateNear();
+
+  // --- status picker ---
+  const statuses = [...new Set(FIXTURE.requests.map(p => p.status))];
+  const sp = document.getElementById("statusPick");
+  sp.innerHTML = statuses.map(s => `<label><input type="checkbox" value="${s}" ${["Open", "Reopened"].includes(s) ? "checked" : ""}> ${s}</label>`).join("");
+  function updateStatus() {
+    const on = [...sp.querySelectorAll("input:checked")].map(i => i.value);
+    const ids = FIXTURE.requests.filter(p => on.includes(p.status)).map(p => p.id);
+    document.getElementById("statusResult").innerHTML = `“Unresolved” = {${on.join(", ") || "nothing"}} → <strong class="ids">${ids.join(", ") || "none"}</strong> (${ids.length} of 6)`;
+  }
+  sp.addEventListener("change", updateStatus); updateStatus();
+
+  // --- table vs map ---
+  requestTable(document.getElementById("tmTable"), { cols: ["id", "category", "priority", "status", "reported", "channel"] });
+  renderMap(document.getElementById("tmMap"), { caption: "Same six records, drawn at their (x, y)" });
+  const tT = document.getElementById("tmTable"), tM = document.getElementById("tmMap"), wrap = document.getElementById("tmWrap");
+  const set = (mode) => {
+    ["viewTable", "viewMap", "viewBoth"].forEach(id => document.getElementById(id).setAttribute("aria-pressed", "false"));
+    document.getElementById(mode).setAttribute("aria-pressed", "true");
+    tT.style.display = mode === "viewMap" ? "none" : "";
+    tM.style.display = mode === "viewTable" ? "none" : "";
+    wrap.style.gridTemplateColumns = mode === "viewBoth" ? "" : "1fr";
+  };
+  ["viewTable", "viewMap", "viewBoth"].forEach(id => document.getElementById(id).addEventListener("click", () => set(id)));
+  set("viewTable");
+}
+</script>
+</body>
+</html>
