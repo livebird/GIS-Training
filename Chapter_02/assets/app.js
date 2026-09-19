@@ -13,16 +13,16 @@ const RESP = [
 /* ---- Solution S-2 evidence (synthetic) ---- */
 const S2 = {
   items: [
-    { id: "gdb", kind: "File geodatabase (archived)", title: "Municipal_Training.gdb", data: true, x: 40, y: 330, w: 300, h: 110, note: "The file the author edited. Archived on 2026-09-15 — must not be edited any more.", stores: "A COPY of all four datasets (Wards, Roads, Requests, Assets) as they were on 2026-09-15.", refs: "Nothing.", del: "The archived copy is gone. The hosted layers are NOT affected — they were copied when published." },
-    { id: "aprx", kind: "ArcGIS Pro project", title: "RequestTracker.aprx", x: 40, y: 150, w: 300, h: 110, note: "The author's saved workspace. Points at the archived file, not the hosted layer.", stores: "Maps, layer list, symbols, and the PATH to each dataset. No data.", refs: "The file geodatabase (by path).", del: "Only the author's workspace is gone. No data changes anywhere." },
-    { id: "hfl", kind: "Hosted feature layer", title: "Requests_Training", data: true, x: 420, y: 150, w: 320, h: 120, note: "AUTHORITATIVE request records. Editing enabled. Shared with the group.", stores: "THE DATA — six request records, stored in ArcGIS Online.", refs: "Nothing (it is the source).", del: "The data is deleted. The view, both web maps, the dashboard, the Instant App and the Field Maps form all break." },
-    { id: "view", kind: "Hosted feature layer VIEW", title: "Requests_Training_public", view: true, x: 420, y: 330, w: 320, h: 120, note: "Same data, seen through a filter: Note and Channel hidden, read-only, public.", stores: "Only its own settings (sharing, editing off, hidden fields). NO copy of the data.", refs: "Requests_Training — it reads the same records.", del: "No data is lost. The public web map and Instant App lose their layer." },
-    { id: "base", kind: "Hosted feature layer (3 layers)", title: "Municipal_Base_Training", data: true, x: 420, y: 500, w: 320, h: 120, note: "Wards, Roads and Assets. Editing settings NOT captured.", stores: "THE DATA for wards, roads and assets.", refs: "Nothing.", del: "Those datasets are deleted; the team web map loses three layers." },
-    { id: "wm1", kind: "Web map", title: "Request Overview (Training)", x: 820, y: 150, w: 320, h: 120, note: "Team map. Requests styled by Status (Open = red…). Shared with the group.", stores: "Layer list, symbols, pop-up settings. NO data.", refs: "Requests_Training and Municipal_Base_Training.", del: "The dashboard and the Field Maps form lose their map. No data changes." },
-    { id: "wm2", kind: "Web map", title: "Request Overview (Public)", x: 820, y: 330, w: 320, h: 120, note: "Public map. Single symbol. Shared with everyone.", stores: "Layer list, one symbol, pop-up settings. NO data.", refs: "Requests_Training_public (the view).", del: "The Instant App loses its map. No data changes." },
-    { id: "dash", kind: "Dashboard", title: "Request Monitoring (Training)", x: 1220, y: 60, w: 320, h: 110, note: "Indicator 'Open requests', list, map. Shared with the organisation.", stores: "Its own layout and the count rule (Status in Open / In progress / Reopened). NO data.", refs: "Request Overview (Training).", del: "Managers lose their screen. No data changes." },
-    { id: "fm", kind: "Field Maps form", title: "on Request Overview (Training)", x: 1220, y: 220, w: 320, h: 110, note: "Form: Status (choice list), Note. Offline enabled.", stores: "The form design and offline settings. NO data.", refs: "Request Overview (Training), and through it Requests_Training.", del: "Crews lose the phone form. No data changes." },
-    { id: "app", kind: "Instant App", title: "Request Locator (Training)", x: 1220, y: 380, w: 320, h: 110, note: "Public viewer: search, legend, zoom.", stores: "Which template and which tools are switched on. NO data.", refs: "Request Overview (Public).", del: "The public page is gone. No data changes." }
+    { id: "gdb", kind: "File geodatabase (archived)", title: "Municipal_Training.gdb", data: true, x: 40, y: 330, w: 320, h: 110, note: "The file the author edited. Archived on 2026-09-15 — must not be edited any more.", stores: "A COPY of all four datasets (Wards, Roads, Requests, Assets) as they were on 2026-09-15.", refs: "Nothing.", del: "The archived copy is gone. The hosted layers are NOT affected — they were copied when published." },
+    { id: "aprx", kind: "ArcGIS Pro project", title: "RequestTracker.aprx", x: 40, y: 150, w: 320, h: 110, note: "The author's saved workspace. Points at the archived file, not the hosted layer.", stores: "Maps, layer list, symbols, and the PATH to each dataset. No data.", refs: "The file geodatabase (by path).", del: "Only the author's workspace is gone. No data changes anywhere." },
+    { id: "hfl", kind: "Hosted feature layer", title: "Requests_Training", data: true, x: 400, y: 150, w: 370, h: 120, note: "AUTHORITATIVE request records. Editing enabled. Shared with the group.", stores: "THE DATA — six request records, stored in ArcGIS Online.", refs: "Nothing (it is the source).", del: "The data is deleted. The view, both web maps, the dashboard, the Instant App and the Field Maps form all break." },
+    { id: "view", kind: "Hosted feature layer VIEW", title: "Requests_Training_public", view: true, x: 400, y: 330, w: 370, h: 120, note: "Same data, seen through a filter: Note and Channel hidden, read-only, public.", stores: "Only its own settings (sharing, editing off, hidden fields). NO copy of the data.", refs: "Requests_Training — it reads the same records.", del: "No data is lost. The public web map and Instant App lose their layer." },
+    { id: "base", kind: "Hosted feature layer (3 layers)", title: "Municipal_Base_Training", data: true, x: 400, y: 500, w: 370, h: 120, note: "Wards, Roads and Assets. Editing settings NOT captured.", stores: "THE DATA for wards, roads and assets.", refs: "Nothing.", del: "Those datasets are deleted; the team web map loses three layers." },
+    { id: "wm1", kind: "Web map", title: "Request Overview (Training)", x: 810, y: 150, w: 370, h: 120, note: "Team map. Requests styled by Status (Open = red…). Shared with the group.", stores: "Layer list, symbols, pop-up settings. NO data.", refs: "Requests_Training and Municipal_Base_Training.", del: "The dashboard and the Field Maps form lose their map. No data changes." },
+    { id: "wm2", kind: "Web map", title: "Request Overview (Public)", x: 810, y: 330, w: 370, h: 120, note: "Public map. Single symbol. Shared with everyone.", stores: "Layer list, one symbol, pop-up settings. NO data.", refs: "Requests_Training_public (the view).", del: "The Instant App loses its map. No data changes." },
+    { id: "dash", kind: "Dashboard", title: "Request Monitoring (Training)", x: 1220, y: 60, w: 370, h: 110, note: "Indicator 'Open requests', list, map. Shared with the organisation.", stores: "Its own layout and the count rule (Status in Open / In progress / Reopened). NO data.", refs: "Request Overview (Training).", del: "Managers lose their screen. No data changes." },
+    { id: "fm", kind: "Field Maps form on the team web map", title: "Field form (Training)", x: 1220, y: 220, w: 370, h: 110, note: "Form: Status (choice list), Note. Offline enabled.", stores: "The form design and offline settings. NO data.", refs: "Request Overview (Training), and through it Requests_Training.", del: "Crews lose the phone form. No data changes." },
+    { id: "app", kind: "Instant App", title: "Request Locator (Training)", x: 1220, y: 380, w: 370, h: 110, note: "Public viewer: search, legend, zoom.", stores: "Which template and which tools are switched on. NO data.", refs: "Request Overview (Public).", del: "The public page is gone. No data changes." }
   ],
   refs: [
     ["aprx", "gdb", "references (path)", true],
@@ -95,7 +95,7 @@ function renderResp(el, opts = {}) {
    opts.onSelect(itemId); opts.gone: array of deleted ids; opts.selected; opts.showCopy */
 function renderItems(el, opts = {}) {
   const o = Object.assign({ onSelect: null, gone: [], selected: null, caption: null, showCopy: true, showAprx: true, labels: true }, opts);
-  const svg = svgEl("svg", { viewBox: "0 0 1580 660", role: "img", "aria-label": "Boxes for a project file, an archived file geodatabase, hosted layers, a view, two web maps and three apps, with arrows showing which item references which." });
+  const svg = svgEl("svg", { viewBox: "0 0 1640 660", role: "img", "aria-label": "Boxes for a project file, an archived file geodatabase, hosted layers, a view, two web maps and three apps, with arrows showing which item references which." });
   arrowDefs(svg);
   const byId = Object.fromEntries(S2.items.map(i => [i.id, i]));
   const isGone = id => o.gone.includes(id);
@@ -114,7 +114,7 @@ function renderItems(el, opts = {}) {
       if (a.y > b.y) { x1 = a.x + a.w / 2; y1 = a.y; x2 = b.x + b.w / 2; y2 = b.y + b.h; } else { x1 = a.x + a.w / 2; y1 = a.y + a.h; x2 = b.x + b.w / 2; y2 = b.y; }
     } else { x1 = a.x; y1 = a.y + a.h / 2; x2 = b.x + b.w; y2 = b.y + b.h / 2; }
     const cls = "ref" + (dash || copy ? " broken" : "") + ((isGone(to) || isGone(from)) ? " broken" : "");
-    const mid = [(x1 + x2) / 2, (y1 + y2) / 2];
+    const mid = copy ? [(x1 + x2) / 2, (y1 + y2) / 2] : [x1 + 0.28 * (x2 - x1), y1 + 0.28 * (y2 - y1)];
     const d = copy ? `M ${x1} ${y1} C ${x1 + 60} ${y1}, ${x2 - 60} ${y2}, ${x2} ${y2}` : `M ${x1} ${y1} L ${x2} ${y2}`;
     const p = svgEl("path", { d, class: cls, style: copy ? "stroke:#d3541f;stroke-dasharray:none;stroke-width:4" : "" }, svg);
     if (isGone(from) || isGone(to)) p.style.opacity = .25;
@@ -127,10 +127,10 @@ function renderItems(el, opts = {}) {
     let cls = "item" + (i.data ? " data" : "") + (i.view ? " view" : "") + (o.selected === i.id ? " sel" : "") + (isGone(i.id) ? " gone" : "") + (brokenSet.has(i.id) ? " broken" : "");
     svgEl("rect", { x: i.x, y: i.y, width: i.w, height: i.h, class: cls }, g);
     const k = svgEl("text", { x: i.x + 16, y: i.y + 28, class: "itag" }, g); k.textContent = i.kind;
-    const t = svgEl("text", { x: i.x + 16, y: i.y + 62, class: "ititle" }, g); t.textContent = i.title;
+    const t = svgEl("text", { x: i.x + 16, y: i.y + 62, class: "ititle", "font-size": "21" }, g); t.textContent = i.title;
     const s = svgEl("text", { x: i.x + 16, y: i.y + 92, class: "isub" }, g); s.textContent = i.data ? "holds DATA" : (i.view ? "no copy — reads the data" : "configuration only");
-    if (brokenSet.has(i.id)) { const b = svgEl("text", { x: i.x + i.w - 90, y: i.y + 28, class: "itag", style: "fill:#b9432e;font-weight:700" }, g); b.textContent = "BROKEN"; }
-    if (isGone(i.id)) { const b = svgEl("text", { x: i.x + i.w - 100, y: i.y + 28, class: "itag", style: "fill:#b9432e;font-weight:700" }, g); b.textContent = "DELETED"; }
+    if (brokenSet.has(i.id)) { const b = svgEl("text", { x: i.x + i.w - 92, y: i.y + i.h - 14, class: "itag", style: "fill:#b9432e;font-weight:700" }, g); b.textContent = "BROKEN"; }
+    if (isGone(i.id)) { const b = svgEl("text", { x: i.x + i.w - 104, y: i.y + i.h - 14, class: "itag", style: "fill:#b9432e;font-weight:700" }, g); b.textContent = "DELETED"; }
     if (o.onSelect) { g.classList.add("clickable"); g.addEventListener("click", () => o.onSelect(i.id)); }
   });
   el.innerHTML = ""; el.appendChild(svg);

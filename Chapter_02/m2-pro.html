@@ -125,15 +125,15 @@ function pageInit() {
     svgEl("rect", { x: 10, y: 10, width: 880, height: 540, rx: 12, fill: "#efe7d7", stroke: "#1f2a44", "stroke-width": 3 }, svg);
     const tb = svgEl("text", { x: 24, y: 40, class: "rlabel", "font-size": "18", style: lit === "project" ? "fill:#d3541f;font-weight:700" : "" }, svg); tb.textContent = "RequestTracker.aprx — ArcGIS Pro (sketch, not a screenshot)";
     const c = box(24, 60, 200, 300, "contents", "Contents");
-    ["✔ Requests", "✔ Assets", "✔ Roads", "✔ Wards"].forEach((l, i) => { const t = svgEl("text", { x: 40, y: 100 + i * 30, class: "isub", "font-size": "18" }, c); t.textContent = l; });
+    ["✔ Requests", "✔ Assets", "✔ Roads", "✔ Wards"].forEach((l, i) => { const t = svgEl("text", { x: 40, y: 118 + i * 30, class: "isub", "font-size": "18" }, c); t.textContent = l; });
     const m = box(240, 60, 420, 300, "map", "Map: Request Overview");
     svgEl("rect", { x: 300, y: 130, width: 150, height: 150, fill: "#dbe7f3", stroke: "#5b7ea3", "stroke-width": 2 }, m); svgEl("rect", { x: 450, y: 130, width: 150, height: 150, fill: "#dbe7f3", stroke: "#5b7ea3", "stroke-width": 2 }, m);
     svgEl("line", { x1: 300, y1: 205, x2: 600, y2: 205, stroke: "#7a5c2e", "stroke-width": 5 }, m);
     [[330, 250], [420, 160], [480, 240], [555, 145], [450, 205], [630, 205]].forEach(p => svgEl("circle", { cx: p[0], cy: p[1], r: 7, fill: "#d3541f", stroke: "#fff", "stroke-width": 2 }, m));
     const k = box(676, 60, 200, 300, "catalog", "Catalog");
-    ["▸ Maps", "▸ Layouts", "▾ Databases", "   Municipal_Training.gdb", "▾ Folders", "   \\\\gis-files\\training", "▸ Portal (signed in)"].forEach((l, i) => { const t = svgEl("text", { x: 690, y: 100 + i * 28, class: "isub", "font-size": "16", style: (lit === "connection" && (i === 3 || i === 5 || i === 6)) ? "fill:#d3541f;font-weight:700" : "" }, k); t.textContent = l; });
+    ["▸ Maps", "▸ Layouts", "▾ Databases", "   Municipal_Training.gdb", "▾ Folders", "   \\\\gis-files\\training", "▸ Portal (signed in)"].forEach((l, i) => { const t = svgEl("text", { x: 690, y: 118 + i * 27, class: "isub", "font-size": "15", style: (lit === "connection" && (i === 3 || i === 5 || i === 6)) ? "fill:#d3541f;font-weight:700" : "" }, k); t.textContent = l; });
     const t = box(24, 376, 636, 160, "table", "Table: Requests");
-    ["RequestID  Category        Status", "P1         Streetlight out Open", "P2         Pothole         In progress", "P3         Water leak      Open"].forEach((l, i) => { const x = svgEl("text", { x: 40, y: 412 + i * 26, class: "itag", "font-size": "16", style: "white-space:pre" }, t); x.setAttribute("xml:space", "preserve"); x.textContent = l; });
+    ["RequestID  Category        Status", "P1         Streetlight out Open", "P2         Pothole         In progress", "P3         Water leak      Open"].forEach((l, i) => { const x = svgEl("text", { x: 40, y: 432 + i * 25, class: "itag", "font-size": "16", style: "white-space:pre" }, t); x.setAttribute("xml:space", "preserve"); x.textContent = l; });
     const lo = box(676, 376, 200, 160, "layout", "Layout: A4 print");
     svgEl("rect", { x: 700, y: 410, width: 150, height: 100, fill: "#fff", stroke: "#8b93a7", "stroke-dasharray": "6 4" }, lo);
     const el = document.getElementById("proFig"); el.innerHTML = ""; el.appendChild(svg);
