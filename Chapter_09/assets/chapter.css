@@ -1,0 +1,88 @@
+/* Chapter 9 — rules specific to this chapter, loaded after /assets/theme.css */
+
+/* town drawing */
+svg .ward.bad { fill: rgba(185,67,46,.18); stroke: var(--warn); stroke-dasharray: 18 12; }
+svg .ward.repaired { fill: rgba(244,197,66,.35); stroke: #8a6a12; stroke-width: 4; }
+svg .gapfill { fill: var(--warn); opacity: .85; }
+svg .road.bad { stroke: var(--warn); }
+svg .depotp { fill: rgba(31,42,68,.55); stroke: var(--ink); stroke-width: 3; }
+svg .asset.odd { stroke: var(--warn); stroke-width: 8; }
+svg .mark { fill: none; stroke: var(--warn); stroke-width: 6; stroke-dasharray: 10 8; }
+svg .mark-text { font-family: var(--font-mono); font-size: 38px; fill: var(--warn); font-weight: 600; }
+svg .vtx { fill: #fff; stroke: var(--ink); stroke-width: 5; }
+svg .vlabel { font-family: var(--font-mono); font-size: 26px; fill: var(--ink); }
+svg .crossmark { fill: none; stroke: var(--warn); stroke-width: 8; }
+
+/* scan drawing */
+svg .scanpaper { fill: #fbf7ea; stroke: #b9a77a; stroke-width: 3; }
+svg .scangrid { stroke: rgba(31,42,68,.12); stroke-width: 1.5; }
+svg .scanink { stroke: #4a5570; stroke-width: 6; stroke-linejoin: round; }
+svg .gcp line { stroke: var(--accent); stroke-width: 5; }
+svg .gcp.check circle { fill: none; stroke: var(--ok); stroke-width: 6; }
+svg .gcp-label { font-family: var(--font-mono); font-size: 20px; fill: var(--accent); }
+svg .gcp-label.check { fill: var(--ok); }
+svg .gcp-label.ghost, svg .ghost { fill: none; stroke: var(--ink-faint); stroke-width: 3; stroke-dasharray: 6 6; }
+svg .gcp-label.ghost { fill: var(--ink-faint); stroke: none; }
+svg .probe { fill: var(--select); stroke: var(--ink); stroke-width: 4; }
+
+/* snapping simulator */
+.snapsim { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+@media (max-width: 760px) { .snapsim { grid-template-columns: 1fr; } }
+svg .snapring { fill: rgba(244,197,66,.25); stroke: #b8961a; stroke-width: 4; stroke-dasharray: 10 8; }
+svg .cursor { fill: none; stroke: var(--ink); stroke-width: 4; }
+
+/* record / status helpers (same look as Chapter 6) */
+.reccard { border: 2px solid var(--ink); border-radius: var(--radius); background: #fff; padding: .9rem 1.1rem; font-size: .95rem; }
+.reccard .hdr { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 1px solid var(--rule); padding-bottom: .3rem; margin-bottom: .5rem; }
+.reccard .row { display: grid; grid-template-columns: 130px 1fr; gap: .3rem .6rem; padding: .25rem 0; align-items: baseline; }
+.reccard .row b { font-family: var(--font-mono); font-weight: 500; color: var(--ink-soft); font-size: .85rem; }
+.reccard .row .v { font-family: var(--font-mono); font-size: .98rem; }
+.reccard .row.changed .v { background: var(--select); border-radius: 4px; padding: 0 .3rem; }
+.reccard .row.same .v { background: var(--ok-soft); border-radius: 4px; padding: 0 .3rem; }
+.opbtns { display: flex; gap: .6rem; flex-wrap: wrap; margin: .6rem 0; }
+.status-line { font-family: var(--font-mono); font-size: .88rem; padding: .5rem .8rem; border-radius: 8px; margin-top: .5rem; }
+.status-line.ok { background: var(--ok-soft); color: var(--ok); }
+.status-line.bad { background: var(--warn-soft); color: var(--warn); }
+.status-line.q { background: var(--note-soft); color: var(--ward-line); }
+.scen { border-left: 5px solid var(--ward-line); background: #fff; border-radius: 0 var(--radius) var(--radius) 0; padding: .8rem 1.1rem; margin: 1rem 0; border-top: 1px solid var(--rule); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+
+/* five-question cards */
+.qcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .6rem; margin: .8rem 0; }
+.qcard { border: 2px solid var(--rule); border-radius: 8px; background: #fff; padding: .6rem .7rem; font-size: .9rem; transition: border-color .2s, background .2s; }
+.qcard h5 { margin: 0 0 .3rem; font-family: var(--font-mono); font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
+.qcard.fail { border-color: var(--warn); background: var(--warn-soft); }
+.qcard.pass { border-color: var(--ok); background: var(--ok-soft); }
+.qcard.unknown { border-color: #b8961a; background: #fbf3d8; }
+
+/* C / O / X classification game */
+.cox { display: grid; gap: .5rem; margin: .8rem 0; }
+.cox .item { display: grid; grid-template-columns: 1fr auto; gap: .6rem; align-items: center; border: 1.5px solid var(--rule); border-radius: 8px; background: #fff; padding: .5rem .8rem; }
+.cox .item .btns { display: flex; gap: .3rem; }
+.cox .item .btns button { font: inherit; font-family: var(--font-mono); font-size: .8rem; border: 1.5px solid var(--rule); background: #fff; border-radius: 6px; padding: .2rem .55rem; cursor: pointer; }
+.cox .item .btns button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.cox .item.ok { border-color: var(--ok); background: var(--ok-soft); }
+.cox .item.bad { border-color: var(--warn); background: var(--warn-soft); }
+.cox .why { grid-column: 1 / -1; font-size: .85rem; color: var(--ink-soft); }
+
+/* check results */
+.checkout { display: grid; gap: .5rem; }
+.checkout .hit { border-left: 5px solid var(--warn); background: #fff; padding: .5rem .8rem; border-radius: 0 8px 8px 0; border-top: 1px solid var(--rule); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: .95rem; }
+.checkout .hit.clean { border-left-color: var(--ok); }
+.checkout .hit code { font-size: .85em; }
+
+/* residual bars */
+.resid { display: grid; grid-template-columns: 60px 1fr 90px; gap: .5rem; align-items: center; font-family: var(--font-mono); font-size: .88rem; margin: .25rem 0; }
+.resid .track { height: 18px; background: var(--paper-2); border-radius: 4px; position: relative; }
+.resid .track i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 4px; }
+.resid .track::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: var(--ink-faint); }
+
+/* before/after log */
+.logtable td, .logtable th { font-size: .88rem; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+@media (max-width: 720px) { .cmp { grid-template-columns: 1fr; } }
+.cmp .side { border: 1.5px solid var(--rule); border-radius: 8px; background: #fff; padding: .7rem .9rem; font-size: .92rem; }
+.cmp .side h5 { margin: 0 0 .4rem; font-family: var(--font-mono); font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
+.cmp .side.dup { border-color: var(--warn); }
+.cmp .side.two { border-color: var(--ok); }
+.bigno { font-family: var(--font-display); font-size: 2rem; font-weight: 700; margin: 0; }
+.bigno small { font-family: var(--font-mono); font-size: .8rem; color: var(--ink-soft); display: block; font-weight: 400; }
