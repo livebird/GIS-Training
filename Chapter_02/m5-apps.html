@@ -20,7 +20,7 @@
   </div>
 
   <h2><span class="mod">2.5.1</span>Configurable builders: arranging what already exists</h2>
-  <p><dfn title="Selecting and arranging capabilities a product already supports — templates, widgets, settings — without writing application code.">Configuring</dfn> an app means choosing a template, switching widgets on, pointing them at a map or layer, and setting labels and filters. The product’s authors decided what is <em>possible</em>; you decide what is <em>used</em>. Click a builder to see Esri’s description and what it would do for our town.</p>
+  <p><dfn title="Selecting and arranging capabilities a product already supports — templates, widgets, settings — without writing application code.">Configuring</dfn> an app means choosing a template, switching widgets on (ready-made building blocks such as a map, a chart, a search box, a list), pointing them at a map or layer, and setting labels and filters. The product’s authors decided what is <em>possible</em>; you decide what is <em>used</em>. Click a builder to see Esri’s description and what it would do for our town.</p>
   <div class="try">
     <span class="tag">Try it</span>
     <div class="controls" id="bBtns">
@@ -33,7 +33,7 @@
   </div>
   <p>Notice that every builder works <em>on top of</em> a web map or layers (module 2.3). The builder stores an application item; the data stays in the layer. Configuring an app never changes the data model, and switching builders usually leaves the map and layers untouched.</p>
   <div class="callout note"><span class="label">A retired builder</span><p>Esri’s developer documentation lists <strong>ArcGIS Web AppBuilder</strong> as retired. You will still see it in old tutorials and existing deployments. Do not choose it for new work; treat any material that assumes it as dated.</p></div>
-  <div class="callout dev"><span class="label">Developer view</span><p>Configuring a builder is like assembling a page in a CMS: pick blocks, set options, publish. <strong>Where it stops:</strong> at the edge of the supported capability. A CMS usually has a plugin escape hatch you write yourself; some ArcGIS builders have one (Experience Builder can be extended with custom widgets), others do not. Knowing where that edge lies is the whole skill of 2.5.3.</p></div>
+  <div class="callout dev"><span class="label">Developer view</span><p>Configuring a builder is like building a page in a website builder such as WordPress or Wix: pick blocks, set options, publish. <strong>Where it stops:</strong> at the edge of the supported capability. A website builder usually lets you add a plugin you write yourself; some ArcGIS builders have one (Experience Builder can be extended with custom widgets), others do not. Knowing where that edge lies is the whole skill of 2.5.3.</p></div>
   <div class="callout warn"><span class="label">Misconception</span><p>“Configurable means limited, so real developers build custom.” Teams write and maintain code for a dashboard that a configured product already does — and then own every bug and every upgrade themselves.</p></div>
 
   <h2><span class="mod">2.5.2</span>When you do write code: three tools, three jobs</h2>
@@ -41,12 +41,12 @@
   <div class="grid-3">
     <div class="card"><h4 style="margin-top:0">ArcGIS Maps SDK for JavaScript</h4><p class="small"><span class="pill">the user’s side</span></p><p>“A developer product for building mapping and spatial analysis applications for the web” — 2D and 3D, with ready-made web components such as <code>&lt;arcgis-map&gt;</code>. Runs in the <strong>browser</strong>.</p><p class="small"><strong>Town example:</strong> a custom public page where residents submit a request with your own UI and workflow, writing to the request feature service.<br><strong>Not:</strong> a data store, a server, an admin tool.</p></div>
     <div class="card"><h4 style="margin-top:0">ArcGIS API for Python</h4><p class="small"><span class="pill">the platform’s side</span></p><p>The <code>arcgis</code> package: “GIS organization administration”, “content management”, “spatial analysis and data science” against ArcGIS Online and Enterprise, often from Jupyter notebooks. Runs on <strong>any machine that can reach the portal</strong>.</p><p class="small"><strong>Town example:</strong> a nightly script that lists every public item and checks the public view still hides the Note field.<br><strong>Not:</strong> a browser UI toolkit; not tied to ArcGIS Pro.</p></div>
-    <div class="card"><h4 style="margin-top:0">ArcPy</h4><p class="small"><span class="pill">the desktop / server tool’s side</span></p><p>“A Python site package that provides a useful and productive way to perform geographic data analysis, data conversion, data management, and map automation.” Runs where <strong>ArcGIS Pro</strong> is installed (“inside a conda environment, which ArcGIS Pro uses”) — or on an <strong>ArcGIS Server</strong>, which also includes ArcPy.</p><p class="small"><strong>Town example:</strong> a weekly script that validates the Assets dataset, computes a field and exports a map layout.<br><strong>Not:</strong> a web SDK; cannot run without ArcGIS Pro or Server.</p></div>
+    <div class="card"><h4 style="margin-top:0">ArcPy</h4><p class="small"><span class="pill">the desktop / server tool’s side</span></p><p>“A Python site package that provides a useful and productive way to perform geographic data analysis, data conversion, data management, and map automation.” Runs where <strong>ArcGIS Pro</strong> is installed (“inside a conda environment, which ArcGIS Pro uses” — a Python setup that ArcGIS Pro installs and manages) — or on an <strong>ArcGIS Server</strong>, which also includes ArcPy.</p><p class="small"><strong>Town example:</strong> a weekly script that validates the Assets dataset, computes a field and exports a map layout.<br><strong>Not:</strong> a web SDK; cannot run without ArcGIS Pro or Server.</p></div>
   </div>
   <p class="small">Two more families, one sentence each: the <strong>ArcGIS Maps SDKs for native apps</strong> (Kotlin, Swift, .NET, Flutter, Qt, Java…) build installed mobile and desktop apps; and Esri lists open-source browser libraries — Leaflet, MapLibre GL JS, OpenLayers, CesiumJS — that “can be used to build web apps with ArcGIS services”. That last point matters for module 2.6.</p>
 
   <h3>Match the task to the tool</h3>
-  <div class="try sorter" data-items='[{"t":"List every item in the organisation shared with everyone","bin":"Python API","why":"an inventory of portal items over the network"},{"t":"Run a geoprocessing tool on a file geodatabase from a scheduled script on a machine with ArcGIS Pro","bin":"ArcPy","why":"geoprocessing where Pro is installed"},{"t":"Add a custom drawing tool to a browser page residents use","bin":"JavaScript SDK","why":"browser UI"},{"t":"Regenerate a fixed PDF map layout every Monday","bin":"ArcPy","why":"map automation from a project"},{"t":"Show a 3D scene with clickable buildings on a website","bin":"JavaScript SDK","why":"browser, 2D/3D"},{"t":"Clone a web map and its layers into another organisation","bin":"Python API","why":"content management across portals"}]'>
+  <div class="try sorter" data-items='[{"t":"List every item in the organisation shared with everyone","bin":"Python API","why":"an inventory of portal items over the network"},{"t":"Run a geoprocessing tool (a ready-made ArcGIS data-processing tool, e.g. buffer) on a file geodatabase from a scheduled script on a machine with ArcGIS Pro","bin":"ArcPy","why":"geoprocessing where Pro is installed"},{"t":"Add a custom drawing tool to a browser page residents use","bin":"JavaScript SDK","why":"browser UI"},{"t":"Regenerate a fixed PDF map layout every Monday","bin":"ArcPy","why":"map automation from a project"},{"t":"Show a 3D scene with clickable buildings on a website","bin":"JavaScript SDK","why":"browser, 2D/3D"},{"t":"Clone a web map and its layers into another organisation","bin":"Python API","why":"content management across portals"}]'>
     <span class="tag">Try it</span>
     <div class="items"></div>
     <div class="bins">
@@ -59,13 +59,13 @@
   <div class="callout dev"><span class="label">Developer view</span><p>JS SDK ≈ a front-end framework with a map component; Python API ≈ a cloud provider’s admin SDK; ArcPy ≈ a build tool’s scripting layer that only works where the tool is installed. <strong>Where it stops:</strong> all three read and write the <em>same</em> items and services, so a change made through one is visible through the others at once — there is no separate “API copy” of the data.</p></div>
 
   <h2><span class="mod">2.5.3</span>The decision: configure, extend, or build</h2>
-  <p>Cheaper options are considered first. Work each case with the ladder, then read the reasoning.</p>
+  <p>Cheaper options are considered first: try step 1, and only if it fails move to step 2, then step 3. Work each case with the ladder, then read the reasoning.</p>
   <div class="try">
     <span class="tag">Try it</span>
     <div class="controls"><label>Case: <select id="caseSel">
       <option value="0">A · Managers want live counts of open requests per ward on a control-room screen</option>
       <option value="1">B · Crews update request status on a phone, sometimes offline, and attach an inspection</option>
-      <option value="2">C · Residents submit requests from a page inside the city portal with its own login, a 3-step wizard and a nearby-duplicate check</option>
+      <option value="2">C · Residents submit requests from a page inside the city’s citizen website, using that website’s own login, with a 3-step form and a check for nearby duplicate complaints</option>
     </select></label></div>
     <div class="ladder" id="ladder">
       <div class="rung" data-r="0"><h4>1 · Configure</h4><p class="small">Can a builder’s <em>supported</em> capability meet the stated requirement — not a near miss?</p></div>
@@ -75,7 +75,7 @@
     <div class="controls" style="margin-top:.8rem"><span>Your call:</span> <button class="btn" data-pick="0">Configure</button> <button class="btn" data-pick="1">Extend</button> <button class="btn" data-pick="2">Build</button></div>
     <div class="result" id="caseOut">Pick a case and make your call.</div>
   </div>
-  <p>Three checks apply to every rung: <strong>ownership</strong> (who fixes it in two years?), <strong>upgrade risk</strong> (what happens when the platform changes?) and <strong>evidence</strong> (has someone confirmed, on the current release, that the capability exists — a search snippet does not count?). If none of the three rungs fits, the requirement is unclear: rewrite it.</p>
+  <p>Three checks apply to every step: <strong>ownership</strong> (who fixes it in two years?), <strong>upgrade risk</strong> (what happens when the platform changes?) and <strong>evidence</strong> (has someone confirmed, on the current release, that the capability exists — a search snippet does not count?). If none of the three steps fits, the requirement is unclear: rewrite it.</p>
 
   <div class="quiz" data-answer="0" data-fb="“Looks too simple” is developer preference. The worksheet asks first which stated requirement the template fails to meet (evidence: the requirement list matched against the template’s documented tools), and who will own and upgrade a custom app in two years.">
     <div class="q">A colleague proposes a custom React app because “Instant Apps look too simple”. What do you ask first?</div>

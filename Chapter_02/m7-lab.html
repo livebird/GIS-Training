@@ -14,9 +14,9 @@
     <h1>Trace a prepared solution</h1>
     <p class="lead">Read the evidence about Solution S-2. Say where geometry, styling, access decisions and app behaviour are managed. Where the evidence does not show it, say <strong>“not enough information”</strong> — that is a correct answer, not a failure.</p>
     <div class="outcomes"><h4>Objective, prerequisites, access</h4>
-      <ul><li><strong>Objective:</strong> an annotated architecture sketch, a completed “where is it managed?” table, a role comparison table, and a list of what the evidence does not show.</li>
+      <ul><li><strong>Objective:</strong> a labelled architecture sketch, a completed “where is it managed?” table, a role comparison table, and a list of what the evidence does not show.</li>
       <li><strong>Prerequisites:</strong> modules 2.1–2.6.</li>
-      <li><strong>Software and access:</strong> none. No account, no publishing, no credits. Everything below is <span class="synthetic">made-up evidence</span> written as an instructor would transcribe it from real screens.</li></ul></div>
+      <li><strong>Software and access:</strong> none. No account, no publishing, no credits. Everything below is <span class="synthetic">made-up evidence</span> written as an instructor would copy it down from real screens.</li></ul></div>
   </div>
 
   <div class="callout note"><span class="label">What an evidence pack is</span><p>The chapter asks for “a screenshot set or supervised demonstration”. This page gives the text an instructor would read off each screen, labelled by the screen it came from. Your instructor may replace any card with a real screenshot; your tasks do not change. Your answers on this page are saved in this browser only.</p></div>
@@ -29,7 +29,7 @@
     <div class="tabpanel">
       <p><strong>Directory listing of the source data package</strong> (as captured from a file browser).</p>
 <pre class="listing">\\gis-files\training\
-├── README_Municipal_Training.txt   <span class="nc">(provenance: "Synthetic training fixture. Planar grid, metres.
+├── README_Municipal_Training.txt   <span class="nc">(provenance — where the data came from: "Synthetic training fixture. Planar grid, metres.
 │                                    No Earth location. Build copy uses a documented local
 │                                    coordinate reference assigned by the instructor.
 │                                    Owner: GIS training lead.")</span>
@@ -45,7 +45,7 @@
 <pre class="listing">Project file:  C:\Projects\RequestTracker\RequestTracker.aprx   (last saved 2026-09-15 by gis.author)
 
 Map "Request Overview" — Contents pane, top to bottom:
-   Requests   symbol: unique values on Status (<span class="hl">Open = red</span>, In progress = orange,
+   Requests   symbol: coloured by Status (<span class="hl">Open = red</span>, In progress = orange,
                        Reopened = purple, Resolved/Closed = grey)   labels: RequestID
    Assets     symbol: single symbol, small green circle
    Roads      symbol: dark grey line, 2 pt
@@ -115,7 +115,7 @@ Catalog pane > Portals: signed in to the training ArcGIS Online organisation as 
   </div>
 
   <h2><span class="mod">2.7.3</span>Step 5: the annotated sketch</h2>
-  <p>Label every arrow. Arrows either mean <em>references</em> (points at; no copy) or <em>copy made on 2026-09-15</em>. Then tick the boxes that hold data.</p>
+  <p>Label every arrow. An arrow either means <em>references</em> (points at the other item; no copy of the data) or <em>copy made on 2026-09-15</em> (the data was duplicated at that moment). Then tick the boxes that hold data.</p>
   <div class="try">
     <span class="tag">Try it</span>
     <figure class="map-fig" id="sketchFig"></figure>
@@ -136,7 +136,7 @@ Catalog pane > Portals: signed in to the training ArcGIS Online organisation as 
   </div>
 
   <h2><span class="mod">2.7.4</span>Self-check before you submit</h2>
-  <p>These invariants must hold. The page checks the ones it can; the rest are yours.</p>
+  <p>All of these must be true of your work. The page checks the ones it can; the rest are yours.</p>
   <div class="card checklist" id="checks">
     <label><input type="checkbox" data-k="c1"> Exactly one item is named as holding the authoritative request data — a hosted item, not the <code>.aprx</code> and not the file geodatabase.</label>
     <label><input type="checkbox" data-k="c2"> My sketch shows <strong>two</strong> copies of the request records (archived file, hosted layer) and <strong>one</strong> view that is <em>not</em> a copy.</label>
@@ -153,7 +153,7 @@ Catalog pane > Portals: signed in to the training ArcGIS Online organisation as 
     <thead><tr><th>Symptom</th><th>Likely cause</th><th>What to do</th></tr></thead>
     <tbody>
       <tr><td>“I can’t tell whether the public map or the view hides the fields.”</td><td>Mixing up presentation (pop-up field list) with data exposure (fields excluded from the view)</td><td>Re-read E5 item 2: the fields are absent from the <em>layer’s field list</em> — a view property. The pop-up merely chooses among fields that exist.</td></tr>
-      <tr><td>“The ArcGIS Pro project must be wrong — it shows old data.”</td><td>Expecting a project to hold data (2.2.2)</td><td>The project references the archived file; it is <em>correct</em> and <em>stale</em> at once. Note it as a governance risk: an author could edit the wrong copy.</td></tr>
+      <tr><td>“The ArcGIS Pro project must be wrong — it shows old data.”</td><td>Expecting a project to hold data (2.2.2)</td><td>The project references the archived file; it is <em>correct</em> and <em>stale</em> (out of date) at once. Note it as a risk: an author could edit the wrong copy by mistake.</td></tr>
       <tr><td>“I marked everything as shown.”</td><td>Reading confidence off the pack’s tone, not its content</td><td>Each “not captured” note in E3/E4/E5 should produce at least one “not enough information”.</td></tr>
       <tr><td>“I put OpenLayers as the replacement for ArcGIS Online.”</td><td>Comparing brands, not roles (2.6.1)</td><td>OpenLayers covers R5 only; split ArcGIS Online’s jobs (R2, R3, R4, part of R5) into separate rows.</td></tr>
       <tr><td>“The dashboard should count P6 as open.”</td><td>Misreading the count rule</td><td>E5 item 1 states the rule: Status in (Open, In progress, Reopened). P6 is <em>Closed – duplicate</em> and is excluded by the rule, whatever one thinks of the policy.</td></tr>
@@ -161,7 +161,7 @@ Catalog pane > Portals: signed in to the training ArcGIS Online organisation as 
 
   <h2><span class="mod">2.7.6</span>Deliverables</h2>
   <ol>
-    <li>Annotated architecture sketch (one page): components, arrows labelled <em>references</em> / <em>copy</em>, question marks on unknowns.</li>
+    <li>Labelled architecture sketch (one page): components, arrows labelled <em>references</em> / <em>copy</em>, question marks on unknowns.</li>
     <li>Completed Table 2.7 with evidence and confidence.</li>
     <li>Role comparison table (five rows, three columns).</li>
     <li>“Not enough information” list with, for each entry, the screen or setting that would resolve it.</li>

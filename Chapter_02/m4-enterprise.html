@@ -20,17 +20,17 @@
   </div>
 
   <h2><span class="mod">2.4.1</span>An organisation controls its deployment — and its consequences</h2>
-  <p>Esri describes ArcGIS Enterprise as “the foundational software system for GIS” that organisations deploy on infrastructure <em>they</em> control: public cloud, private cloud, or on-premises physical or virtual machines; small single-machine or large multi-machine; connected to the internet or <em>disconnected</em> from it. The same page makes the organisation responsible for the choice of infrastructure, its scale, and its strategy for uptime and data-loss prevention.</p>
+  <p>Esri describes ArcGIS Enterprise as “the foundational software system for GIS” that organisations install on infrastructure <em>they</em> control: a public cloud (such as AWS or Azure), a private cloud, or on-premises machines (servers in your own office or data centre), physical or virtual; small single-machine or large multi-machine; connected to the internet or <em>disconnected</em> from it. The same page makes the organisation responsible for the choice of infrastructure, its scale, and its plan for keeping the system running and not losing data.</p>
   <div class="try">
     <span class="tag">Look closely</span>
     <p>The top halves look the same. The bottom halves do not.</p>
     <div class="compare">
       <div class="col esri"><h4>ArcGIS Online</h4><div class="top"><span class="pill">items</span> <span class="pill">groups</span> <span class="pill">members &amp; roles</span> <span class="pill">web maps</span> <span class="pill">hosted layers</span> <span class="pill">apps</span></div><div class="band"><strong>Operated by Esri.</strong> Machines, storage, network, patches, upgrades, backups, monitoring, scaling: Esri’s job. Needs internet. Metered by credits.</div></div>
-      <div class="col org"><h4>ArcGIS Enterprise</h4><div class="top"><span class="pill">items</span> <span class="pill">groups</span> <span class="pill">members &amp; roles</span> <span class="pill">web maps</span> <span class="pill">hosted layers</span> <span class="pill">apps</span></div><div class="band"><strong>Operated by your organisation.</strong> You choose the infrastructure, install, upgrade, patch, back up, monitor, restore, and scale. Can run disconnected. Can serve data from your own databases without copying. Licensed per deployment.</div></div>
+      <div class="col org"><h4>ArcGIS Enterprise</h4><div class="top"><span class="pill">items</span> <span class="pill">groups</span> <span class="pill">members &amp; roles</span> <span class="pill">web maps</span> <span class="pill">hosted layers</span> <span class="pill">apps</span></div><div class="band"><strong>Operated by your organisation.</strong> You choose the infrastructure, install, upgrade, patch, back up, monitor, restore, and scale. Can run disconnected (no internet). Can serve data from your own databases without copying. Paid licence for your own installation.</div></div>
     </div>
   </div>
   <p>Why the top halves match: Esri notes that web maps “adhere to the same web map specification” across ArcGIS, so a map made in ArcGIS Pro can be edited in ArcGIS Online or in a portal — and that Enterprise “connects with ArcGIS Online” to share content. The two are designed to work <em>together</em>, not as rival editions of one thing.</p>
-  <div class="callout idea"><span class="label">The change of job description</span><p>Building an app against ArcGIS Online means writing to an API and administering content. Building the same app against ArcGIS Enterprise means that someone in your organisation also owns servers, certificates, backups, upgrades and outages — and if that someone is you, those tasks now sit beside your feature work.</p></div>
+  <div class="callout idea"><span class="label">The change of job description</span><p>Building an app against ArcGIS Online means writing to an API and administering content. Building the same app against ArcGIS Enterprise means that someone in your organisation also owns servers, security certificates (HTTPS), backups, upgrades and outages (downtime) — and if that someone is you, those tasks now sit beside your feature work.</p></div>
   <div class="callout dev"><span class="label">Developer view</span><p>ArcGIS Online : ArcGIS Enterprise ≈ a managed database service : running the same engine on your own servers. Similar interface, very different operations. <strong>Where it stops:</strong> Enterprise is a <em>system of several cooperating components</em> (below), not one engine — and the two are meant to coexist and share content, not to be alternatives.</p></div>
 
   <h2><span class="mod">2.4.2</span>The parts inside, by job</h2>
@@ -47,7 +47,7 @@
     <div class="result" id="compOut">Pick a component.</div>
   </div>
   <div class="callout note"><span class="label">Two confusions to avoid</span>
-    <p><strong>Enterprise can serve data you already have.</strong> Unlike a hosted layer, an ArcGIS Server service can <em>reference</em> data registered in your own database or file location. Publishing from ArcGIS Pro offers exactly that choice: copy all data so it becomes “managed by ArcGIS”, or reference registered data that stays where it is. Whether a service copies or references is something to <em>ask</em>, never assume.</p>
+    <p><strong>Enterprise can serve data you already have.</strong> Unlike a hosted layer, an ArcGIS Server service can <em>reference</em> data in your own database or file location (“registered” simply means the server has been told where that data lives). Publishing from ArcGIS Pro offers exactly that choice: copy all data so it becomes “managed by ArcGIS”, or reference registered data that stays where it is. Whether a service copies or references is something to <em>ask</em>, never assume.</p>
     <p><strong>“ArcGIS Data Store” is a product, not a synonym for “our database”.</strong> It is the managed storage behind hosted layers in an Enterprise deployment. Your PostgreSQL, SQL Server or Oracle database is a different thing, registered with ArcGIS Server as a data source (Chapter 7).</p></div>
   <p class="small"><strong>Release-specific detail deferred.</strong> The exact base-deployment list changes between releases. For the record, the 11.4 documentation names Portal for ArcGIS, ArcGIS Server as the hosting server, ArcGIS Data Store (relational + object store) and two Web Adaptors, installable “across one or more machines, any of which can be physical, virtual, or cloud machines”. Re-read the page for whatever release your organisation installs.</p>
 
@@ -56,7 +56,7 @@
     <thead><tr><th>Using and configuring (this phase)</th><th>Operating (the later Enterprise track)</th></tr></thead>
     <tbody>
       <tr><td>Open a web map, make a dashboard, share a layer with a group</td><td>Install and upgrade Portal, Server and Data Store</td></tr>
-      <tr><td>Publish a layer from ArcGIS Pro to the portal</td><td>Configure certificates, web-server integration, single sign-on</td></tr>
+      <tr><td>Publish a layer from ArcGIS Pro to the portal</td><td>Configure security certificates, web-server integration, single sign-on (one company login for everything)</td></tr>
       <tr><td>Set a layer’s editing options</td><td>Back up portal content and the data store — and test restoring them</td></tr>
       <tr><td>Add a member to a group</td><td>Monitor service health, logs, disk space, licences</td></tr>
       <tr><td>Build an app with the JavaScript SDK against a service</td><td>Restore a failed server; add machines to scale</td></tr>
@@ -110,7 +110,7 @@ function pageInit() {
     box(380, 90, 290, 80, "portal", "Portal for ArcGIS", "R4 · items, groups, members", "#efe7d7");
     box(380, 220, 290, 80, "server", "ArcGIS Server", "R3 · services (hosting server)", "#d9ecdf");
     box(720, 220, 260, 80, "store", "ArcGIS Data Store", "R2 · hosted-layer storage", "#dbe7f3");
-    box(720, 350, 260, 80, "db", "Your own database", "registered data source", "#dbe7f3");
+    box(720, 350, 260, 80, "db", "Your own database", "registered = server told where it is", "#dbe7f3");
     const ar = (d) => svgEl("path", { d, class: "ref" }, svg);
     ar("M 310 130 L 372 130"); ar("M 310 145 L 340 145 L 340 260 L 372 260"); ar("M 525 170 L 525 212"); ar("M 670 260 L 712 260"); ar("M 670 275 L 690 275 L 690 390 L 712 390");
     const cl = svgEl("text", { x: 60, y: 300, class: "isub", "font-size": "18" }, svg); cl.textContent = "browsers, phones, ArcGIS Pro →";

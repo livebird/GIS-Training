@@ -20,7 +20,7 @@
   </div>
 
   <h2><span class="mod">2.2.1</span>What ArcGIS Pro is for</h2>
-  <p>Esri’s documentation calls ArcGIS Pro “a full-featured professional desktop GIS application” for exploring, visualising and analysing data, making 2D maps and 3D scenes, and sharing work to ArcGIS Online or ArcGIS Enterprise. In the language of module 2.1 it is <strong>R1 — desktop authoring</strong>. It runs on a workstation; on first launch you sign in with an ArcGIS Online or ArcGIS Enterprise organisation account. It is a licensed commercial product — which licence you have is a question for your administrator, not this page.</p>
+  <p>Esri’s documentation calls ArcGIS Pro “a full-featured professional desktop GIS application” for exploring, visualising and analysing data, making 2D maps and 3D scenes, and sharing work to ArcGIS Online or ArcGIS Enterprise. In the language of module 2.1 it is <strong>R1 — desktop authoring</strong>. It runs on an ordinary computer; on first launch you sign in with the ArcGIS account your company gives you (an ArcGIS Online or ArcGIS Enterprise “organisation” account). It is paid software that needs a licence — which licence you have is a question for your administrator, not this page.</p>
   <div class="try">
     <span class="tag">Try it</span>
     <p>Click a word to see what it means. The screen below is a <strong>simplified sketch</strong> of the ArcGIS Pro window, not a screenshot.</p>
@@ -31,6 +31,7 @@
     <div class="result" id="vocabOut">Pick a term on the left.</div>
   </div>
 
+  <div class="callout idea"><span class="label">Everyday picture</span><p>A project file is like a PowerPoint that <em>links</em> to a video on your laptop. Send the PowerPoint on WhatsApp and the slides arrive — but the video does not, because it was never inside the file. The <code>.aprx</code> is the PowerPoint; the datasets are the video.</p></div>
   <div class="callout dev"><span class="label">Developer view</span><p>A project is like an IDE <strong>workspace</strong> or <strong>solution file</strong>: it records what you were working on, how the windows were arranged, and where to find the sources — and, just like a workspace, it does not contain the source itself. <strong>Where the comparison stops:</strong> a workspace points at <em>code you wrote</em>; a GIS project points at <em>data</em> that other people and tools may change while your project is closed. A project can go stale in a way a workspace rarely does.</p></div>
 
   <details class="reveal"><summary>Optional: a short guided look (ArcGIS Pro 3.7 documentation edition; not execution-tested)</summary>
@@ -67,21 +68,21 @@
   <div class="table-wrap"><table>
     <thead><tr><th>Inside the <code>.aprx</code> (presentation and organisation)</th><th>Outside the <code>.aprx</code> (data and tools)</th></tr></thead>
     <tbody>
-      <tr><td>Which maps, scenes, layouts and tables the project has</td><td>The datasets themselves (feature classes, tables, rasters)</td></tr>
-      <tr><td>Which layers each map contains, in what order</td><td>The file geodatabase, folder, database or server that stores them</td></tr>
+      <tr><td>Which maps, scenes, layouts and tables the project has</td><td>The datasets themselves (point/line/area layers, tables, images)</td></tr>
+      <tr><td>Which layers each map contains, in what order</td><td>The file geodatabase (Esri’s file-based storage folder, <code>.gdb</code> — Chapter 7), folder, database or server that stores them</td></tr>
       <tr><td>Each layer’s symbols, labels, pop-ups, visibility and filters</td><td>Edits made to the data by anyone — including you</td></tr>
-      <tr><td>The <em>path or connection</em> to each layer’s source</td><td>The toolboxes’ tool code (the project stores a connection)</td></tr>
-      <tr><td>Layout page designs</td><td>The signed-in portal’s content (the project stores a connection)</td></tr>
+      <tr><td>The <em>path or connection</em> to each layer’s source</td><td>The toolboxes (collections of processing tools) — the project stores only a connection to them</td></tr>
+      <tr><td>Layout page designs</td><td>The content of the ArcGIS Online / Enterprise organisation you are signed in to (the project stores a connection)</td></tr>
     </tbody></table></div>
   <div class="callout idea"><span class="label">Consequences for a developer</span><ul style="margin:0">
     <li>A project in version control captures presentation and structure, <strong>not data</strong>. Data needs its own backup and owner.</li>
     <li>“Send me the project” is rarely enough. Ask for the project <em>and</em> where its data is — or a package containing both.</li>
     <li>When a layer shows as broken, check the <strong>source path</strong> first, not the data.</li></ul></div>
-  <div class="callout warn"><span class="label">Misconception</span><p>“Saving the project saves my edits.” In ArcGIS Pro, edits to <em>data</em> are saved separately from the <em>project</em>. Someone who believes they are the same can lose data edits — or believe that not saving the project undoes edits already written to storage. Durable rule: <strong>project state and data state are saved separately; know which one you changed.</strong> (The exact prompts are version-specific; your instructor will demonstrate on a disposable copy.)</p></div>
+  <div class="callout warn"><span class="label">Misconception</span><p>“Saving the project saves my edits.” In ArcGIS Pro, edits to <em>data</em> are saved separately from the <em>project</em>. Someone who believes they are the same can lose data edits — or believe that not saving the project undoes edits already written to storage. Durable rule: <strong>project state and data state are saved separately; know which one you changed.</strong> (The exact prompts are version-specific; your instructor will demonstrate on a throw-away copy.)</p></div>
 
   <h2><span class="mod">2.2.3</span>Changing the data vs changing how it looks</h2>
   <p>A habit for every later chapter: before doing anything in a desktop GIS, ask <strong>“am I about to change the data, or change how the data is shown?”</strong> Click a task, then click the bin.</p>
-  <div class="try sorter" data-items='[{"t":"Move request P3 100 m north — the reporter gave a wrong location","bin":"Changes the dataset","why":"every map, service and app that reads this dataset sees the new location; who moved it, on what evidence?"},{"t":"Draw Open requests in red and Resolved in grey","bin":"Changes only the look","why":"stored in the map or layer; Status values untouched"},{"t":"Rename the field Cat to Category","bin":"Changes the dataset","why":"a schema change; pop-ups, queries and scripts using Cat may break"},{"t":"Show the layer only when zoomed in","bin":"Changes only the look","why":"a visibility rule; the features exist at every scale"},{"t":"Delete the Closed – duplicate request P6","bin":"Changes the dataset","why":"destructive; a filter that hides closed duplicates would be presentation"},{"t":"Filter the map to show only High priority","bin":"Changes only the look","why":"Chapter 1: hiding is not deleting"},{"t":"Add a field AssignedCrew and fill it in","bin":"Changes the dataset","why":"schema plus data; every consumer sees it"},{"t":"Label each request with its ID","bin":"Changes only the look","why":"labels are drawn from the data but stored as a layer setting"}]'>
+  <div class="try sorter" data-items='[{"t":"Move request P3 100 m north — the citizen who reported it gave a wrong location","bin":"Changes the dataset","why":"every map, service and app that reads this dataset sees the new location; who moved it, on what evidence?"},{"t":"Draw Open requests in red and Resolved in grey","bin":"Changes only the look","why":"stored in the map or layer; Status values untouched"},{"t":"Rename the field (column) Cat to Category","bin":"Changes the dataset","why":"a schema change; pop-ups, queries and scripts using Cat may break"},{"t":"Show the layer only when zoomed in","bin":"Changes only the look","why":"a visibility rule; the features exist at every scale"},{"t":"Delete the Closed – duplicate request P6","bin":"Changes the dataset","why":"destructive; a filter that hides closed duplicates would be presentation"},{"t":"Filter the map to show only High priority","bin":"Changes only the look","why":"Chapter 1: hiding is not deleting"},{"t":"Add a field (column) AssignedCrew and fill it in","bin":"Changes the dataset","why":"schema plus data; every consumer sees it"},{"t":"Label each request with its ID","bin":"Changes only the look","why":"labels are drawn from the data but stored as a layer setting"}]'>
     <span class="tag">Try it</span>
     <div class="items"></div>
     <div class="bins">
@@ -108,7 +109,7 @@
 function pageInit() {
   /* 2.2.1 vocabulary + sketch of the window */
   const vocab = [
-    ["project", "Project", "“A body of related work that may include maps, scenes, layouts, and connections to resources such as system folders and databases.” Saved as a <code>.aprx</code> file, by default in its own folder with a file geodatabase and a toolbox beside it."],
+    ["project", "Project", "“A body of related work that may include maps, scenes, layouts, and connections to resources such as system folders and databases.” Saved as a <code>.aprx</code> file, by default in its own folder with a <em>file geodatabase</em> (Esri’s file-based storage folder, <code>.gdb</code>) and a <em>toolbox</em> (a collection of processing tools) beside it."],
     ["map", "Map / scene", "A 2D view where layers are drawn together. A <em>scene</em> is the 3D version."],
     ["layout", "Layout", "A page design for printing or export: one or more maps plus title, legend, scale bar."],
     ["table", "Table", "A tabular view of a dataset’s records — the attribute table you used in Chapter 1."],

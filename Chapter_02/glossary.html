@@ -64,6 +64,16 @@ function pageInit() {
     ["GeoServer" + O, "A Java-based server that serves geospatial data through OGC standards such as WMS, WFS, WCS and WMTS (R3)."],
     ["OGC", "The Open Geospatial Consortium, publisher of the open standards GeoServer implements. Named only; standards are taught later."],
     ["Evidence pack", "This course’s term for a documented set of screens, listings and observations from a deployed solution, used in the lab."],
+    ["Basemap", "The background map (streets, satellite image) that your own layers are drawn on top of."],
+    ["Pop-up", "The small information box that opens when you click a feature on a web map."],
+    ["Field (column)", "One column of a table — Status, Category, Note. Each record has a value in each field."],
+    ["File geodatabase (.gdb)" + E, "Esri’s file-based storage folder for datasets on a disk or shared drive. Chapter 7 explains it properly."],
+    ["Geoprocessing tool" + E, "A ready-made data-processing tool in ArcGIS (for example buffer or clip) that can be run from the desktop, a script, or a server."],
+    ["Widget", "A ready-made building block in an app builder — a map, a chart, a search box, a list — that you switch on and point at a layer."],
+    ["Registered data" + E, "Data in your own database or folder that ArcGIS Server has been told about, so it can serve it without making a copy."],
+    ["Federated server" + E, "An ArcGIS Server that has been joined to a portal so that the portal manages its security and its services appear as items."],
+    ["Stale copy", "A copy of the data that was correct when it was fetched but has not been refreshed since the authoritative copy changed."],
+    ["Municipal corporation / nagar palika", "The city or town office in the practice scenario — the organisation that owns the assets and answers the requests."],
     ["Solution S-2", "The made-up deployment traced in the lab: an archived file, an ArcGIS Pro project, hosted layers, a view, two web maps, a dashboard, a Field Maps form and an Instant App."]
   ];
   terms.sort((a, b) => a[0].replace(/<[^>]+>/g, "").localeCompare(b[0].replace(/<[^>]+>/g, "")));

@@ -37,15 +37,15 @@
   <div class="card">
     <p><span class="synthetic">Made-up evidence: Solution S-X, “School Transport Planner (Training)” — deliberately different from the lab.</span></p>
     <ul>
-      <li><strong>Data:</strong> an enterprise geodatabase in a PostgreSQL database <code>schools_db</code> on server <code>db01</code> holds <code>Schools</code> (points), <code>BusRoutes</code> (lines), <code>Catchments</code> (polygons). The readme names <code>schools_db</code> as authoritative.</li>
-      <li><strong>Publishing:</strong> ArcGIS Pro published all three to an <strong>ArcGIS Enterprise</strong> portal <code>portal.training.example</code> by <strong>referencing registered data</strong> on the federated ArcGIS Server <code>gis01</code>.</li>
+      <li><strong>Data:</strong> an enterprise geodatabase (an Esri geodatabase kept inside a normal database — Chapter 7) in a PostgreSQL database <code>schools_db</code> on server <code>db01</code> holds <code>Schools</code> (points), <code>BusRoutes</code> (lines), <code>Catchments</code> (polygons). The readme names <code>schools_db</code> as authoritative.</li>
+      <li><strong>Publishing:</strong> ArcGIS Pro published all three to an <strong>ArcGIS Enterprise</strong> portal <code>portal.training.example</code> by <strong>referencing registered data</strong> on the federated ArcGIS Server <code>gis01</code> (federated = joined to the portal; registered = the server was told where the database is; the data was not copied).</li>
       <li><strong>Content:</strong> web map <em>Transport Overview</em> (group <em>Transport Planners</em>) styles <code>BusRoutes</code> by operator and <code>Catchments</code> with a yellow fill. A second web map <em>Transport Public</em> (everyone) shows <code>Schools</code> only.</li>
       <li><strong>Apps:</strong> an Experience Builder app <em>Route Planner</em> (group) with a custom widget that computes walking distance from an address to the nearest school; an Instant App <em>Find My School</em> (public).</li>
       <li><strong>Operations:</strong> on Monday <code>gis01</code> failed; the portal stayed up but every layer in <em>Transport Overview</em> showed an error until <code>gis01</code> was restored by the operations team on Tuesday.</li>
     </ul>
     <p><strong>Four requests arrive.</strong> For each, state (1) which job (R1–R5, or “infrastructure operation”) it involves, (2) which component or item is changed, (3) whether the <em>data</em> changes, and (4) what evidence supports your answer — or whether there is not enough information. <span class="pill">6 marks each</span></p>
     <ol>
-      <li>“Move the boundary of catchment C-14 two streets north — it was digitised wrongly.”</li>
+      <li>“Move the boundary of catchment C-14 two streets north — it was drawn wrongly.”</li>
       <li>“Change the catchment fill from yellow to light blue in the planners’ map only.”</li>
       <li>“When a planner clicks a route, the app should also show the number of pupils on it — that needs a different calculation from the current widget.”</li>
       <li>“The layers were down all Monday; make sure this cannot happen again.”</li>
