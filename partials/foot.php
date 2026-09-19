@@ -13,6 +13,10 @@
     <span>GIS &amp; ArcGIS training · <a href="<?= $HOME ?>">Course index</a><?php if ($chapter): ?> · <a href="./">Chapter <?= $chapter['n'] ?></a> · <a href="glossary">Glossary</a><?php endif; ?></span>
     <span class="small">Practice data on these pages is made up. Progress is saved in this browser only.</span>
   </div>
+  <div class="inner legal">
+    <span>Prepared by <strong>LiveBird Technologies</strong></span>
+    <span class="small">&copy; <?= date('Y') ?> LiveBird Technologies. All rights reserved.</span>
+  </div>
 </footer>
 <script>
 window.CHAPTER = <?= json_encode(['n' => $chapter['n'] ?? 0, 'modules' => $modules, 'current' => $current['id'] ?? null], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;

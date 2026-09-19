@@ -280,6 +280,8 @@ details.reveal[open] summary { margin-bottom: .5rem; }
 .sitefoot { border-top: 1px solid var(--rule); background: rgba(247,242,232,.8); margin-top: 2rem; }
 .sitefoot .inner { max-width: 1040px; margin: 0 auto; padding: 1rem 1.2rem 1.4rem; display: flex; justify-content: space-between; gap: .6rem 1.5rem; flex-wrap: wrap; font-size: .9rem; color: var(--ink-soft); }
 .sitefoot a { color: var(--ink); }
+.sitefoot .legal { border-top: 1px dashed var(--rule); padding-top: .8rem; margin-top: -.4rem; }
+.sitefoot .legal strong { font-family: var(--font-display); color: var(--ink); }
 @media print { .sitefoot { display: none; } }
 
 /* animation on load */
