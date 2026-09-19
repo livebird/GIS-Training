@@ -346,3 +346,9 @@ svg .lbl.swap { fill: var(--warn); }
 .recip.on { border-color: var(--accent); background: #fffdf9; box-shadow: 0 0 0 4px var(--accent-soft); }
 .recip .who { font-family: var(--font-display); font-weight: 700; }
 .recip .say { font-style: italic; color: var(--ink-soft); }
+table.diff td.mono { white-space: normal; word-break: break-word; }
+table.diff td:last-child { min-width: 240px; }
+table.diff { font-size: .9rem; }
+svg .wlbl { font-family: var(--font-mono); font-size: 22px; font-weight: 600; fill: var(--ink); }
+svg .wlbl.swap { fill: var(--warn); }
+svg .wpt.swap { fill: var(--warn); }

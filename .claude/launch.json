@@ -10,6 +10,16 @@
         "dev-router.php"
       ],
       "port": 8760
+    },
+    {
+      "name": "gis-training-alt",
+      "runtimeExecutable": "php",
+      "runtimeArgs": [
+        "-S",
+        "localhost:8761",
+        "dev-router.php"
+      ],
+      "port": 8761
     }
   ]
 }
