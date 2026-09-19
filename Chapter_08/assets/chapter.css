@@ -1,0 +1,108 @@
+/* Chapter 8 — rules specific to this chapter, loaded after /assets/theme.css */
+
+/* tabs, code, copy (same look as earlier chapters) */
+.tabs { display: flex; flex-wrap: wrap; gap: .3rem; border-bottom: 2px solid var(--ink); margin-top: 1rem; }
+.tabs button { font: inherit; font-size: .9rem; border: 1px solid var(--rule); border-bottom: 0; background: var(--paper-2); padding: .4rem .8rem; border-radius: 8px 8px 0 0; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tabpanel { display: none; background: #fff; border: 1px solid var(--rule); border-top: 0; padding: 1rem 1.2rem; border-radius: 0 0 var(--radius) var(--radius); }
+.tabpanel.show { display: block; }
+pre.code, .copywrap pre { background: #fff; border: 1px solid var(--rule); border-radius: 8px; padding: .8rem 1rem; font-family: var(--font-mono); font-size: .82rem; line-height: 1.5; overflow-x: auto; white-space: pre; }
+.copywrap { position: relative; }
+.copywrap .btn { position: absolute; top: .5rem; right: .5rem; }
+.scen { border-left: 5px solid var(--ward-line); background: #fff; border-radius: 0 var(--radius) var(--radius) 0; padding: .8rem 1.1rem; margin: 1rem 0; border-top: 1px solid var(--rule); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.status-line { font-family: var(--font-mono); font-size: .88rem; padding: .5rem .8rem; border-radius: 8px; margin-top: .5rem; }
+.status-line.ok { background: var(--ok-soft); color: var(--ok); }
+.status-line.bad { background: var(--warn-soft); color: var(--warn); }
+.status-line.q { background: var(--note-soft); color: var(--ward-line); }
+.opbtns { display: flex; gap: .6rem; flex-wrap: wrap; margin: .6rem 0; }
+.chip { display: inline-block; padding: .1rem .5rem; border-radius: 6px; font-family: var(--font-mono); font-size: .8rem; }
+.chip.yes { background: var(--ok-soft); color: var(--ok); } .chip.no { background: var(--warn-soft); color: var(--warn); } .chip.q { background: var(--note-soft); color: var(--ward-line); }
+table caption { caption-side: top; text-align: left; font-family: var(--font-mono); font-size: .8rem; color: var(--ink-soft); padding: .2rem 0 .4rem; }
+td .blank { color: var(--ink-faint); }
+tr.orphan td { background: var(--warn-soft); }
+tr.new td { background: var(--ok-soft); }
+
+/* ER diagram */
+svg .erbox rect { fill: #fff; stroke: var(--ink); stroke-width: 3; cursor: pointer; }
+svg .erbox.spatial rect { fill: var(--ward); stroke: var(--ward-line); }
+svg .erbox.lit rect { stroke: var(--accent); stroke-width: 7; }
+svg .ertitle { font-family: var(--font-display); font-size: 28px; font-weight: 700; fill: var(--ink); pointer-events: none; }
+svg .ersub { font-family: var(--font-mono); font-size: 18px; fill: var(--ink-soft); pointer-events: none; }
+svg .erlink { stroke: var(--ink); stroke-width: 4; }
+svg .erlink.dash { stroke-dasharray: 14 10; stroke: var(--ink-soft); }
+svg .erlink.lit { stroke: var(--accent); stroke-width: 7; }
+svg .erlabel { font-family: var(--font-mono); font-size: 19px; fill: var(--ink); }
+svg .asset.sel { stroke: var(--accent); stroke-width: 10; }
+
+/* record cards (one row shown as a card) */
+.reccard { border: 2px solid var(--ink); border-radius: var(--radius); background: #fff; padding: .9rem 1.1rem; font-size: .95rem; }
+.reccard .hdr { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 1px solid var(--rule); padding-bottom: .3rem; margin-bottom: .5rem; }
+.reccard .row { display: grid; grid-template-columns: 130px 1fr; gap: .3rem .6rem; padding: .25rem 0; align-items: baseline; }
+.reccard .row b { font-family: var(--font-mono); font-weight: 500; color: var(--ink-soft); font-size: .85rem; }
+.reccard .row .v { font-family: var(--font-mono); font-size: .95rem; }
+.reccard .row.changed .v { background: var(--select); border-radius: 4px; padding: 0 .3rem; }
+.reccard .row.same .v { background: var(--ok-soft); border-radius: 4px; padding: 0 .3rem; }
+.reccard .row.gone .v { background: var(--warn-soft); border-radius: 4px; padding: 0 .3rem; text-decoration: line-through; }
+.reccard.bad { border-color: var(--warn); } .reccard.good { border-color: var(--ok); }
+
+/* "which table" column chips */
+.colchips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0; }
+.colchips .item { border: 1.5px solid var(--ink); border-radius: 8px; padding: .3rem .7rem; background: #fff; font-family: var(--font-mono); font-size: .85rem; cursor: pointer; }
+
+/* dictionary builder */
+.dict { display: grid; grid-template-columns: 1fr; gap: .6rem; }
+.dict .drow { display: grid; grid-template-columns: 150px 1fr 1fr 1fr auto; gap: .5rem; align-items: center; background: #fff; border: 1px solid var(--rule); border-radius: 8px; padding: .5rem .7rem; font-size: .9rem; }
+@media (max-width: 760px) { .dict .drow { grid-template-columns: 1fr 1fr; } }
+.dict select { font: inherit; font-size: .88rem; padding: .25rem .4rem; border: 1px solid var(--rule); border-radius: 6px; background: #fff; width: 100%; }
+.dict .fname { font-family: var(--font-mono); font-weight: 600; }
+.dict .drow.ok { border-color: var(--ok); background: var(--ok-soft); }
+.dict .drow.bad { border-color: var(--warn); background: var(--warn-soft); }
+
+/* four kinds of blank */
+.blankgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; }
+.blankgrid .b { border: 1.5px solid var(--rule); border-radius: var(--radius); background: #fff; padding: .8rem 1rem; cursor: pointer; }
+.blankgrid .b:hover, .blankgrid .b.on { border-color: var(--accent); background: #fffdf9; }
+.blankgrid .b .val { font-family: var(--font-mono); font-size: 1.3rem; }
+.blankgrid .b h4 { margin: .2rem 0; }
+
+/* time converter */
+.tconv { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; align-items: stretch; }
+.tconv .box { border: 1.5px solid var(--rule); border-radius: var(--radius); background: #fff; padding: .8rem 1rem; }
+.tconv .box h4 { margin: 0 0 .3rem; font-family: var(--font-mono); font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.tconv .big { font-family: var(--font-mono); font-size: 1.35rem; }
+.tconv input { font: inherit; font-family: var(--font-mono); font-size: 1rem; padding: .3rem .5rem; border: 1px solid var(--rule); border-radius: 6px; width: 100%; }
+
+/* three-ID demo */
+.idgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 720px) { .idgrid { grid-template-columns: 1fr; } }
+.idtag { display: inline-block; padding: .2rem .6rem; border-radius: 999px; font-family: var(--font-mono); font-size: .85rem; margin: .1rem; }
+.idtag.biz { background: var(--ink); color: #fff; } .idtag.label { background: var(--note-soft); color: var(--ward-line); border: 1px dotted var(--ward-line); } .idtag.store { background: var(--paper-2); color: var(--ink-faint); }
+.idtag.changed { outline: 3px solid var(--select); }
+
+/* domain form demo */
+.formdemo { background: #fff; border: 1.5px solid var(--rule); border-radius: var(--radius); padding: 1rem 1.2rem; }
+.formdemo label { display: block; font-weight: 600; margin: .6rem 0 .2rem; }
+.formdemo select, .formdemo input { font: inherit; font-size: .95rem; padding: .35rem .5rem; border: 1px solid var(--rule); border-radius: 6px; background: #fff; min-width: 200px; }
+.formdemo .stored { font-family: var(--font-mono); background: var(--paper-2); padding: .5rem .8rem; border-radius: 8px; margin-top: .6rem; }
+
+/* history demo */
+.hist { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+@media (max-width: 760px) { .hist { grid-template-columns: 1fr; } }
+
+/* lab flat table with clickable cells */
+.flat td { cursor: pointer; white-space: nowrap; }
+.flat td.flag { background: var(--warn-soft); outline: 2px solid var(--warn); }
+.flat th { white-space: nowrap; }
+.defects { display: grid; gap: .4rem; }
+.defects .d { display: flex; gap: .6rem; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: 8px; padding: .4rem .7rem; font-size: .92rem; }
+.defects .d.found { border-color: var(--ok); background: var(--ok-soft); }
+.defects .d .n { font-family: var(--font-mono); color: var(--accent); min-width: 2rem; }
+
+/* migration checklist */
+.mig .q { font-weight: 600; }
+
+/* enforcement ladder */
+.ladder3 { display: grid; gap: .6rem; }
+.ladder3 .band { border: 2px solid var(--ink); border-radius: var(--radius); padding: .7rem 1rem; background: #fff; }
+.ladder3 .band h4 { margin: 0 0 .2rem; }
+.ladder3 .band.schema { background: var(--ok-soft); } .ladder3 .band.app { background: #fbf3d8; } .ladder3 .band.review { background: var(--note-soft); }
