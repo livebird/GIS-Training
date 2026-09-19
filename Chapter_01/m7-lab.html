@@ -32,7 +32,7 @@
 
   <h2><span class="mod">1.7.3</span>Steps</h2>
   <ol>
-    <li><strong>Underline every vague word.</strong> Expect at least: “first”, “needs someone”, “road corridor”, and the unstated “unresolved”.</li>
+    <li><strong>Underline every unclear word.</strong> Expect at least: “first”, “needs someone”, “road corridor”, and the unstated “unresolved”.</li>
     <li><strong>Write the decision in one sentence</strong> beginning “Tomorrow the team will…”.</li>
     <li><strong>Draft three questions</strong>, each of a different type (for example one proximity, one containment, one change through time). Each must be answerable from the tables <em>after</em> you define its terms.</li>
     <li><strong>Fill the four-part card</strong> for each: inputs, selection rules (exact status values, distance, unit, whether the boundary counts), output, validation.</li>
@@ -55,7 +55,7 @@
   <div class="try">
     <span class="tag">Sketch helper</span>
     <h3>Sketch with notes</h3>
-    <p>Set the distance you used on your proximity card. The band along the road must match the number on the card. P5 and P6 are marked because each needs an explicit rule.</p>
+    <p>Set the distance you used on your proximity card. The band along the road must match the number on the card. P5 and P6 are marked because each needs a clearly written rule.</p>
     <div class="controls">
       <label>Distance band: <input type="range" id="sk" min="0" max="500" step="10" value="300"> <strong><span id="skVal">300</span> m</strong></label>
       <label><input type="checkbox" id="skExt" checked> Draw study-area boundary</label>
@@ -66,7 +66,7 @@
   <h2><span class="mod">1.7.4</span>Self-check before you submit</h2>
   <p>There is no single correct set of questions, but every correct brief satisfies all of these.</p>
   <div class="card checklist" id="checks">
-    <label><input type="checkbox" data-k="c1"> Every vague term in the scenario has a testable definition somewhere on the page.</label>
+    <label><input type="checkbox" data-k="c1"> Every unclear word in the scenario has a clear, checkable meaning somewhere on the page.</label>
     <label><input type="checkbox" data-k="c2"> Each card’s rules, applied to the request table, give a definite result — and I wrote it down and checked the arithmetic.</label>
     <label><input type="checkbox" data-k="c3"> P5 (on the shared boundary and on the road) and P6 (outside both wards; closed as duplicate) are each mentioned with a stated treatment.</label>
     <label><input type="checkbox" data-k="c4"> At least one question uses a time condition tied to the date range, and I noted that nothing was reported after 2026-09-11.</label>
@@ -78,7 +78,7 @@
   <div class="table-wrap"><table>
     <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
     <tbody>
-      <tr><td>Two people applying your rules get different IDs</td><td>A term is still vague (usually the boundary value or the status list)</td><td>Rewrite with “≤” or “&lt;” and an explicit status set</td></tr>
+      <tr><td>Two people applying your rules get different IDs</td><td>A word is still unclear (usually the edge value or the status list)</td><td>Rewrite with “≤” or “&lt;” and a full list of status values</td></tr>
       <tr><td>Your proximity question selects P6 but you “meant” to exclude it</td><td>The study-area condition was assumed, not written</td><td>Add the containment condition, or accept P6 and say why</td></tr>
       <tr><td>You cannot decide which ward P5 belongs to</td><td>That is a rule to be decided, not a fact in the data</td><td>Write the rule on the card; note that pure geometry gives two matches</td></tr>
       <tr><td>A question needs travel time</td><td>The practice data has no road network</td><td>Mark it “not answerable with current data”; do not quietly use straight-line distance instead</td></tr>
