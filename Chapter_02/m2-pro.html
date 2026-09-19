@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.2 Position ArcGIS Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 2.2 · Platform-specific (Esri)</div>
+    <h1>ArcGIS Pro: the desktop authoring product</h1>
+    <p class="lead">Where a skilled person creates, edits, styles and analyses data. And the one fact that trips up every developer: <strong>a project file points at data; it does not contain it.</strong></p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Learn what ArcGIS Pro is for and its basic vocabulary: project, map, layout, table, Contents pane, Catalog pane, connection.</li>
+      <li>See what happens when you email a project file to a colleague.</li>
+      <li>Tell <em>changing the data</em> from <em>changing how it looks</em>.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">2.2.1</span>What ArcGIS Pro is for</h2>
+  <p>Esri’s documentation calls ArcGIS Pro “a full-featured professional desktop GIS application” for exploring, visualising and analysing data, making 2D maps and 3D scenes, and sharing work to ArcGIS Online or ArcGIS Enterprise. In the language of module 2.1 it is <strong>R1 — desktop authoring</strong>. It runs on a workstation; on first launch you sign in with an ArcGIS Online or ArcGIS Enterprise organisation account. It is a licensed commercial product — which licence you have is a question for your administrator, not this page.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <p>Click a word to see what it means. The screen below is a <strong>simplified sketch</strong> of the ArcGIS Pro window, not a screenshot.</p>
+    <div class="map-with-panel">
+      <div class="layerlist" id="vocab"></div>
+      <figure class="map-fig" id="proFig"></figure>
+    </div>
+    <div class="result" id="vocabOut">Pick a term on the left.</div>
+  </div>
+
+  <div class="callout dev"><span class="label">Developer view</span><p>A project is like an IDE <strong>workspace</strong> or <strong>solution file</strong>: it records what you were working on, how the windows were arranged, and where to find the sources — and, just like a workspace, it does not contain the source itself. <strong>Where the comparison stops:</strong> a workspace points at <em>code you wrote</em>; a GIS project points at <em>data</em> that other people and tools may change while your project is closed. A project can go stale in a way a workspace rarely does.</p></div>
+
+  <details class="reveal"><summary>Optional: a short guided look (ArcGIS Pro 3.7 documentation edition; not execution-tested)</summary>
+    <ol>
+      <li>Start ArcGIS Pro and open the instructor’s Chapter 1 project (a <code>.aprx</code> file). Sign in if prompted.</li>
+      <li>Look at the <strong>Contents</strong> pane: it lists the map’s layers — Requests, Assets, Roads, Wards — in drawing order. This is <em>presentation</em>.</li>
+      <li>Right-click the Requests layer and open its <strong>Attribute Table</strong> (confirm the label in your installed version). A <em>table view</em> of the same dataset.</li>
+      <li>Open the <strong>Catalog</strong> pane. Expand <strong>Databases</strong> and <strong>Folders</strong>. These are <em>connections</em>: pointers to where datasets are stored.</li>
+      <li>Open the Requests layer’s properties and find <strong>Source</strong>. It shows the <em>path</em> to the dataset. Write it down.</li>
+      <li>Close the project <strong>without saving</strong>. Nothing you did changed the data.</li>
+    </ol>
+    <p class="small"><strong>QGIS equivalent:</strong> a <code>.qgz</code> project file also stores references, not data. The <em>Layers</em> panel ≈ Contents; the <em>Browser</em> panel ≈ Catalog; a layer’s source path is under Properties → Source. QGIS warns of “unavailable layers” when a file has moved — the same broken-link idea as below. Panel names differ; the idea is shared.</p>
+  </details>
+
+  <h2><span class="mod">2.2.2</span>A saved project is not the datasets it points at</h2>
+  <p>Esri says it directly: a project “includes connections to folders, databases, toolboxes, and servers that contain data”; it is “a single file with the extension .aprx”; and map files store “the path to each layer’s data source, but not the data”. A colleague who receives the file “must have access to the data” separately.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>Email the project</h3>
+    <p>The author saves <code>RequestTracker.aprx</code>. Requests are drawn red when <em>Open</em>, and the layer’s source is <code>\\gis-files\training\Municipal_Training.gdb\Requests</code>. Now play two scenarios.</p>
+    <div class="controls">
+      <button class="btn accent" id="sc1">A · Email the .aprx to a colleague on another network</button>
+      <button class="btn" id="sc2">B · A colleague edits the dataset while your project is open</button>
+      <button class="btn ghost" id="scReset">Reset</button>
+    </div>
+    <div class="two-col">
+      <div class="card" id="aprxCard"></div>
+      <div class="card" id="dataCard"></div>
+    </div>
+    <div class="result" id="scOut">Choose A or B.</div>
+  </div>
+
+  <h3>What is inside the file, and what is outside it</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Inside the <code>.aprx</code> (presentation and organisation)</th><th>Outside the <code>.aprx</code> (data and tools)</th></tr></thead>
+    <tbody>
+      <tr><td>Which maps, scenes, layouts and tables the project has</td><td>The datasets themselves (feature classes, tables, rasters)</td></tr>
+      <tr><td>Which layers each map contains, in what order</td><td>The file geodatabase, folder, database or server that stores them</td></tr>
+      <tr><td>Each layer’s symbols, labels, pop-ups, visibility and filters</td><td>Edits made to the data by anyone — including you</td></tr>
+      <tr><td>The <em>path or connection</em> to each layer’s source</td><td>The toolboxes’ tool code (the project stores a connection)</td></tr>
+      <tr><td>Layout page designs</td><td>The signed-in portal’s content (the project stores a connection)</td></tr>
+    </tbody></table></div>
+  <div class="callout idea"><span class="label">Consequences for a developer</span><ul style="margin:0">
+    <li>A project in version control captures presentation and structure, <strong>not data</strong>. Data needs its own backup and owner.</li>
+    <li>“Send me the project” is rarely enough. Ask for the project <em>and</em> where its data is — or a package containing both.</li>
+    <li>When a layer shows as broken, check the <strong>source path</strong> first, not the data.</li></ul></div>
+  <div class="callout warn"><span class="label">Misconception</span><p>“Saving the project saves my edits.” In ArcGIS Pro, edits to <em>data</em> are saved separately from the <em>project</em>. Someone who believes they are the same can lose data edits — or believe that not saving the project undoes edits already written to storage. Durable rule: <strong>project state and data state are saved separately; know which one you changed.</strong> (The exact prompts are version-specific; your instructor will demonstrate on a disposable copy.)</p></div>
+
+  <h2><span class="mod">2.2.3</span>Changing the data vs changing how it looks</h2>
+  <p>A habit for every later chapter: before doing anything in a desktop GIS, ask <strong>“am I about to change the data, or change how the data is shown?”</strong> Click a task, then click the bin.</p>
+  <div class="try sorter" data-items='[{"t":"Move request P3 100 m north — the reporter gave a wrong location","bin":"Changes the dataset","why":"every map, service and app that reads this dataset sees the new location; who moved it, on what evidence?"},{"t":"Draw Open requests in red and Resolved in grey","bin":"Changes only the look","why":"stored in the map or layer; Status values untouched"},{"t":"Rename the field Cat to Category","bin":"Changes the dataset","why":"a schema change; pop-ups, queries and scripts using Cat may break"},{"t":"Show the layer only when zoomed in","bin":"Changes only the look","why":"a visibility rule; the features exist at every scale"},{"t":"Delete the Closed – duplicate request P6","bin":"Changes the dataset","why":"destructive; a filter that hides closed duplicates would be presentation"},{"t":"Filter the map to show only High priority","bin":"Changes only the look","why":"Chapter 1: hiding is not deleting"},{"t":"Add a field AssignedCrew and fill it in","bin":"Changes the dataset","why":"schema plus data; every consumer sees it"},{"t":"Label each request with its ID","bin":"Changes only the look","why":"labels are drawn from the data but stored as a layer setting"}]'>
+    <span class="tag">Try it</span>
+    <div class="items"></div>
+    <div class="bins">
+      <div class="bin" data-bin="Changes the dataset"><h5>Changes the dataset (authoring)</h5></div>
+      <div class="bin" data-bin="Changes only the look"><h5>Changes only the look (presentation)</h5></div>
+    </div>
+  </div>
+  <p><strong>Exercise (write it down; answers are with your instructor).</strong> Classify, and give one consequence for other users of the same dataset: (a) correcting SL-0113’s installation year from 2018 to 2016; (b) turning off the Wards layer; (c) changing the drain symbol from a square to a circle; (d) splitting Road R1 into two pieces at x = 1000; (e) a filter showing only requests reported after 2026-09-01.</p>
+
+  <div class="quiz" data-answer="1" data-fb="The .aprx is a self-contained file and opens, with its maps, layer list and symbols. But each layer’s source path fails to resolve, so the layers are listed and cannot draw — ArcGIS Pro marks them broken. The data itself is almost certainly intact on the original share.">
+    <div class="q">An <code>.aprx</code> is copied to a machine that cannot reach the file share in the layers’ source paths. What opens?</div>
+    <div class="opts">
+      <button class="opt">Nothing — the project cannot open without its data</button>
+      <button class="opt">The project opens with maps, layer list and symbols, but the layers cannot draw</button>
+      <button class="opt">The project opens and draws from a copy embedded in the .aprx</button>
+      <button class="opt">The project opens and downloads the data from ArcGIS Online automatically</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>In one sentence each: what does a <code>.aprx</code> file contain, what does it not contain, and what is the first thing to check when a layer shows as broken?</p></div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  /* 2.2.1 vocabulary + sketch of the window */
+  const vocab = [
+    ["project", "Project", "“A body of related work that may include maps, scenes, layouts, and connections to resources such as system folders and databases.” Saved as a <code>.aprx</code> file, by default in its own folder with a file geodatabase and a toolbox beside it."],
+    ["map", "Map / scene", "A 2D view where layers are drawn together. A <em>scene</em> is the 3D version."],
+    ["layout", "Layout", "A page design for printing or export: one or more maps plus title, legend, scale bar."],
+    ["table", "Table", "A tabular view of a dataset’s records — the attribute table you used in Chapter 1."],
+    ["contents", "Contents pane", "Lists what is in the active view: for a map, its layers in drawing order. This is presentation."],
+    ["catalog", "Catalog pane", "Lists the project’s items and connections: folders, databases, toolboxes, servers, the signed-in portal."],
+    ["connection", "Connection", "A stored pointer from the project to a folder, database, toolbox, server or portal that holds data or tools. The project stores the pointer, not the thing."]
+  ];
+  const vEl = document.getElementById("vocab");
+  vEl.innerHTML = '<div class="hdr">Vocabulary</div>' + vocab.map(v => `<label><span class="sw" style="background:var(--accent)"></span><button class="btn small ghost" data-k="${v[0]}" style="border:0;padding:0;background:none;text-align:left">${v[1]}</button></label>`).join("");
+  let lit = null;
+  function drawPro() {
+    const svg = svgEl("svg", { viewBox: "0 0 900 560", role: "img", "aria-label": "Sketch of the ArcGIS Pro window: a Contents pane on the left, a map view in the middle, a Catalog pane on the right, an attribute table below." });
+    const box = (x, y, w, h, key, title) => { const g = svgEl("g", {}, svg); svgEl("rect", { x, y, width: w, height: h, rx: 8, fill: lit === key ? "#f6d9c8" : "#fff", stroke: lit === key ? "#d3541f" : "#1f2a44", "stroke-width": lit === key ? 5 : 2 }, g); const t = svgEl("text", { x: x + 12, y: y + 26, class: "rlabel", "font-size": "18", style: "font-weight:600;fill:#1f2a44" }, g); t.textContent = title; return g; };
+    svgEl("rect", { x: 10, y: 10, width: 880, height: 540, rx: 12, fill: "#efe7d7", stroke: "#1f2a44", "stroke-width": 3 }, svg);
+    const tb = svgEl("text", { x: 24, y: 40, class: "rlabel", "font-size": "18", style: lit === "project" ? "fill:#d3541f;font-weight:700" : "" }, svg); tb.textContent = "RequestTracker.aprx — ArcGIS Pro (sketch, not a screenshot)";
+    const c = box(24, 60, 200, 300, "contents", "Contents");
+    ["✔ Requests", "✔ Assets", "✔ Roads", "✔ Wards"].forEach((l, i) => { const t = svgEl("text", { x: 40, y: 100 + i * 30, class: "isub", "font-size": "18" }, c); t.textContent = l; });
+    const m = box(240, 60, 420, 300, "map", "Map: Request Overview");
+    svgEl("rect", { x: 300, y: 130, width: 150, height: 150, fill: "#dbe7f3", stroke: "#5b7ea3", "stroke-width": 2 }, m); svgEl("rect", { x: 450, y: 130, width: 150, height: 150, fill: "#dbe7f3", stroke: "#5b7ea3", "stroke-width": 2 }, m);
+    svgEl("line", { x1: 300, y1: 205, x2: 600, y2: 205, stroke: "#7a5c2e", "stroke-width": 5 }, m);
+    [[330, 250], [420, 160], [480, 240], [555, 145], [450, 205], [630, 205]].forEach(p => svgEl("circle", { cx: p[0], cy: p[1], r: 7, fill: "#d3541f", stroke: "#fff", "stroke-width": 2 }, m));
+    const k = box(676, 60, 200, 300, "catalog", "Catalog");
+    ["▸ Maps", "▸ Layouts", "▾ Databases", "   Municipal_Training.gdb", "▾ Folders", "   \\\\gis-files\\training", "▸ Portal (signed in)"].forEach((l, i) => { const t = svgEl("text", { x: 690, y: 100 + i * 28, class: "isub", "font-size": "16", style: (lit === "connection" && (i === 3 || i === 5 || i === 6)) ? "fill:#d3541f;font-weight:700" : "" }, k); t.textContent = l; });
+    const t = box(24, 376, 636, 160, "table", "Table: Requests");
+    ["RequestID  Category        Status", "P1         Streetlight out Open", "P2         Pothole         In progress", "P3         Water leak      Open"].forEach((l, i) => { const x = svgEl("text", { x: 40, y: 412 + i * 26, class: "itag", "font-size": "16", style: "white-space:pre" }, t); x.setAttribute("xml:space", "preserve"); x.textContent = l; });
+    const lo = box(676, 376, 200, 160, "layout", "Layout: A4 print");
+    svgEl("rect", { x: 700, y: 410, width: 150, height: 100, fill: "#fff", stroke: "#8b93a7", "stroke-dasharray": "6 4" }, lo);
+    const el = document.getElementById("proFig"); el.innerHTML = ""; el.appendChild(svg);
+  }
+  vEl.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; lit = b.dataset.k; drawPro(); const v = vocab.find(x => x[0] === lit); document.getElementById("vocabOut").innerHTML = `<strong>${v[1]}.</strong> ${v[2]}`; });
+  drawPro();
+
+  /* 2.2.2 scenarios */
+  const A = document.getElementById("aprxCard"), D = document.getElementById("dataCard"), O = document.getElementById("scOut");
+  function base(brokenA, edited) {
+    A.innerHTML = `<h4 style="margin-top:0">RequestTracker.aprx <span class="chip q">project file</span></h4><p class="small">Map “Request Overview”<br>Layer <strong>Requests</strong> — Open = red<br>Source: <code>\\\\gis-files\\training\\…\\Requests</code></p><p>Layer status: ${brokenA ? '<span class="chip no">broken — source not found</span>' : '<span class="chip yes">draws normally</span>'}</p><p class="small">P3 shows as: ${brokenA ? "— (cannot draw)" : (edited ? "<strong>In progress</strong>" : "Open")}</p>`;
+    D.innerHTML = `<h4 style="margin-top:0">Municipal_Training.gdb <span class="chip yes">the data</span></h4><p class="small">On <code>\\\\gis-files\\training\\</code><br>Requests: 6 records</p><p>P3 Status: <strong>${edited ? "In progress" : "Open"}</strong></p><p class="small">${edited ? "Edited by a colleague at 10:42" : "Unchanged"}</p>`;
+  }
+  base(false, false);
+  document.getElementById("sc1").addEventListener("click", () => { base(true, false); O.innerHTML = "<strong>Scenario A.</strong> The project opens — it is a self-contained file — but the layer’s path points at a share the colleague cannot reach, so the layer is <strong>broken</strong>: name and symbols defined, no features. The <em>data</em> is untouched on the original share. The failure is a missing <em>connection</em>, not lost data. Check: open the layer’s Source and compare the path with what is reachable."; });
+  document.getElementById("sc2").addEventListener("click", () => { base(false, true); O.innerHTML = "<strong>Scenario B.</strong> Your project file has not changed at all — yet when the map redraws it shows P3 as <em>In progress</em>, because the map <strong>reads through</strong> its connection to storage. The project never “had” the old value; it never had any data."; });
+  document.getElementById("scReset").addEventListener("click", () => { base(false, false); O.textContent = "Choose A or B."; });
+}
+</script>
+</body>
+</html>

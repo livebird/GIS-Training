@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.6 Transferable roles across platforms</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 2.6 · General principle</div>
+    <h1>The same five jobs on other platforms</h1>
+    <p class="lead">Compare <em>roles</em>, not brands. Ask “which job does this product do?” before “which Esri product does it replace?” — because the honest answer to the second is usually “part of one, and none of the others”.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Place OpenLayers and Mapbox by job.</li>
+      <li>Place QGIS, PostGIS and GeoServer by job — and find the gap.</li>
+      <li>Label tasks as <em>shared GIS knowledge</em> or <em>platform-specific implementation</em>.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">2.6.1</span>OpenLayers and Mapbox</h2>
+  <div class="grid-2">
+    <div class="card"><h4 style="margin-top:0">OpenLayers <span class="pill">R5 · browser library</span></h4><p>Describes itself as “a high-performance, feature-packed library for all your mapping needs” that “makes it easy to put a dynamic map in any web page” and “can display map tiles, vector data and markers loaded from any source” — tiles from several providers, OGC mapping services, and formats such as GeoJSON, TopoJSON, KML and GML. Free, open source, 2-clause BSD licence.</p><p><strong>Job:</strong> the browser application layer — the same role as the ArcGIS Maps SDK for JavaScript. It says nothing about where tiles or data come from (R2, R3), who may see them (R4), or who authored them (R1). Esri itself lists OpenLayers among libraries that can consume ArcGIS services: it can be the front end of an Esri stack, an open-source stack, or a static file.</p></div>
+    <div class="card"><h4 style="margin-top:0">Mapbox <span class="pill">R5 + hosted R3/R2 products</span></h4><p>Presents product families rather than one library: <em>Maps</em> (Mapbox GL JS for the web, mobile SDKs, Studio for map design, static maps, a tiling service), <em>Navigation</em>, <em>Search</em> (geocoding, address autofill), <em>Data</em> (traffic, movement, boundaries), and a self-hosted option.</p><p><strong>Jobs:</strong> a browser library (R5), hosted tile and data services (R3, and R2 for the datasets Mapbox itself provides), and a design tool for map <em>styles</em> (a slice of R1 for cartography — not for editing your own asset data). This page takes no position on Mapbox pricing, licensing or terms; they change.</p></div>
+  </div>
+  <div class="callout dev"><span class="label">Developer view</span><p>“We’ll use OpenLayers” is like “we’ll use React”: it names the front-end library and says nothing about the database, the API, authentication or hosting. “We’ll use Mapbox” is more like “we’ll use Firebase”: a vendor’s bundle of SDKs and hosted services chosen together. <strong>Where it stops:</strong> in a GIS the dataset is usually the organisation’s long-lived asset, so “who holds the authoritative copy, and can we take it with us?” weighs more than it does for a web app’s session data.</p></div>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>“We don’t need ArcGIS — we’ll use OpenLayers.”</h3>
+    <p>Which jobs does that sentence cover? Toggle the jobs you think OpenLayers does, then check.</p>
+    <div class="controls" id="olChecks">
+      <label><input type="checkbox" value="R1"> R1 authoring</label>
+      <label><input type="checkbox" value="R2"> R2 storage</label>
+      <label><input type="checkbox" value="R3"> R3 services</label>
+      <label><input type="checkbox" value="R4"> R4 content</label>
+      <label><input type="checkbox" value="R5"> R5 apps</label>
+      <button class="btn small" id="olCheck">Check</button>
+    </div>
+    <div class="result" id="olOut">OpenLayers is a browser library. Where will the request data be stored and edited? How will it be served to crews but not the public? How will crews edit offline on phones? Who operates the servers that implies?</div>
+  </div>
+
+  <h2><span class="mod">2.6.2</span>QGIS, PostGIS, GeoServer — and the gap</h2>
+  <p>Switch the diagram between the Esri arrangement and one open-source arrangement of the same five jobs. Look at the R4 box.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls">
+      <button class="btn" data-mode="generic" aria-pressed="false">Jobs only</button>
+      <button class="btn" data-mode="esri" aria-pressed="true">Esri arrangement</button>
+      <button class="btn" data-mode="oss" aria-pressed="false">One open-source arrangement</button>
+    </div>
+    <figure class="map-fig" id="archFig"></figure>
+    <div class="result" id="archOut"></div>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Product</th><th>Self-description</th><th>Job covered</th><th>Does <em>not</em> cover on its own</th></tr></thead>
+    <tbody>
+      <tr><td><strong>QGIS</strong></td><td>A GIS application — “a software program that forms part of the GIS”, with a map view, a legend of layers and attribute tables; “completely free”</td><td><strong>R1</strong> desktop authoring</td><td>Hosted storage, web services, a content portal, member management, mobile apps (separate projects exist for some; they are not QGIS Desktop)</td></tr>
+      <tr><td><strong>PostGIS</strong></td><td>“Extends the capabilities of the PostgreSQL relational database by adding support for storing, indexing, and querying geospatial data” — points, lines, polygons, spatial indexes, functions for distance, area and intersection</td><td><strong>R2</strong> storage with spatial capability</td><td>Serving maps over the web, a catalogue, user apps, desktop editing. Also <em>not</em> automatically an Esri enterprise geodatabase (Chapter 7)</td></tr>
+      <tr><td><strong>GeoServer</strong></td><td>“A Java-based server that allows users to view and edit geospatial data”, implementing OGC standards including WMS, WFS, WCS and WMTS</td><td><strong>R3</strong> service delivery via open standards</td><td>A portal with groups and roles, desktop authoring, managed hosted storage (it <em>serves</em> data held elsewhere, e.g. in PostGIS)</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="label">R4 is the gap</span><p>QGIS + PostGIS + GeoServer give you authoring, storage and services. <strong>None of them is a portal</strong> with items, groups, sharing levels and member roles. Teams going this route add a catalogue product, an identity provider and a good deal of glue — or accept that “sharing” means file paths and server URLs passed around by hand. That is a legitimate choice for some organisations; it is not a free one, and it is exactly the kind of omission the five-job model exists to expose.</p></div>
+  <div class="callout warn"><span class="label">Misconception</span><p>“QGIS is free ArcGIS Pro, GeoServer is free ArcGIS Server, PostGIS is a free geodatabase.” An architecture gets proposed with three products and one missing job; or a data-model feature a geodatabase enforces (Chapter 8) is assumed to exist in PostGIS by default and silently does not. Compare <em>roles</em>, then check <em>each</em> capability the requirement needs.</p></div>
+
+  <h2><span class="mod">2.6.3</span>Shared knowledge or platform-specific?</h2>
+  <p>For each task, is the knowledge needed to do it well <strong>shared GIS knowledge</strong> (it transfers unchanged to any platform) or <strong>platform-specific implementation</strong> (you would relearn it on another product)? Most tasks have both; sort by the <em>dominant</em> part. Worked example first: <em>“Decide that a ward should be a polygon rather than a point”</em> → shared, because it depends on the question the data must answer, not the software; the platform-specific part is only the geometry type’s name and storage format.</p>
+  <div class="try sorter" data-items='[{"t":"Publish the Requests dataset as a hosted feature layer and share it with a group","bin":"Platform-specific","why":"the publish dialog and sharing UI are Esri’s; the decision about who should see the data is shared"},{"t":"Decide that the service is the authoritative copy and the original file is archived","bin":"Shared","why":"an authoritative-copy decision applies anywhere; how to enforce the archive is platform-specific"},{"t":"Write a browser page that draws request points from a service and opens a pop-up on click","bin":"Platform-specific","why":"the library API; the idea that the page is a client holding no data is shared"},{"t":"Explain why a phone showing In progress and a laptop showing Closed can both be non-authoritative","bin":"Shared","why":"entirely shared; only how to check the service’s value is platform-specific"},{"t":"Choose between configuring Dashboards and building a custom monitoring page","bin":"Shared","why":"the configure/extend/build reasoning is shared; what Dashboards supports on the current release is platform-specific"}]'>
+    <span class="tag">Try it</span>
+    <div class="items"></div>
+    <div class="bins">
+      <div class="bin" data-bin="Shared"><h5>Shared GIS knowledge</h5></div>
+      <div class="bin" data-bin="Platform-specific"><h5>Platform-specific</h5></div>
+    </div>
+  </div>
+  <p class="small"><strong>Reserved for later phases:</strong> the protocols behind the services (feature-service REST calls, WMS/WFS request syntax, tile schemes) and production architecture (high availability, federation, security). Naming them is enough for now.</p>
+
+  <div class="quiz" data-answer="3" data-fb="OpenLayers is a browser library: R5. It provides no storage, no services and no catalogue. Any two of R2, R3, R4 are left uncovered by the sentence.">
+    <div class="q">“We will replace ArcGIS Online with OpenLayers.” Which job does OpenLayers cover?</div>
+    <div class="opts">
+      <button class="opt">R2 storage</button>
+      <button class="opt">R3 service delivery</button>
+      <button class="opt">R4 content organisation</button>
+      <button class="opt">R5 user applications</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>One sentence each: which job does OpenLayers cover, which does PostGIS cover, and which job is <em>not</em> covered by QGIS + PostGIS + GeoServer without a further product?</p></div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  document.getElementById("olCheck").addEventListener("click", () => {
+    const picked = [...document.querySelectorAll("#olChecks input:checked")].map(i => i.value);
+    const ok = picked.length === 1 && picked[0] === "R5";
+    document.getElementById("olOut").innerHTML = (ok ? '<div class="verdict ok">Right — R5 only.</div>' : '<div class="verdict no">Not quite — OpenLayers covers R5 only.</div>') + "The sentence “we’ll use X” is complete only when X, or a named set of products around X, covers all five jobs the requirement needs. Saying “Mapbox” covers more of them — but with Mapbox’s hosted services, a different operational and contractual choice, not a like-for-like swap.";
+  });
+  const notes = {
+    generic: "The five jobs with no products. This is the portable part.",
+    esri: "One vendor’s arrangement. ArcGIS Online covers R2, R3, R4 and part of R5 by itself — which is why it feels like “the system”.",
+    oss: "Three open-source products cover R1, R2 and R3 well. Look at R4: no item catalogue, no sharing levels, no member roles among them. Products are examples, not a prescribed stack; capability statements checked 19 September 2026."
+  };
+  function draw(mode) { renderResp(document.getElementById("archFig"), { mode, caption: "Figure 2.6 — two arrangements of the same five jobs (schematic)." }); document.getElementById("archOut").textContent = notes[mode]; document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode)); }
+  document.querySelectorAll("[data-mode]").forEach(b => b.addEventListener("click", () => draw(b.dataset.mode)));
+  draw("esri");
+}
+</script>
+</body>
+</html>

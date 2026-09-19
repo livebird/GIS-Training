@@ -6,6 +6,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8765", "--directory", "Chapter_01"],
       "port": 8765
+    },
+    {
+      "name": "chapter-02-tutorial",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8766", "--directory", "Chapter_02"],
+      "port": 8766
     }
   ]
 }
