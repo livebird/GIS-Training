@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.9 Recap, media brief and next chapter</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 3.9</div>
+    <h1>Recap, media notes, and what comes next</h1>
+    <p class="lead">Six ideas to carry forward, one small 3D sketch, and the question that opens Chapter 4.</p>
+  </div>
+
+  <h2><span class="mod">Recap</span>Six things to remember</h2>
+  <div class="try">
+    <span class="tag">Self-test</span>
+    <p>Before opening each one, say it aloud in your own words.</p>
+    <details class="reveal"><summary>1 · The real thing is not its shape</summary><p>Point or polygon is a choice for a purpose and a scale; a richer shape is <em>different</em> information, not more truth. Asset, complaint and inspection are three collections. A feature is one row of shape + facts; it may be an invisible area (a ward) and may even have no shape yet (P7).</p></details>
+    <details class="reveal"><summary>2 · Shapes are lists of vertices</summary><p>Point = one vertex; line = vertices joined by segments; polygon = a closed ring. One shape type per dataset. A drawn stroke’s thickness says nothing about ground width — that is a column, or a separate polygon. X and Y are always there; Z and M are optional and formats disagree about them.</p></details>
+    <details class="reveal"><summary>3 · Parts, holes, formats</summary><p>A multipart feature is one row in several pieces (the park). A hole cuts area out (the depot courtyard) — a point in the hole is not inside. A closed line is not a polygon. WKT, GeoJSON and Esri JSON write the same ideas with different rules — GeoJSON outer rings run counter-clockwise, Esri’s clockwise.</p></details>
+    <details class="reveal"><summary>4 · Attributes</summary><p>Rows, columns, values; the map and the table are two views of one row. The business ID is not the system ObjectID and not the label. Colour by one column, filter by another, label by a third — none changes the data. Inspection history is a separate table linked by ID.</p></details>
+    <details class="reveal"><summary>5 · Dataset, layer, map</summary><p>A dataset is stored; a layer points at it with its own filter and colours; a map stacks layers. A filtered view stays live; an exported copy drifts. Layers higher in the list cover those below — check drawing order and filters before believing an empty-looking map.</p></details>
+    <details class="reveal"><summary>6 · Inspect before you trust</summary><p>Extent is a box, not a shape. Write the intake record: count, shape type, columns, rows with no shape. Predict which stored rows an action changes before you act: presentation changes touch none; edits touch exactly the rows you edit; edits sit in memory until you save them.</p></details>
+  </div>
+
+  <h2><span class="mod">One sketch</span>A Z per vertex does not make a building</h2>
+  <p>Module 3.2.3 said that giving a vertex a Z value gives it a height — and nothing else. Drag the slider to lift one corner of the school outline. The planned 3D scene for this chapter (see the chapter document’s Media Appendix, M.5) shows the same thing; this 2D side view is its text-and-picture alternative.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls"><label>z of corner 3 <input type="range" id="z" min="0" max="8" step="0.5" value="0"> <span id="zV">0 m</span></label><label><input type="checkbox" id="ghost"> show what a solid would need</label></div>
+    <figure class="map-fig" id="zFig"></figure>
+    <div class="result" id="zOut"></div>
+  </div>
+  <p class="small">Schematic; training grid metres; no vertical exaggeration. A real building solid is a different shape type (Esri’s <em>multipatch</em>), outside Phase 1.</p>
+
+  <h2><span class="mod">Media notes</span>For the slides and the audio version</h2>
+  <div class="grid-2">
+    <div class="card"><h4 style="margin-top:0">Slides</h4><p>One group per module: sketch → geometry → attribute cards → layer styles; the two-part park and the holed depot; ring vs closed line; the three written forms with direction arrows; table ↔ map; dataset → two layers → copy; drawing order in two frames; extents as dashed boxes; the intake record; the “predict first” table. Every slide poses its question <em>before</em> the answer.</p></div>
+    <div class="card"><h4 style="margin-top:0">Audio</h4><p>Describe every shape by walking its vertices aloud (“starts at five hundred, zero; straight up to five hundred, five hundred; then diagonally to eight hundred, nine hundred”). Introduce each unit once — metres, square metres, the printing point. Say ring directions as “right, up, left, down”. Never “this box” or “the red one”.</p></div>
+  </div>
+
+  <h2><span class="mod">Cross-references</span>Where these ideas go next</h2>
+  <ul>
+    <li>What a coordinate reference system adds to (x, y); why other systems write latitude first; vertical reference for Z — <strong>Chapter 5</strong>.</li>
+    <li>Measuring length and area on the Earth rather than on flat graph paper — <strong>Chapter 6</strong>.</li>
+    <li>Converting between WKT, GeoJSON and Esri JSON without losing M values or curves; GeoPackage, shapefile and geodatabase details — <strong>Chapter 7</strong>.</li>
+    <li>Designing identifiers and the assets ↔ inspections relationship — <strong>Chapter 8</strong>.</li>
+    <li>Fixing P7, validity rules (unclosed rings, self-intersections, ring direction), editing with an audit trail — <strong>Chapter 9</strong>.</li>
+    <li>“Inside” rules for a point on a shared edge or in a hole; joins across related tables — <strong>Chapter 10</strong>.</li>
+    <li>Splitting the multipart park by ward; buffers around points versus outlines — <strong>Chapter 11</strong>.</li>
+    <li>Symbol design, labels and drawing order as map-making — <strong>Chapter 12</strong>.</li>
+  </ul>
+
+  <div class="callout idea"><span class="label">Transition to Chapter 4</span><p>Everything in this chapter was built from <em>vertices</em>: stored positions joined into points, lines and areas. Chapter 4 introduces the other fundamental way to store geographic data — a <strong>grid of cells</strong>, each holding a value, with no vertices at all — and asks what happens to “feature”, “attribute” and “extent” when the data is a picture of numbers.</p></div>
+  <p class="small">Sources for every software statement on these pages are listed in the chapter document <em>GIS_Phase_1_Chapter_03_Geographic_Data_Features_Geometry_Attributes_and_Layers.md</em> (reference list, access date 19 September 2026).</p>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  function drawZ() {
+    const z = +document.getElementById("z").value, ghost = document.getElementById("ghost").checked;
+    document.getElementById("zV").textContent = z + " m";
+    const svg = mkEl("svg", { viewBox: "0 0 700 300", role: "img", "aria-label": "Side view of the school outline as a flat line with one corner lifted along a Z axis." });
+    const X = x => 100 + (x - 370) * 6, Yz = zz => 230 - zz * 14;
+    // axis
+    mkEl("line", { x1: 60, y1: 240, x2: 60, y2: 90, class: "axis" }, svg); [0, 4, 8].forEach(v => { mkEl("line", { x1: 55, y1: Yz(v), x2: 65, y2: Yz(v), class: "axis" }, svg); const t = mkEl("text", { x: 45, y: Yz(v) + 5, class: "axis-label", "text-anchor": "end", style: "font-size:14px" }, svg); t.textContent = v + " m"; });
+    const tz = mkEl("text", { x: 60, y: 78, class: "axis-label", "text-anchor": "middle", style: "font-size:14px" }, svg); tz.textContent = "z";
+    // ground line: x from 370 to 430 seen from the side (y collapsed)
+    const pts = [[370, 0], [430, 0], [430, z], [370, 0]];
+    mkEl("line", { x1: X(370), y1: Yz(0), x2: X(430), y2: Yz(0), class: "axis" }, svg);
+    mkEl("polyline", { points: `${X(370)},${Yz(0)} ${X(430)},${Yz(0)} ${X(430)},${Yz(z)} ${X(370)},${Yz(0)}`, class: "line", style: "stroke:#d3541f;stroke-width:4" }, svg);
+    [[370, 0, "1: (370, 680, 0)"], [430, 0, "2: (430, 680, 0)"], [430, z, "3: (430, 720, " + z + ")"]].forEach(v => { mkEl("circle", { cx: X(v[0]), cy: Yz(v[1]), r: 6, class: "vertex" + (v[1] > 0 ? " lit" : "") }, svg); const t = mkEl("text", { x: X(v[0]) + (v[0] > 400 ? 10 : -10), y: Yz(v[1]) + (v[1] > 0 ? -10 : 22), class: "vlabel", style: "font-size:13px", "text-anchor": v[0] > 400 ? "start" : "end" }, svg); t.textContent = v[2]; });
+    if (ghost) { mkEl("rect", { x: X(370), y: Yz(8), width: X(430) - X(370), height: Yz(0) - Yz(8), class: "ghost" }, svg); const t = mkEl("text", { x: X(372), y: Yz(5.5), class: "tag", style: "font-size:13px" }, svg); t.textContent = "a solid would need walls and a roof — not stored"; }
+    const cap = mkEl("text", { x: 100, y: 285, class: "tag", style: "font-size:13px" }, svg); cap.textContent = "Side view (x–z) of the school outline; corners 1–3 shown, corner 4 behind corner 1. Schematic.";
+    const f = document.getElementById("zFig"); f.innerHTML = ""; f.appendChild(svg);
+    document.getElementById("zOut").innerHTML = z === 0 ? "All four corners at z = 0: a flat outline, planar area 2,400 m²." : `Corner 3 is now at z = ${z} m. The outline is a tilted, non-flat quadrilateral. Its projected area is still <strong>2,400 m²</strong> (raising z does not change x or y). <strong>No walls appeared, no roof appeared.</strong> The dataset now “has Z” — and still describes no building.`;
+  }
+  document.getElementById("z").addEventListener("input", drawZ); document.getElementById("ghost").addEventListener("change", drawZ); drawZ();
+}
+</script>
+</body>
+</html>

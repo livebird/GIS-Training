@@ -112,7 +112,7 @@ function renderTown(el, opts = {}) {
     park() {
       const p = mk("path", { d: pathOf(TOWN.park.parts), class: "poly park" + sel("park", "PK-01") });
       click(p, "park", "PK-01");
-      if (o.labels) { const t = mk("text", { x: SX(200), y: SY(170), class: "tag", "text-anchor": "middle" }); t.textContent = "PK-01 (part 1)"; const t2 = mk("text", { x: SX(1400), y: SY(170), class: "tag", "text-anchor": "middle" }); t2.textContent = "PK-01 (part 2)"; }
+      if (o.labels) { const t = mk("text", { x: SX(200), y: SY(15), class: "tag", "text-anchor": "middle" }); t.textContent = "PK-01 (part 1)"; const t2 = mk("text", { x: SX(1400), y: SY(15), class: "tag", "text-anchor": "middle" }); t2.textContent = "PK-01 (part 2)"; }
     },
     depot() {
       const h = mk("path", { d: pathOf([TOWN.depot.hole]), class: "hole-hatch" }); h.style.pointerEvents = "none";
@@ -176,7 +176,8 @@ function renderTown(el, opts = {}) {
   }
   if (o.vertices) {
     const vs = layerVertices(o.vertices);
-    vs.forEach((v, i) => { mk("circle", { cx: SX(v[0]), cy: SY(v[1]), r: 14, class: "vertex" + (o.litVertex === i ? " lit" : "") }); if (o.vertexLabels) { const t = mk("text", { x: SX(v[0]) + 18, y: SY(v[1]) - 18, class: "vlabel" }); t.textContent = `(${v[0]}, ${v[1]})`; } });
+    const r = o.vertexR || 14;
+    vs.forEach((v, i) => { mk("circle", { cx: SX(v[0]), cy: SY(v[1]), r, class: "vertex" + (o.litVertex === i ? " lit" : ""), style: r < 10 ? "stroke-width:2" : "" }); if (o.vertexLabels) { const t = mk("text", { x: SX(v[0]) + 18, y: SY(v[1]) - 18, class: "vlabel" }); t.textContent = `(${v[0]}, ${v[1]})`; } if (o.vertexNumbers && i < vs.length - 1) { const t = mk("text", { x: SX(v[0]) + r + 3, y: SY(v[1]) - r - 2, class: "vlabel", style: `font-size:${r * 2.5}px;font-weight:600` }); t.textContent = i + 1; } });
   }
   if (o.extra) o.extra(mk, svg);
   el.innerHTML = ""; el.appendChild(svg);

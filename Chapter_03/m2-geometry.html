@@ -121,7 +121,7 @@ function pageInit() {
     const s = S[k];
     document.querySelectorAll("#shapePick .btn").forEach(b => b.setAttribute("aria-pressed", b.dataset.s === k));
     const zoom = !!s.view;
-    renderTown(document.getElementById("vFig"), { visible: s.visible, selected: s.sel, vertices: s.vkey || null, vertexLabels: !zoom, roadThin: zoom, view: s.view || null, axes: !zoom, labels: !zoom, extra: mk => { if (k === "DR") { mk("circle", { cx: 995, cy: SY(510), r: 14, class: "vertex lit" }); const t = mk("text", { x: 1015, y: SY(510) - 18, class: "vlabel" }); t.textContent = "(995, 510)"; } if (zoom) { s.verts.slice(0, -1).forEach(v => { const t = mk("text", { x: SX(v[0]) + 8, y: SY(v[1]) - 8, class: "vlabel", style: "font-size:11px" }); t.textContent = `(${v[0]}, ${v[1]})`; }); } }, caption: s.name + (zoom ? " — zoomed in" : "") });
+    renderTown(document.getElementById("vFig"), { visible: s.visible, selected: s.sel, vertices: s.vkey || null, vertexLabels: !zoom, vertexNumbers: zoom, vertexR: zoom ? 4 : 14, roadThin: zoom, view: s.view || null, axes: !zoom, labels: !zoom, extra: mk => { if (k === "DR") { mk("circle", { cx: 995, cy: SY(510), r: 14, class: "vertex lit" }); const t = mk("text", { x: 1015, y: SY(510) - 18, class: "vlabel" }); t.textContent = "(995, 510)"; } }, caption: s.name + (zoom ? " — zoomed in; vertex numbers match the list" : "") });
     const nV = s.verts.length, nSeg = s.kind === "point" ? 0 : nV - 1;
     let measure = "";
     if (s.kind === "line") measure = `<div class="tile"><div class="v">${fmtN(lineLength(s.verts))} m</div><div class="l">length</div></div>`;

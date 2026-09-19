@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.7 Guided lab: model and inspect a small town</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 3.7 · Guided lab</div>
+    <h1>Model and inspect a small town</h1>
+    <p class="lead">You get a made-up town as data. You will justify every shape choice, write an intake record, show one dataset two ways without changing it, and point at the one dataset that cannot answer its question. Your answers are saved in this browser; the deliverables go to your instructor.</p>
+    <div class="outcomes"><h4>Objective and prerequisites</h4>
+      <ul><li>Modules 3.1–3.6 read; the Chapter 1 map walk-through done or read.</li>
+      <li><strong>Software:</strong> ArcGIS Pro (primary route) <em>or</em> QGIS 3.40+ (route in 3.7.7). No software? Use the paper route (3.7.8) — it covers every outcome except the “observed in software” part.</li>
+      <li>No coordinate-system knowledge needed. The software will say the data has an <em>unknown</em> coordinate system. <strong>That is correct — do not “fix” it.</strong> Chapter 5 explains why.</li></ul></div>
+  </div>
+  <div class="callout warn"><span class="label">Honesty note</span><p>The steps below were written from the official ArcGIS Pro (3.7) and QGIS (3.40) documentation and have <strong>not been run by the author</strong>. Expected results are hand-checked from the tables, not observed on screen. Your instructor builds and verifies the data package before the session; if a button or label differs in your installed version, note it in your log.</p></div>
+
+  <h2><span class="mod">3.7.2</span>The data package (synthetic)</h2>
+  <p>Ten small text files. Lines and areas are written as <strong>WKT</strong> in a <code>wkt</code> column (module 3.3); points have <code>x</code> and <code>y</code> columns. The instructor turns these into <code>Chapter03_Town.gpkg</code> (a GeoPackage) or a file geodatabase. Download the files here to read them — you can open a CSV in any text editor or spreadsheet.</p>
+  <div class="card">
+    <div id="dls"></div>
+    <p class="small">Flat practice grid in metres, (x, y), y upward, <strong>no coordinate reference system</strong>. Not a real place. P7 has blank coordinates on purpose. The value <code>Closed - duplicate</code> uses a plain hyphen in the file.</p>
+  </div>
+  <details class="reveal"><summary>See the file contents on screen</summary><div id="fileView"></div></details>
+  <figure class="map-fig" id="townFig"></figure>
+
+  <h2><span class="mod">3.7.3</span>Steps (ArcGIS Pro primary route)</h2>
+  <p>Keep a <strong>lab log</strong>. Write every observation as you make it: “I expected …” and “I saw …” are both required.</p>
+  <ol class="steps" style="gap:.6rem">
+    <li class="step"><span class="n">1</span><div><strong>Open the prepared project</strong> <code>Chapter03_Town.aprx</code> (or make a new map and add every feature class from the GeoPackage — ArcGIS Pro reads GeoPackage directly). The map reports an <em>unknown</em> coordinate system. Do not set one.</div></li>
+    <li class="step"><span class="n">2</span><div><strong>Justify the shapes</strong> before touching the software further: complete deliverable A below for all ten datasets.</div></li>
+    <li class="step"><span class="n">3</span><div><strong>Intake check</strong> (module 3.6.2): for each spatial dataset record count, shape type, columns, extent, and rows with no shape. Compare with the expected values (3.7.4). Every difference is either a build error (report it) or a misunderstanding (resolve it). Do not continue with an unexplained difference.</div></li>
+    <li class="step"><span class="n">4</span><div><strong>Find the structural exceptions.</strong> Open the tables of <em>Parks</em> and <em>Depot</em>: one row each. Zoom to Parks: what does one row look like? Zoom to Depot and click inside the courtyard with the <em>Explore</em> tool: does a pop-up for DP-01 appear? Click the depot ring itself and compare. Identify L1: note what the pop-up reports (a length, perhaps; never an area).</div></li>
+    <li class="step"><span class="n">5</span><div><strong>Related records.</strong> Select DR-0042 on the map; open the Assets table with <em>Show Selected Records</em>. Open the <em>Inspections</em> stand-alone table and, without any join, find rows with <code>asset_id = 'DR-0042'</code> (sort, or <em>Select By Attributes</em>). Expect 2, in date order.</div></li>
+    <li class="step"><span class="n">6</span><div><strong>Two presentations of one source.</strong> Add the <em>Requests</em> feature class to the map <strong>a second time</strong>. Rename the two layers <em>Requests — by status</em> and <em>Requests — High priority</em>. On the first: <em>Feature Layer</em> ▸ <em>Symbology</em> ▸ <em>Unique Values</em>, Field 1 = <code>status</code>. On the second: <em>Feature Layer</em> ▸ <em>Data</em> ▸ <em>Build Definition Query</em> ▸ <em>New definition query</em>, clause <code>priority = 'High'</code>, <em>Apply</em>. Record each layer’s row count and dot count. <strong>Then record the source dataset’s count</strong> from the Catalog pane or <em>Get Count</em> on the feature class with no selection.</div></li>
+    <li class="step"><span class="n">7</span><div><strong>Drawing order.</strong> Drag <em>Wards</em> (solid fill) to the top of the Contents pane. Count visible complaints. Drag it to the bottom. Count again.</div></li>
+    <li class="step"><span class="n">8</span><div><strong>Presentation change vs geometry edit.</strong> Make <code>Requests_scratch</code> with <em>Copy Features</em> (no selection active). Write the five predictions of module 3.6.3 in your log. On the scratch copy: <em>Edit</em> ▸ <em>Modify</em> ▸ <em>Move</em>, move P1 to (200, 300), <em>Finish</em>. Check the predictions. <em>Edit</em> ▸ <em>Discard</em>. Confirm the original still has P1 at (200, 200) and 7 rows.</div></li>
+    <li class="step"><span class="n">9</span><div><strong>The unsuitable representation.</strong> Using only <code>Wards_as_points</code>, try to answer “which ward is P3 in?”. Write why it cannot, what it <em>could</em> answer, and what is needed.</div></li>
+    <li class="step validate"><span class="n">10</span><div><strong>Close without saving edits.</strong> Save the <em>project</em> if you like (settings only). Reopen: 7 requests, P1 at (200, 200).</div></li>
+  </ol>
+
+  <h2><span class="mod">3.7.4</span>Expected results (hand-checked, not observed in software)</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Step</th><th>Expected</th></tr></thead>
+    <tbody>
+      <tr><td>3</td><td>Counts 2, 3, <strong>7 (1 with no shape)</strong>, 4, 1, 1, 1, 1, 2; Inspections 3 rows, no shapes. Extents as in module 3.6.1.</td></tr>
+      <tr><td>4</td><td>Parks: 1 row, two rectangles far apart. Courtyard click: no DP-01 (the point is in the hole); ring click: DP-01. L1: no area.</td></tr>
+      <tr><td>5</td><td>INS-0001 (2024-10-15, Fair), then INS-0002 (2025-11-02, Poor).</td></tr>
+      <tr><td>6</td><td>Layer 1: 7 rows, 6 dots, 5 status classes. Layer 2: 3 rows (P2, P3, P6), 3 dots. <strong>Source: 7, unchanged.</strong></td></tr>
+      <tr><td>7</td><td>Wards on top with solid fill: 1 visible (P6). Wards at bottom: 6 visible.</td></tr>
+      <tr><td>8</td><td>Scratch copy: 7 rows, P1 at (200, 300), 200 m from R1; original unchanged.</td></tr>
+      <tr><td>9</td><td>Cannot answer; a point per ward can give a label/reference position; polygons are needed.</td></tr>
+      <tr><td>10</td><td>7 rows; P1 at (200, 200).</td></tr>
+    </tbody></table></div>
+  <div class="callout idea"><span class="label">The invariant</span><p>Across steps 6–8 the <em>Requests</em> feature class count is <strong>7 at every check</strong>. If it is ever not 7, stop and find which step wrote to the source.</p></div>
+
+  <h2><span class="mod">3.7.6</span>Deliverables — fill in here (saved in this browser), then submit</h2>
+  <div class="card lab-form">
+    <h4 style="margin-top:0">A · Geometry-choice table</h4>
+    <div class="table-wrap"><table class="trace" id="geomTable"></table></div>
+    <h4>B · Intake record</h4><p class="small">Use the interactive record in module 3.6.2 (it saves too) and copy the values into your submission with a column “matches expected? (Y/N + note)”.</p>
+    <h4>C · Annotated record/map pairs</h4><p class="small">For DR-0042, DP-01, PK-01 and P7: a sketch or screenshot of the feature (for P7, of the row and the empty map) with its row, and one sentence each on what the shape represents and what it omits.</p>
+    <label>D · Two-presentations evidence — symbology field, definition query text, row and dot counts for each layer, and the source count before and after</label><textarea data-k="d"></textarea>
+    <label>E · Prediction log for step 8 — the five predictions written BEFORE the move, then the observed results</label><textarea data-k="e"></textarea>
+    <label>F · Unsuitable-representation note (3–5 sentences on Wards_as_points)</label><textarea data-k="f"></textarea>
+    <div class="controls"><button class="btn primary" id="saveLab">Save</button><button class="btn ghost" id="clearLab">Clear saved answers</button><span class="saved" id="labSaved"></span></div>
+  </div>
+  <h3>Self-check before you submit</h3>
+  <div class="card checklist" id="checks">
+    <label><input type="checkbox" data-k="c1"> My intake record says Requests = <strong>7 rows, 1 without a shape</strong> — not 6.</label>
+    <label><input type="checkbox" data-k="c2"> Parks is recorded as <strong>1 row with 2 parts</strong>; Depot as 1 row with 2 rings.</label>
+    <label><input type="checkbox" data-k="c3"> Deliverable D states the source count <strong>before and after</strong>, and both are 7.</label>
+    <label><input type="checkbox" data-k="c4"> My five predictions in E were written before I moved P1 (they carry a time or a “before” heading).</label>
+    <label><input type="checkbox" data-k="c5"> I did not assign a coordinate system to any dataset.</label>
+    <label><input type="checkbox" data-k="c6"> I edited only <code>Requests_scratch</code>, and discarded even that.</label>
+  </div>
+  <div class="result" id="autoCheck"></div>
+
+  <h2><span class="mod">3.7.5</span>Troubleshooting</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td>Software offers to assign a coordinate system, or warns “unknown spatial reference”</td><td>Expected for this data</td><td>Decline; write the message in your log; Chapter 5</td></tr>
+      <tr><td>Requests table shows 6 rows, not 7</td><td>The build dropped the blank-coordinate row</td><td>Tell the instructor (Pro’s XY Table To Point keeps it as an empty shape; QGIS behaviour is a check item)</td></tr>
+      <tr><td><em>Requests — High priority</em> shows 7 rows</td><td>Definition query not applied or not active (only one can be active)</td><td>Layer Properties ▸ Definition Query; check the active query</td></tr>
+      <tr><td>Get Count returns 3 for the source</td><td>A selection or filter was in effect on the layer you counted</td><td>Clear the selection; count the feature class from the Catalog pane, not the filtered layer</td></tr>
+      <tr><td>Clicking in the depot courtyard identifies DP-01</td><td>The hole was lost in the build, or the click landed on the ring</td><td>Check the ring count; zoom in and click again near (1500, 700)</td></tr>
+      <tr><td>Moving P1 changed the original</td><td>You moved it on the original layer, or the “copy” is a second layer on the same source rather than an exported copy</td><td>Discard edits; confirm <code>Requests_scratch</code> is a separate feature class in the Catalog pane</td></tr>
+      <tr><td>Parks has 2 rows</td><td>The build split the multipart feature</td><td>Tell the instructor; or continue with 2 rows and record the difference</td></tr>
+    </tbody></table></div>
+
+  <h2><span class="mod">3.7.7</span>QGIS route (same results; not execution-tested)</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Adding data:</strong> <em>Layer ▸ Add Layer ▸ Add Vector Layer</em> for the GeoPackage. For the CSV route, <em>Add Delimited Text Layer</em> offers “Point coordinates” (X/Y fields) or “Well known text (WKT)”, and asks for a Geometry CRS — your instructor will tell you what to choose so the layer stays without an Earth reference.</li>
+      <li><strong>Intake:</strong> Layer Properties ▸ <em>Information</em> tab (geometry type, extent, feature count, fields); attribute-table title bar for counts. QGIS may report Parks as <em>MultiPolygon</em> — still a polygon layer; record what you see.</li>
+      <li><strong>Two presentations:</strong> right-click ▸ <em>Duplicate Layer</em>. Symbology ▸ <em>Categorized</em> on <code>status</code>, <em>Classify</em>; on the duplicate, <em>Filter…</em> with <code>"priority" = 'High'</code>. Check the source count from a third, unfiltered layer or the Browser panel.</li>
+      <li><strong>Drawing order:</strong> drag in the Layers panel; the layer nearer the top draws over those below.</li>
+      <li><strong>Scratch copy and move:</strong> <em>Export ▸ Save Features As…</em> to a new GeoPackage layer; <em>Toggle Editing</em>; <em>Move Feature(s)</em>; then <em>Save Layer Edits</em> or cancel.</li>
+      <li><strong>Identify:</strong> <em>Identify Features</em> tool; a click in the courtyard should identify nothing from Depot if the hole survived the build.</li>
+    </ul>
+    <p class="small">Do not claim QGIS and ArcGIS Pro produce identical <em>pictures</em> (default symbols, pop-ups and area/length column names differ). Claim only that counts, types, extents and the invariant agree — and record any that do not.</p>
+  </div>
+
+  <h2><span class="mod">3.7.8</span>Paper route (no software)</h2>
+  <p>Using the fixture tables only: complete A, B (from the tables), C (sketches) and F; for D, write the two layer definitions and work out their row and dot counts by hand; for E, write the five predictions and derive the observed values arithmetically. State on your submission that no software observation was made.</p>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  /* data package as downloadable CSV text */
+  const FILES = {
+    "wards.csv": 'ward,wkt\nA,"POLYGON((0 0,1000 0,1000 1000,0 1000,0 0))"\nB,"POLYGON((1000 0,2000 0,2000 1000,1000 1000,1000 0))"\n',
+    "roads.csv": 'road_id,name,width_m,wkt\nR1,Main Road,12,"LINESTRING(0 500,2000 500)"\nR2,Station Road,7,"LINESTRING(500 0,500 500,800 900)"\nL1,Bus turning loop,6,"LINESTRING(1300 300,1350 300,1350 350,1300 350,1300 300)"\n',
+    "requests.csv": 'request_id,x,y,category,priority,status,reported_on,closed_on,channel,note\nP1,200,200,Streetlight out,Medium,Open,2026-09-02,,Mobile app,\nP2,800,800,Pothole,High,In progress,2026-08-28,,Phone,Crew assigned 2026-09-01\nP3,1200,250,Water leak,High,Open,2026-09-10,,Mobile app,\nP4,1700,900,Pothole,Low,Resolved,2026-08-15,2026-08-20,Web form,\nP5,1000,500,Blocked drain,Medium,Reopened,2026-08-30,,Phone,Closed 2026-09-05; reopened 2026-09-12\nP6,2200,500,Fallen tree,High,Closed - duplicate,2026-09-11,2026-09-12,Phone,Duplicate of a report not in this package\nP7,,,Pothole,Medium,Open,2026-09-14,,Phone,Caller could not give a location; to be located\n',
+    "assets.csv": 'asset_id,asset_type,x,y,installed,condition\nSL-0113,Streetlight,205,195,2018,Fair\nDR-0042,Drain,995,510,2011,Poor\nTR-0301,Tree,2190,520,2005,Unknown\nTR-0302,Tree,1500,700,2019,Good\n',
+    "schools_point.csv": 'school_id,name,x,y\nSC-01,Ward A Primary School,400,700\n',
+    "schools_footprint.csv": 'school_id,name,wkt\nSC-01,Ward A Primary School,"POLYGON((370 680,430 680,430 720,370 720,370 680))"\n',
+    "parks.csv": 'park_id,name,wkt\nPK-01,Riverside Park,"MULTIPOLYGON(((100 50,300 50,300 150,100 150,100 50)),((1300 50,1500 50,1500 150,1300 150,1300 50)))"\n',
+    "depot.csv": 'depot_id,name,wkt\nDP-01,Central depot,"POLYGON((1400 600,1600 600,1600 800,1400 800,1400 600),(1450 650,1550 650,1550 750,1450 750,1450 650))"\n',
+    "wards_as_points.csv": 'ward,x,y\nA,500,500\nB,1500,500\n',
+    "inspections.csv": 'inspection_id,asset_id,inspected_on,condition_found,inspector\nINS-0001,DR-0042,2024-10-15,Fair,crew01\nINS-0002,DR-0042,2025-11-02,Poor,crew01\nINS-0003,SL-0113,2026-03-14,Fair,crew02\n'
+  };
+  document.getElementById("dls").innerHTML = Object.keys(FILES).map(f => `<a class="btn small dl" download="${f}" href="data:text/csv;charset=utf-8,${encodeURIComponent(FILES[f])}">⬇ ${f}</a>`).join("");
+  document.getElementById("fileView").innerHTML = Object.keys(FILES).map(f => `<h4>${f}</h4><pre class="code">${FILES[f].replace(/</g, "&lt;")}</pre>`).join("");
+  renderTown(document.getElementById("townFig"), { order: ["wards", "park", "depot", "schoolFoot", "roads", "assets", "schoolPt", "wardPts", "requests"], visible: ["wards", "park", "depot", "schoolFoot", "roads", "assets", "schoolPt", "requests", "wardPts"], wardStyle: "outline", caption: "Everything in the package drawn at once, including the deliberately unsuitable Wards_as_points (blue dots). Schematic; synthetic grid." });
+
+  /* deliverable A */
+  const DSN = ["Wards", "Roads", "Requests", "Assets", "Schools_point", "Schools_footprint", "Parks", "Depot", "Wards_as_points", "Inspections"];
+  const KEY = "gis-ch3-lab"; const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+  const opt = (k, os) => `<select data-k="${k}"><option value="">—</option>${os.map(o => `<option ${saved[k] === o ? "selected" : ""}>${o}</option>`).join("")}</select>`;
+  const txt = k => `<input type="text" data-k="${k}" value="${(saved[k] || "").replace(/"/g, "&quot;")}">`;
+  document.getElementById("geomTable").innerHTML = `<thead><tr><th>Dataset</th><th>Shape used</th><th>Question it answers</th><th>Question it cannot answer</th><th>Scale / purpose assumption</th><th>Would you change it? Why?</th></tr></thead><tbody>` + DSN.map((d, i) => `<tr><td>${d}</td><td>${opt("g" + i, ["Point", "Line", "Polygon", "No shape (table)"])}</td><td>${txt("q" + i)}</td><td>${txt("n" + i)}</td><td>${txt("s" + i)}</td><td>${txt("w" + i)}</td></tr>`).join("") + "</tbody>";
+  const fields = () => document.querySelectorAll("[data-k]");
+  fields().forEach(f => { const v = saved[f.dataset.k]; if (v == null) return; if (f.type === "checkbox") f.checked = !!v; else if (f.tagName === "TEXTAREA") f.value = v; });
+  function save() { const o = {}; fields().forEach(f => o[f.dataset.k] = f.type === "checkbox" ? f.checked : f.value); localStorage.setItem(KEY, JSON.stringify(o)); document.getElementById("labSaved").textContent = "Saved " + new Date().toLocaleTimeString(); auto(); }
+  document.getElementById("saveLab").addEventListener("click", save);
+  document.getElementById("clearLab").addEventListener("click", () => { if (confirm("Clear all saved lab answers?")) { localStorage.removeItem(KEY); location.reload(); } });
+  document.getElementById("checks").addEventListener("change", save);
+  document.getElementById("geomTable").addEventListener("change", save);
+  function auto() {
+    const filled = DSN.filter((_, i) => document.querySelector(`[data-k="g${i}"]`).value).length;
+    const shapes = DSN.map((_, i) => document.querySelector(`[data-k="g${i}"]`).value);
+    const hints = [];
+    if (shapes[2] && shapes[2] !== "Point") hints.push("Requests are reported positions — points.");
+    if (shapes[6] && shapes[6] !== "Polygon") hints.push("The park is an area — polygon (one row, two parts).");
+    if (shapes[9] && shapes[9] !== "No shape (table)") hints.push("Inspections have no shape; they name an asset by ID.");
+    if (shapes[8] && shapes[8] !== "Point") hints.push("Wards_as_points is stored as points — that is exactly why it is unsuitable for “which ward?”.");
+    const ticks = [...document.querySelectorAll("#checks input")].filter(c => c.checked).length;
+    document.getElementById("autoCheck").innerHTML = `<strong>Automatic checks:</strong> ${filled}/10 shape choices made · ${ticks}/6 self-checks ticked. ` + (hints.length ? hints.map(h => `<span class="chip no">${h}</span>`).join(" ") : "") + ` <span class="small">The page checks only the shape column; the reasoning columns are judged by your instructor.</span>`;
+  }
+  auto();
+}
+</script>
+</body>
+</html>

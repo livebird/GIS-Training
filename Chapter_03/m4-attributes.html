@@ -33,14 +33,10 @@
   <div class="try">
     <span class="tag">Try it</span>
     <h3>Click a dot on the map, or a row in the table — they are the same record</h3>
-    <div class="two-col">
-      <figure class="map-fig" id="linkFig"></figure>
-      <div>
-        <div class="table-wrap"><table class="attr" id="linkTable"></table></div>
-        <div class="tablefoot" id="linkFoot">0 of 7 selected</div>
-        <div class="controls"><button class="btn small" id="showSel">Show selected records</button><button class="btn small" id="showAll" aria-pressed="true">Show all records</button></div>
-      </div>
-    </div>
+    <figure class="map-fig" id="linkFig"></figure>
+    <div class="table-wrap"><table class="attr" id="linkTable"></table></div>
+    <div class="tablefoot" id="linkFoot">0 of 7 selected</div>
+    <div class="controls"><button class="btn small" id="showSel">Show selected records</button><button class="btn small" id="showAll" aria-pressed="true">Show all records</button></div>
     <div class="result" id="linkOut">Try clicking P7’s row. Where is it on the map?</div>
   </div>
   <details class="reveal"><summary>Doing this in ArcGIS Pro and QGIS (from the official documentation; not execution-tested)</summary>
@@ -71,10 +67,10 @@
       <label>Filter <select id="filterBy"><option value="">none</option><option value="open">status is Open or Reopened</option><option value="high">priority = High</option><option value="pothole">category = Pothole</option></select></label>
       <label>Label with <select id="labelBy"><option value="id">request_id</option><option value="category">category</option><option value="">no label</option></select></label>
     </div>
-    <div class="two-col">
-      <figure class="map-fig" id="styleFig"></figure>
-      <div><div class="legend" id="legend"></div><div class="table-wrap"><table class="attr" id="styleTable"></table></div><div class="tilesx tiles" id="styleTiles"></div></div>
-    </div>
+    <figure class="map-fig" id="styleFig"></figure>
+    <div class="legend" id="legend"></div>
+    <div class="tiles" id="styleTiles"></div>
+    <div class="table-wrap"><table class="attr" id="styleTable"></table></div>
     <div class="result" id="styleOut"></div>
   </div>
   <div class="callout idea"><span class="label">Why a map label is not the ID</span><p>A <strong>label</strong> is chosen for <em>reading</em>: short, meaningful, often repeated (“Pothole” three times). An <strong>identifier</strong> is chosen for <em>linking</em>: unique, stable, often meaningless (“P3”). “Main Road” is a fine label for R1 but a poor key — many towns have several Main Roads, and roads get renamed. Keep both columns; show the label; join on the ID. (A <em>field alias</em> is a third, separate thing: a friendlier column <em>heading</em>, not a value.)</p></div>
@@ -98,10 +94,8 @@
   <div class="try">
     <span class="tag">Try it</span>
     <h3>Click an asset to see its inspections</h3>
-    <div class="two-col">
-      <figure class="map-fig" id="insFig"></figure>
-      <div><div class="table-wrap"><table class="attr" id="insTable"></table></div><div class="result" id="insOut">Click a diamond (streetlight, drain) or a green circle (tree).</div></div>
-    </div>
+    <figure class="map-fig" id="insFig"></figure>
+    <div class="table-wrap"><table class="attr" id="insTable"></table></div><div class="result" id="insOut">Click a diamond (streetlight, drain) or a green circle (tree).</div>
   </div>
   <div class="callout dev"><span class="label">Developer view</span><p><code>inspections.asset_id</code> is a foreign key to <code>assets.asset_id</code> — one asset, many inspections. <strong>Where the comparison stops:</strong> GIS software also offers <em>joins</em> that temporarily flatten related rows onto the map table, and a one-to-many join can multiply or collapse rows in ways a map count will not reveal. That trap is Chapter 10’s.</p></div>
 
@@ -113,7 +107,7 @@ function pageInit() {
   /* 3.4.1 linked selection */
   let sel = null, onlySel = false;
   function drawLink() {
-    renderTown(document.getElementById("linkFig"), { visible: ["wards", "roads", "requests"], selected: sel ? { layer: "requests", id: sel } : null, onSelect: (l, id) => { sel = id; drawLink(); }, caption: "Requests layer. Click a dot." });
+    renderTown(document.getElementById("linkFig"), { visible: ["wards", "roads", "requests"], selected: sel ? { layer: "requests", id: sel } : null, onSelect: (l, id) => { if (l !== "requests") return; sel = id; drawLink(); }, caption: "Requests layer. Click a dot." });
     const t = document.getElementById("linkTable");
     t.innerHTML = REQ_HEAD + TOWN.requests.filter(p => !onlySel || p.id === sel).map(p => requestRow(p, p.id === sel ? 'class="sel"' : "")).join("");
     document.getElementById("linkFoot").textContent = (sel ? 1 : 0) + " of 7 selected";
@@ -157,7 +151,7 @@ function pageInit() {
   /* 3.4.3 related records */
   let aSel = null;
   function drawIns() {
-    renderTown(document.getElementById("insFig"), { visible: ["wards", "roads", "assets"], selected: aSel ? { layer: "assets", id: aSel } : null, onSelect: (l, id) => { aSel = id; drawIns(); }, caption: "Assets layer. Click one." });
+    renderTown(document.getElementById("insFig"), { visible: ["wards", "roads", "assets"], selected: aSel ? { layer: "assets", id: aSel } : null, onSelect: (l, id) => { if (l !== "assets") return; aSel = id; drawIns(); }, caption: "Assets layer. Click one." });
     const rows = TOWN.inspections.filter(i => i.asset_id === aSel);
     document.getElementById("insTable").innerHTML = `<tr><th>inspection_id</th><th>asset_id</th><th>inspected_on</th><th>found</th><th>by</th></tr>` + TOWN.inspections.map(i => `<tr class="${i.asset_id === aSel ? "sel" : ""}"><td class="mono">${i.id}</td><td class="mono">${i.asset_id}</td><td class="mono">${i.date}</td><td>${i.found}</td><td class="mono">${i.by}</td></tr>`).join("");
     if (aSel) { const a = TOWN.assets.find(x => x.id === aSel); document.getElementById("insOut").innerHTML = `<strong>${a.id}</strong> (${a.type}, condition <em>${a.condition}</em>): ${rows.length} inspection${rows.length === 1 ? "" : "s"} found by looking up <code>asset_id = '${a.id}'</code>` + (rows.length ? ` — ${rows.map(r => r.date + " (" + r.found + ")").join(", ")}. The asset row’s condition is just a summary of the latest one.` : ". <strong>No rows.</strong> Never inspected? Or inspected and the record lost? The asset row alone cannot tell you."); }
