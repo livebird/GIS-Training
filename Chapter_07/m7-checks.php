@@ -20,7 +20,7 @@
       <tr><td>CRS</td><td>Data source properties</td><td>None — local grid (documented); the importer may show “Unknown” or the local reference you assign</td></tr>
       <tr><td>Extent</td><td>Min / max of x and y</td><td class="mono">x 205–2190; y 195–950</td></tr>
       <tr><td>Null counts per field</td><td>Count nulls / empties per field</td><td><code>condition_score</code> 1; <code>last_inspection_at</code> 1; <code>inspector_note</code> 1 empty</td></tr>
-      <tr><td>Unicode samples</td><td>Copy two values verbatim</td><td><code>સ્ટ્રીટલાઇટ</code> (SL-0113); <code>Silt build-up — ગટર ભરાયેલી છે</code> (DR-0042)</td></tr>
+      <tr><td>Free-text samples</td><td>Copy two values verbatim, including punctuation</td><td><code>Lamp flickers at dusk</code> (SL-0113); <code>Silt build-up — needs clearing</code> (DR-0042)</td></tr>
       <tr><td>Identifier sample</td><td>Copy the leading-zero code verbatim</td><td class="mono">0113 (SL-0113), 0007 (BN-0007)</td></tr>
       <tr><td>Date/time samples</td><td>Copy verbatim with offset</td><td class="mono">2026-08-30T02:10:00+05:30 (SL-0055)</td></tr>
       <tr><td>One statistic by hand</td><td>Compute it yourself</td><td class="mono">mean condition_score (non-null) = 3.2</td></tr>
@@ -42,22 +42,22 @@
   </div>
   <div class="grid-2">
     <div class="card"><h4 style="margin-top:0">Intentional adaptation</h4><p>A change you decided on because the target format or the recipient requires it, which you can describe, justify and (often) reverse. Examples: GeoPackage stores the timestamp as UTC with <code>Z</code>; shapefile names shortened with a written old → new mapping; a text <code>legacy_code</code> deliberately kept as text.</p></div>
-    <div class="card"><h4 style="margin-top:0">Accidental loss</h4><p>A change you did not decide on and cannot justify to the recipient. Examples: null score became 0; <code>0113</code> became 113 because a type was guessed; Gujarati became <code>????</code>; SL-0055’s date moved a day with nobody noting the UTC conversion; a record dropped because its geometry was empty.</p></div>
+    <div class="card"><h4 style="margin-top:0">Accidental loss</h4><p>A change you did not decide on and cannot justify to the recipient. Examples: null score became 0; <code>0113</code> became 113 because a type was guessed; TR-0301’s empty note became a single space; SL-0055’s date moved a day with nobody noting the UTC conversion; a record dropped because its geometry was empty.</p></div>
   </div>
 
   <h2><span class="mod">7.7.3</span>Three working rules</h2>
   <ol>
     <li><strong>Never convert in place.</strong> The original is the only evidence of what the data looked like before your tool touched it. Keep it read-only, beside its intake form.</li>
     <li><strong>Name outputs for content and purpose, not for the step.</strong> <code>assets_ch7_shp_for_contractorX_2026-09-19</code> says what it is, who it was for and when; <code>export1</code> and <code>final_final</code> do not. Put the format’s limits (the field-name mapping, for example) in the readme that travels with the output.</li>
-    <li><strong>A “completed” message is not a semantic validation.</strong> The tool verified that it could write a structurally valid file. It did not verify that <code>0</code> still means “not assessed”, that <code>legacy_cod</code> is the field a downstream join expects, or that a reader with another code page will see Gujarati. Only the before/after comparison verifies meaning, and only a person can say which column a change belongs in.</li>
+    <li><strong>A “completed” message is not a semantic validation.</strong> The tool verified that it could write a structurally valid file. It did not verify that <code>0</code> still means “not assessed”, that <code>legacy_cod</code> is the field a downstream join expects, or that an empty note now reads the same as a real space. Only the before/after comparison verifies meaning, and only a person can say which column a change belongs in.</li>
   </ol>
   <div class="callout dev"><span class="label">Developer view</span><p>This is a data-migration test: snapshot, migrate, diff, classify diffs. Good analogy. <strong>Where it breaks:</strong> in most application migrations a lost null raises an error or a failed constraint. A shapefile writer replaces it with a legal-looking value and reports success. GIS conversions must be tested for what they <em>changed</em>, not only for what they <em>rejected</em>.</p></div>
 
-  <div class="quiz" data-answer="1" data-fb="Count and field-count lines detect none of these. Nulls substituted → the null-count line and the TR-0301 known record; names shortened → the schema line; time/date changed → the SL-0055 sample; Gujarati re-encoded → the Unicode sample; zeros lost → the identifier sample.">
+  <div class="quiz" data-answer="1" data-fb="Count and field-count lines detect none of these. Nulls substituted → the null-count line and the TR-0301 known record; names shortened → the schema line; time/date changed → the SL-0055 sample; an empty note turned into a space → the free-text sample; zeros lost → the identifier sample.">
     <div class="q">After exporting F7 to a shapefile, your comparison shows six records, ten fields, and no error. Which snapshot lines could <em>still</em> reveal a change?</div>
     <div class="opts">
       <button class="opt">None — six in, six out, ten fields, no error means nothing changed.</button>
-      <button class="opt">Null counts, the schema (names), the date/time sample, the Unicode sample, and the identifier sample.</button>
+      <button class="opt">Null counts, the schema (names), the date/time sample, the free-text sample, and the identifier sample.</button>
       <button class="opt">Only the extent.</button>
       <button class="opt">Only the file size.</button>
     </div><div class="fb"></div>
@@ -73,7 +73,7 @@ function pageInit() {
     const fmt = document.getElementById("fmt").value, typed = document.getElementById("typed").checked, doc = document.getElementById("documented").checked;
     let html = `<thead><tr><th>record · field</th><th>before</th><th>after</th><th>rule says</th><th>your call</th></tr></thead><tbody>`;
     const rows = [];
-    KNOWN.forEach(i => { const r = convertRow(F7.rows[i], fmt, { tsTyped: typed, utcFirst: fmt === "shp" && typed, codepage: "utf8" }); r.fields.forEach(f => { if (f.status !== "kept" || f.outName !== f.name) rows.push({ id: F7.rows[i].asset_id, f }); }); });
+    KNOWN.forEach(i => { const r = convertRow(F7.rows[i], fmt, { tsTyped: typed, utcFirst: fmt === "shp" && typed }); r.fields.forEach(f => { if (f.status !== "kept" || f.outName !== f.name) rows.push({ id: F7.rows[i].asset_id, f }); }); });
     if (!rows.length) html += `<tr><td colspan="5">No differences predicted for these settings.</td></tr>`;
     rows.forEach((x, k) => {
       const f = x.f;

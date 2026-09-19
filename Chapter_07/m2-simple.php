@@ -12,7 +12,7 @@
   <h2><span class="mod">7.2.1</span>A coordinate CSV carries nothing geographic inside it</h2>
   <p>Here is Table F7 as the text file the lab uses. Read it before any software does. Ten header names; the codes in the second column are in quotes on purpose; the TR-0301 row has <em>three empty fields in a row</em>.</p>
   <div class="copywrap"><pre id="csvPre" class="listing"></pre></div>
-  <p>Nothing in that file says what <code>x</code> and <code>y</code> mean, what units they are in, which coordinate system they belong to, whether an empty field means “null” or “no note”, or how the Gujarati bytes are encoded. <strong>All of that must travel beside the file</strong>, in a readme — and the receiver must check it in the software, because every importer <em>guesses</em>.</p>
+  <p>Nothing in that file says what <code>x</code> and <code>y</code> mean, what units they are in, which coordinate system they belong to, or whether an empty field means “null” or “no note”. <strong>All of that must travel beside the file</strong>, in a readme — and the receiver must check it in the software, because every importer <em>guesses</em>.</p>
   <div class="table-wrap"><table>
     <thead><tr><th>Must be explicit</th><th>Why it cannot be guessed safely</th><th>Table F7’s answer (in the readme)</th></tr></thead>
     <tbody>
@@ -28,10 +28,9 @@
   <div class="try">
     <span class="tag">Try it</span>
     <h3>Load the CSV with different settings — what does the table look like afterwards?</h3>
-    <p>Three switches every importer has somewhere. Flip them and watch the SL-0113 and SL-0055 rows. This is a simulation of the rules, not a real import — that is what the lab is for.</p>
+    <p>Two switches every importer has somewhere. Flip them and watch the SL-0113 and SL-0055 rows. This is a simulation of the rules, not a real import — that is what the lab is for.</p>
     <div class="controls">
       <label><input type="checkbox" id="optQuote" checked> Types declared (quotes / <code>schema.ini</code> / <code>.csvt</code>)</label>
-      <label><input type="checkbox" id="optUtf" checked> Read as UTF-8</label>
       <label><input type="checkbox" id="optTs"> Convert timestamp to UTC on import</label>
     </div>
     <div class="table-wrap"><table id="csvSim" class="diff"></table></div>
@@ -114,23 +113,22 @@ function pageInit() {
   /* CSV import simulator */
   const sim = document.getElementById("csvSim"), note = document.getElementById("csvSimNote");
   function runSim() {
-    const quoted = document.getElementById("optQuote").checked, utf = document.getElementById("optUtf").checked, ts = document.getElementById("optTs").checked;
+    const quoted = document.getElementById("optQuote").checked, ts = document.getElementById("optTs").checked;
     const rows = [F7.rows[0], F7.rows[5]];
-    const cols = ["asset_id", "legacy_code", "asset_type_gu", "condition_score", "last_inspection_at"];
+    const cols = ["asset_id", "legacy_code", "asset_type_local", "condition_score", "last_inspection_at"];
     const th = cols.map(c => `<th>${c}</th>`).join("");
     const problems = [];
     const tb = rows.map(r => `<tr>` + cols.map(c => {
       let v = r[c], cls = "";
       if (c === "legacy_code" && !quoted) { v = String(parseInt(v, 10)); cls = "bad"; problems.push("leading zero lost"); }
-      if (c === "asset_type_gu" && !utf) { v = "????????"; cls = "bad"; problems.push("Gujarati garbled"); }
       if (c === "last_inspection_at" && ts) { v = toUTC(v); cls = "chg"; if (r.asset_id === "SL-0055") problems.push("SL-0055’s date moved to the 29th"); }
       return `<td class="${cls} ${/^\d/.test(String(v)) ? "mono" : ""}">${esc(v)}</td>`;
     }).join("") + `</tr>`).join("");
     sim.innerHTML = `<thead><tr>${th}</tr></thead><tbody>${tb}</tbody>`;
     const u = [...new Set(problems)];
-    note.innerHTML = u.length ? `<strong>What changed:</strong> ${u.join("; ")}. ${ts ? "The UTC change is an <em>adaptation</em> if the readme says so. " : ""}${(!quoted || !utf) ? "The others are <em>losses</em> — nothing warned you." : ""}` : "Every value survived. Now imagine you had not looked: the same table would have looked equally ‘successful’ with the zeros gone.";
+    note.innerHTML = u.length ? `<strong>What changed:</strong> ${u.join("; ")}. ${ts ? "The UTC change is an <em>adaptation</em> if the readme says so. " : ""}${!quoted ? "The others are <em>losses</em> — nothing warned you." : ""}` : "Every value survived. Now imagine you had not looked: the same table would have looked equally ‘successful’ with the zeros gone.";
   }
-  ["optQuote", "optUtf", "optTs"].forEach(id => document.getElementById(id).addEventListener("change", runSim)); runSim();
+  ["optQuote", "optTs"].forEach(id => document.getElementById(id).addEventListener("change", runSim)); runSim();
   /* swap demo */
   const fig = document.getElementById("worldFig"), sn = document.getElementById("swapNote");
   function showSwap(swap) {
@@ -154,7 +152,7 @@ function pageInit() {
       <span class="k">"properties"</span>: {
         <span class="k">"asset_id"</span>: <span class="s">"SL-9001"</span>,
         <span class="k">"legacy_code"</span>: <span class="s hot" data-q="3">"9001"</span>,
-        <span class="k">"asset_type_gu"</span>: <span class="s">"સ્ટ્રીટલાઇટ"</span>,
+        <span class="k">"asset_type_local"</span>: <span class="s">"Street lamp"</span>,
         <span class="k">"condition_score"</span>: <span class="n hot" data-q="3">null</span>,
         <span class="k">"last_inspection_at"</span>: <span class="s hot" data-q="3">"2026-03-14T10:42:00+05:30"</span>
       }

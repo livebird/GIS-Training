@@ -15,7 +15,7 @@
   <h2 style="border-top:0;margin-top:1rem"><span class="mod">The big idea</span>A courier parcel, not a magic box</h2>
   <div class="grid-2">
     <div class="card">
-      <p>Think of sending a wedding gift by courier. The gift is the same whatever box you use — but a thin envelope will not carry a glass bowl, a plastic bag will not keep a sweet box dry, and a sealed carton hides what is inside until you open it. <strong>A data format is a box.</strong> Some boxes cannot carry a null value, some cannot carry Gujarati text, some cannot carry the time of day, and some have no place to write which coordinate system the numbers are in.</p>
+      <p>Think of sending a wedding gift by courier. The gift is the same whatever box you use — but a thin envelope will not carry a glass bowl, a plastic bag will not keep a sweet box dry, and a sealed carton hides what is inside until you open it. <strong>A data format is a box.</strong> Some boxes cannot carry a null value, some cannot carry a field name longer than ten characters, some cannot carry the time of day, and some have no place to write which coordinate system the numbers are in.</p>
       <p>Everything in this chapter follows from that:</p>
       <ol>
         <li>Separate the <em>thing</em> (vector or raster), the <em>way it is written</em> (encoding), the <em>box it travels in</em> (container) and the <em>counter you collect it from</em> (service) — and never trust a file name extension (<strong>7.1</strong>).</li>
@@ -41,7 +41,7 @@
   </div>
 
   <h2><span class="mod">This chapter’s practice data</span>Table F7 — six assets built to break things</h2>
-  <p>The same imaginary town as Chapters 1–3, on the flat metre grid with <strong>no real-world location</strong>. Six assets, each field chosen to trip up at least one format: a code with a <em>leading zero</em>, a <em>null</em> score, a timestamp with India’s <em>+05:30</em> offset, Gujarati text, and seven field names longer than ten characters.</p>
+  <p>The same imaginary town as Chapters 1–3, on the flat metre grid with <strong>no real-world location</strong>. Six assets, each field chosen to trip up at least one format: a code with a <em>leading zero</em>, a <em>null</em> score, a timestamp with India’s <em>+05:30</em> offset, and seven field names longer than ten characters.</p>
   <div class="table-wrap"><table id="f7Table" class="attr"></table></div>
   <div class="grid-3">
     <div class="tile"><div class="v">6</div><div class="l">records</div></div>

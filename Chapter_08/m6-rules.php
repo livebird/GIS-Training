@@ -29,7 +29,7 @@
         <input id="fCond" type="number" value="3" min="0" max="9">
         <label for="fHeight">Pole height in metres (range domain <code>PoleHeightM</code>, 3 to 15)</label>
         <input id="fHeight" type="number" value="7" step="0.1">
-        <label><input type="checkbox" id="fGuj"> Show descriptions in Gujarati (display only)</label>
+        <label><input type="checkbox" id="fAlt"> Show descriptions in plain-language wording (display only)</label>
       </div>
       <div>
         <div class="reccard"><div class="hdr">What the database stores</div>
@@ -41,7 +41,7 @@
       </div>
     </div>
   </div>
-  <p>Chapter 1’s status column had free text — “Open”, “In progress”, “Closed – duplicate”. A coded list guarantees that “In Progress”, “in progress” and “In-progress” cannot coexist, and lets a report rename a description (say, into Gujarati) without touching a single stored row or query. Ranges for the town: <code>ConditionScore</code> 1–5; <code>PoleHeightM</code> 3–15 (so “22”, feet misread as metres, is rejected); <code>InstallYear</code> 1950–2100 (catches “18” meaning 2018, and “0”). A domain is defined <strong>once</strong> in the geodatabase and assigned to fields — Esri: “you can share attribute domains across feature classes, tables, and subtypes in a geodatabase”.</p>
+  <p>Chapter 1’s status column had free text — “Open”, “In progress”, “Closed – duplicate”. A coded list guarantees that “In Progress”, “in progress” and “In-progress” cannot coexist, and lets a report rename a description (say, into plain-language wording for a public dashboard) without touching a single stored row or query. Ranges for the town: <code>ConditionScore</code> 1–5; <code>PoleHeightM</code> 3–15 (so “22”, feet misread as metres, is rejected); <code>InstallYear</code> 1950–2100 (catches “18” meaning 2018, and “0”). A domain is defined <strong>once</strong> in the geodatabase and assigned to fields — Esri: “you can share attribute domains across feature classes, tables, and subtypes in a geodatabase”.</p>
   <div class="callout note"><span class="label">Platform note — the same idea elsewhere</span><p>QGIS has no stored domain for a plain file, but its <strong>Value Map</strong> widget is the display-side twin: “the value is stored in the attribute, the description is shown in the combo box” — and QGIS reads domains already stored in a GeoPackage or file geodatabase and assigns a Value Map or Range widget automatically. In PostgreSQL the equivalent is a <code>CHECK</code> constraint (“the value in a certain column must satisfy a Boolean expression”) or a foreign key to a lookup table. A <strong>Shapefile has none of these</strong>: converting from a geodatabase loses subtypes and attribute domains (Chapter 7).</p></div>
   <div class="callout warn"><span class="label">Common mistake</span><p><em>“Storing the description instead of the code is friendlier and avoids a lookup.”</em> It also means the data changes every time the wording changes, every query embeds the wording, and a translation becomes a data migration. Store the code; show the description.</p></div>
 
@@ -134,20 +134,20 @@
 <script>
 function pageInit() {
   const desc = { en: { OPEN: "Open", INPROG: "In progress", RESOLVED: "Resolved", CLOSED: "Closed", REOPENED: "Reopened", DUP: "Closed – duplicate" },
-                 gu: { OPEN: "ખુલ્લું", INPROG: "કામ ચાલુ", RESOLVED: "ઉકેલાયું", CLOSED: "બંધ", REOPENED: "ફરી ખોલ્યું", DUP: "બંધ – ડુપ્લિકેટ" } };
-  const sel = document.getElementById("fStatus"), cond = document.getElementById("fCond"), ht = document.getElementById("fHeight"), guj = document.getElementById("fGuj"), msg = document.getElementById("fmsg");
+                 alt: { OPEN: "New", INPROG: "Being worked on", RESOLVED: "Fixed", CLOSED: "Closed out", REOPENED: "Reopened", DUP: "Merged as duplicate" } };
+  const sel = document.getElementById("fStatus"), cond = document.getElementById("fCond"), ht = document.getElementById("fHeight"), altWording = document.getElementById("fAlt"), msg = document.getElementById("fmsg");
   function upd() {
-    const lang = guj.checked ? "gu" : "en";
+    const lang = altWording.checked ? "alt" : "en";
     Array.from(sel.options).forEach(o => o.textContent = desc[lang][o.value]);
-    document.getElementById("sStatus").textContent = sel.value + "   ← the code, whatever language the screen shows";
+    document.getElementById("sStatus").textContent = sel.value + "   ← the code, whatever wording the screen shows";
     const c = Number(cond.value), h = Number(ht.value);
     const cOk = Number.isInteger(c) && c >= 1 && c <= 5, hOk = h >= 3 && h <= 15;
     document.getElementById("sCond").textContent = cOk ? c + " (" + F8.condWords[c] + ")" : "REJECTED — " + cond.value + " is outside 1–5";
     document.getElementById("sHeight").textContent = hOk ? h + " m" : "REJECTED — " + ht.value + " is outside 3–15 m (feet typed as metres?)";
     msg.className = "status-line " + (cOk && hOk ? "ok" : "bad");
-    msg.textContent = cOk && hOk ? "All values accepted. Switch the language: the stored status code does not change." : "A range domain refuses the value at entry time (in software that honours the domain). Fix the value; do not widen the range.";
+    msg.textContent = cOk && hOk ? "All values accepted. Switch the wording: the stored status code does not change." : "A range domain refuses the value at entry time (in software that honours the domain). Fix the value; do not widen the range.";
   }
-  [sel, cond, ht, guj].forEach(e => e.addEventListener("input", upd)); guj.addEventListener("change", upd); upd();
+  [sel, cond, ht, altWording].forEach(e => e.addEventListener("input", upd)); altWording.addEventListener("change", upd); upd();
 
   const sl = document.getElementById("naSlider"), out = document.getElementById("naOut");
   function na() {

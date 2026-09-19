@@ -10,26 +10,26 @@ const F7 = {
   fields: [
     { name: "asset_id",           type: "text",      len: 8,  note: "Business ID: two letters, hyphen, four digits. Unique." },
     { name: "legacy_code",        type: "text",      len: 11, note: "Old register code. Leading zeros matter: 0113 is not 113." },
-    { name: "asset_type_en",      type: "text",      len: 13, note: "Asset type in English." },
-    { name: "asset_type_gu",      type: "text",      len: 13, note: "Asset type in Gujarati script (Unicode)." },
+    { name: "asset_type_en",      type: "text",      len: 13, note: "Asset type, formal classification." },
+    { name: "asset_type_local",   type: "text",      len: 16, note: "Asset type, the crew's everyday wording (not the formal classification)." },
     { name: "installed_year",     type: "integer",   len: 14, note: "Year of installation." },
     { name: "condition_score",    type: "decimal",   len: 15, note: "0.0 to 5.0. Null = not yet assessed (NOT zero)." },
     { name: "last_inspection_at", type: "timestamp", len: 18, note: "ISO 8601 local time with +05:30 offset. Null = never inspected." },
-    { name: "inspector_note",     type: "text",      len: 14, note: "Free text, may mix scripts. Empty = no note (different from null)." },
+    { name: "inspector_note",     type: "text",      len: 14, note: "Free text. Empty = no note (different from null)." },
     { name: "x",                  type: "decimal",   len: 1,  note: "Training-grid metres. No Earth CRS." },
     { name: "y",                  type: "decimal",   len: 1,  note: "Training-grid metres. No Earth CRS." }
   ],
   rows: [
-    { asset_id: "SL-0113", legacy_code: "0113", asset_type_en: "Streetlight", asset_type_gu: "સ્ટ્રીટલાઇટ", installed_year: 2018, condition_score: 3.5,  last_inspection_at: "2026-03-14T10:42:00+05:30", inspector_note: "Lamp flickers at dusk", x: 205,  y: 195, ward: "A" },
-    { asset_id: "DR-0042", legacy_code: "0042", asset_type_en: "Drain",       asset_type_gu: "ગટર",        installed_year: 2011, condition_score: 1.5,  last_inspection_at: "2025-11-02T15:05:00+05:30", inspector_note: "Silt build-up — ગટર ભરાયેલી છે", x: 995,  y: 510, ward: "A" },
-    { asset_id: "TR-0301", legacy_code: "0301", asset_type_en: "Tree",        asset_type_gu: "વૃક્ષ",       installed_year: 2005, condition_score: null, last_inspection_at: null,                        inspector_note: "",                      x: 2190, y: 520, ward: "outside" },
-    { asset_id: "BN-0007", legacy_code: "0007", asset_type_en: "Bench",       asset_type_gu: "બાંકડો",      installed_year: 2022, condition_score: 5.0,  last_inspection_at: "2026-06-01T09:00:00+05:30", inspector_note: "Repainted",             x: 1500, y: 300, ward: "B" },
-    { asset_id: "DR-0110", legacy_code: "0110", asset_type_en: "Drain",       asset_type_gu: "ગટર",        installed_year: 2015, condition_score: 2.0,  last_inspection_at: "2026-01-20T11:30:00+05:30", inspector_note: "Grate missing",         x: 400,  y: 700, ward: "A" },
-    { asset_id: "SL-0055", legacy_code: "0055", asset_type_en: "Streetlight", asset_type_gu: "સ્ટ્રીટલાઇટ", installed_year: 2020, condition_score: 4.0,  last_inspection_at: "2026-08-30T02:10:00+05:30", inspector_note: "Night check: lamp OK",  x: 1800, y: 950, ward: "B" }
+    { asset_id: "SL-0113", legacy_code: "0113", asset_type_en: "Streetlight", asset_type_local: "Street lamp", installed_year: 2018, condition_score: 3.5,  last_inspection_at: "2026-03-14T10:42:00+05:30", inspector_note: "Lamp flickers at dusk", x: 205,  y: 195, ward: "A" },
+    { asset_id: "DR-0042", legacy_code: "0042", asset_type_en: "Drain",       asset_type_local: "Storm drain", installed_year: 2011, condition_score: 1.5,  last_inspection_at: "2025-11-02T15:05:00+05:30", inspector_note: "Silt build-up — needs clearing", x: 995,  y: 510, ward: "A" },
+    { asset_id: "TR-0301", legacy_code: "0301", asset_type_en: "Tree",        asset_type_local: "Shade tree",  installed_year: 2005, condition_score: null, last_inspection_at: null,                        inspector_note: "",                      x: 2190, y: 520, ward: "outside" },
+    { asset_id: "BN-0007", legacy_code: "0007", asset_type_en: "Bench",       asset_type_local: "Park bench",  installed_year: 2022, condition_score: 5.0,  last_inspection_at: "2026-06-01T09:00:00+05:30", inspector_note: "Repainted",             x: 1500, y: 300, ward: "B" },
+    { asset_id: "DR-0110", legacy_code: "0110", asset_type_en: "Drain",       asset_type_local: "Storm drain", installed_year: 2015, condition_score: 2.0,  last_inspection_at: "2026-01-20T11:30:00+05:30", inspector_note: "Grate missing",         x: 400,  y: 700, ward: "A" },
+    { asset_id: "SL-0055", legacy_code: "0055", asset_type_en: "Streetlight", asset_type_local: "Street lamp", installed_year: 2020, condition_score: 4.0,  last_inspection_at: "2026-08-30T02:10:00+05:30", inspector_note: "Night check: lamp OK",  x: 1800, y: 950, ward: "B" }
   ]
 };
 F7.csvText = () => [F7.fields.map(f => f.name).join(",")].concat(F7.rows.map(r => [
-  r.asset_id, '"' + r.legacy_code + '"', r.asset_type_en, r.asset_type_gu, r.installed_year,
+  r.asset_id, '"' + r.legacy_code + '"', r.asset_type_en, r.asset_type_local, r.installed_year,
   r.condition_score == null ? "" : r.condition_score.toFixed(1), r.last_inspection_at ?? "",
   /[,—]/.test(r.inspector_note) ? '"' + r.inspector_note + '"' : r.inspector_note, r.x, r.y].join(","))).join("\n");
 
@@ -59,9 +59,8 @@ const dateOnly = iso => iso ? iso.slice(0, 10) : null;
 /* ---------- the format rules engine ----------
    convertRow(row, format, opts) → { fields: [ { name, outName, before, after, status, why } ] }
    status: kept | adapted | lost | depends
-   opts: { codepage: "utf8"|"ansi", tsTyped: true|false (timestamp typed as date-time before export),
+   opts: { tsTyped: true|false (timestamp typed as date-time before export),
            utcFirst: true|false, quoted: true|false (leading-zero code declared as text), nullPolicy: "zero"|"neg" } */
-const NON_LATIN = /[^\u0000-\u024F]/;
 function shortName(name, used) {
   // Shapefile: 10 characters. Two names that collide after cutting must be told apart — HOW is product-specific.
   let s = name.slice(0, 10);
@@ -70,7 +69,7 @@ function shortName(name, used) {
   return s;
 }
 function convertRow(row, format, opts = {}) {
-  const o = Object.assign({ codepage: "utf8", tsTyped: false, utcFirst: false, quoted: true, nullPolicy: "zero" }, opts);
+  const o = Object.assign({ tsTyped: false, utcFirst: false, quoted: true, nullPolicy: "zero" }, opts);
   const out = { fields: [] };
   const used = new Set();
   const isNull = v => v === null || v === undefined;
@@ -108,14 +107,6 @@ function convertRow(row, format, opts = {}) {
         else { after = before; why = "Kept as TEXT because the field was typed as text."; }
       } else if (format === "geojson") { after = '"' + before + '"'; why = "GeoJSON has no date type; the ISO string travels as text."; }
       else if (format === "gdb") { after = before; status = o.tsTyped ? "kept" : "depends"; why = "A geodatabase 'timestamp offset' field (ArcGIS Pro 3.2+) keeps the offset; a plain Date field would drop it — choose deliberately."; }
-    }
-    /* --- Unicode text --- */
-    if ((f.name === "asset_type_gu" || f.name === "inspector_note") && NON_LATIN.test(before || "")) {
-      if (format === "shp") {
-        if (o.codepage === "utf8") { after = before; status = "depends"; why = "Kept only if the writer records a Unicode code page (.cpg) AND the reader honours it. Esri: Unicode support 'may not be available in non-Esri applications'."; }
-        else { after = before.replace(/[^\u0000-\u024F]/g, "?"); status = "lost"; why = "Written with the default ANSI code page — Gujarati has no place in it and becomes ? or boxes."; }
-      } else if (format === "csv") { status = "depends"; why = "Safe only if the file is saved as UTF-8 and the reader knows that."; }
-      else { why = "Unicode text is native here."; }
     }
     if (f.name === "inspector_note" && before === "") {
       if (format === "shp") { after = "' ' (one space)"; status = "lost"; why = "Empty text is written as a single space; 'no note' and 'a space' now look the same."; }

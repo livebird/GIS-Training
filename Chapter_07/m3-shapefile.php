@@ -37,7 +37,6 @@
     <h3>One record through a shapefile export</h3>
     <div class="controls">
       <label>Record <select id="recSel"></select></label>
-      <label>Code page written <select id="cpSel"><option value="ansi">default (ANSI)</option><option value="utf8">Unicode (UTF-8 .cpg)</option></select></label>
       <label><input type="checkbox" id="tsTyped" checked> timestamp typed as date/time before export</label>
       <label><input type="checkbox" id="utcFirst"> tool converts to UTC first</label>
     </div>
@@ -48,15 +47,14 @@
   <div class="table-wrap"><table>
     <thead><tr><th>Limit (format rule)</th><th>F7 field it bites</th><th>What happens</th></tr></thead>
     <tbody>
-      <tr><td>“Field names cannot be longer than 10 characters.”</td><td>7 of the 10 names</td><td>Names are cut. <code>asset_type_en</code> and <code>asset_type_gu</code> both start with the same ten letters, so the writer must invent different names; GDAL cuts to 8 and adds a number, ArcGIS Pro has its own way — <em>observe it</em>. Any code or join keyed on the old names breaks.</td></tr>
+      <tr><td>“Field names cannot be longer than 10 characters.”</td><td>7 of the 10 names</td><td>Names are cut. <code>asset_type_en</code> and <code>asset_type_local</code> both start with the same ten letters, so the writer must invent different names; GDAL cuts to 8 and adds a number, ArcGIS Pro has its own way — <em>observe it</em>. Any code or join keyed on the old names breaks.</td></tr>
       <tr><td>“Null values are not supported in shapefiles.”</td><td><code>condition_score</code>, <code>last_inspection_at</code> for TR-0301</td><td>Esri’s table: for most tools a numeric null becomes <strong>0</strong>; text null becomes one space; a date null is “stored as zero, but displays &lt;null&gt;”. Afterwards “ArcGIS cannot determine whether a field value represents a null value or a legitimate value”. <em>Not assessed</em> becomes <em>score 0</em> — the worst possible condition — and the mean drops from 3.2 to 2.67.</td></tr>
       <tr><td>“Date fields only support date; they do not support time.”</td><td><code>last_inspection_at</code></td><td>Time dropped. Depending on whether the writer converts to UTC first, SL-0055’s night check is stored as 2026-08-<strong>30</strong> or 2026-08-<strong>29</strong>. Either way the +05:30 is gone.</td></tr>
       <tr><td>Text width 254; record 4,000 bytes; 255 fields</td><td>a long <code>inspector_note</code></td><td>Cut off. Not triggered by F7, but check on real data.</td></tr>
-      <tr><td>“By default, in ArcGIS Pro, dBASE files support the ANSI character set … Unicode support … may not be available in non-Esri applications.”</td><td><code>asset_type_gu</code>, <code>inspector_note</code></td><td>Gujarati survives only if the writer records a Unicode code page <em>and</em> the reader honours the <code>.cpg</code>. GDAL’s default is <code>LDID/87</code>; QGIS shows an <em>Encoding</em> box in its export dialog — set UTF-8. Otherwise expect <code>?</code> or boxes.</td></tr>
       <tr><td>Loss of “Subtypes, Attribute domains, Geometric networks, Topologies, Annotation”</td><td>(geodatabase sources — 7.5)</td><td>Rules vanish; codes stay (e.g. <code>2</code> instead of “Drain”) unless the export is told to write descriptions.</td></tr>
       <tr><td>2 GB per component file; one geometry type per file; curves densified</td><td>—</td><td>Big or mixed data must split or use another container.</td></tr>
     </tbody></table></div>
-  <div class="callout warn"><span class="label">Why the green message is not a check</span><p>The exporter checks that it could <em>write bytes in the format’s structure</em>. It does not know that <code>0</code> meant “not assessed”, that <code>legacy_cod</code> used to be joined by a longer name, or that a reader without Unicode support will mangle the note. Format validity and meaning preservation are two different tests, and only you can run the second one (7.7).</p></div>
+  <div class="callout warn"><span class="label">Why the green message is not a check</span><p>The exporter checks that it could <em>write bytes in the format’s structure</em>. It does not know that <code>0</code> meant “not assessed”, that <code>legacy_cod</code> used to be joined by a longer name, or that an empty note now reads as a single space. Format validity and meaning preservation are two different tests, and only you can run the second one (7.7).</p></div>
 
   <h2><span class="mod">7.3.4</span>A format you will meet, not a default you choose</h2>
   <p>You will receive shapefiles from contractors, government portals and older systems for years. Some recipients will accept nothing else. Treat the shapefile as an <strong>export chosen for a named recipient</strong>, never as a working or archive store. The question to answer is the recipient’s, not yours:</p>
@@ -65,7 +63,7 @@
     <tbody>
       <tr><td>“Our old desktop tool only reads .shp”</td><td class="yes">Yes, as a delivered copy</td><td>Export from the master; document every rename and substitution; send all companion files plus a readme</td></tr>
       <tr><td>“We just need to see the points on a web map”</td><td class="no">Usually no</td><td>GeoJSON (if the data is WGS 84) or a service (Chapter 2)</td></tr>
-      <tr><td>“We need the full schema — nulls, timestamps, both languages”</td><td class="no">No</td><td>GeoPackage or a geodatabase (7.4, 7.5)</td></tr>
+      <tr><td>“We need the full schema — nulls, timestamps, the local-name field”</td><td class="no">No</td><td>GeoPackage or a geodatabase (7.4, 7.5)</td></tr>
       <tr><td>“Send whatever, we’ll figure it out”</td><td>Not an answer</td><td>Ask what they will do with it; choose from the answer</td></tr>
     </tbody></table></div>
   <div class="callout dev"><span class="label">Developer view</span><p>A shapefile is like a legacy fixed-width flat-file interface with 8.3-style names: everyone can read it, and every modern data type must be squashed to fit. <strong>Where the comparison breaks:</strong> no flat file falls apart when one of its five companion files is left behind, and most flat-file conventions at least allow an explicit null marker.</p></div>
@@ -100,20 +98,20 @@ function pageInit() {
     const v = document.getElementById("folderVerdict");
     if (!on(0)) v.innerHTML = "<strong>No .shp:</strong> there is no geometry. Nothing to open.";
     else if (!on(1) || !on(2)) v.innerHTML = `<strong>Missing a required file</strong> (${!on(1) ? ".shx" : ""}${!on(1) && !on(2) ? " and " : ""}${!on(2) ? ".dbf" : ""}). Esri lists .shp, .shx and .dbf as required; most software will refuse to open it (GDAL can rebuild a missing .shx only with a special option). Ask the sender for the full set — do not try to repair it.`;
-    else v.innerHTML = `<strong>Opens.</strong> ${on(3) ? "CRS is defined by the .prj — read it, do not assume it is right." : "<span style='color:var(--warn)'>No .prj → coordinate system <em>unknown</em>.</span> Investigate (Chapter 5); write a .prj only once the CRS is established from evidence (Chapter 6)."} ${on(4) ? "Text encoding is declared by the .cpg." : "<span style='color:var(--warn)'>No .cpg → the text encoding is a guess</span>; Gujarati may show as ? in some software."}`;
+    else v.innerHTML = `<strong>Opens.</strong> ${on(3) ? "CRS is defined by the .prj — read it, do not assume it is right." : "<span style='color:var(--warn)'>No .prj → coordinate system <em>unknown</em>.</span> Investigate (Chapter 5); write a .prj only once the CRS is established from evidence (Chapter 6)."} ${on(4) ? "Text encoding is declared by the .cpg." : "<span style='color:var(--warn)'>No .cpg → the text encoding is a guess</span>; accented or non-English characters may show as ? in some software."}`;
   }
   folder.addEventListener("change", verdict); verdict();
   /* export simulator */
   const sel = document.getElementById("recSel"); F7.rows.forEach((r, i) => { const o = document.createElement("option"); o.value = i; o.textContent = r.asset_id + (i === 2 ? " (the null case)" : i === 5 ? " (night timestamp)" : ""); sel.appendChild(o); }); sel.value = 2;
   function runShp() {
     const r = F7.rows[+sel.value];
-    const res = convertRow(r, "shp", { codepage: document.getElementById("cpSel").value, tsTyped: document.getElementById("tsTyped").checked, utcFirst: document.getElementById("utcFirst").checked });
+    const res = convertRow(r, "shp", { tsTyped: document.getElementById("tsTyped").checked, utcFirst: document.getElementById("utcFirst").checked });
     const t = document.getElementById("shpDiff");
     t.innerHTML = `<thead><tr><th>field (before)</th><th>value before</th><th>field (after)</th><th>value after</th><th>status</th></tr></thead><tbody>` + res.fields.map(f => `<tr><td class="mono">${esc(f.name)}</td><td class="mono">${esc(f.before)}</td><td class="mono ${f.outName !== f.name ? "chg" : ""}">${esc(f.outName)}</td><td class="mono ${f.status === "lost" ? "bad" : f.status === "adapted" ? "chg" : ""}">${esc(f.after)}</td><td><span class="st ${f.status}">${STATUS_LABEL[f.status]}</span>${f.why ? `<div class="why">${esc(f.why)}</div>` : ""}</td></tr>`).join("") + `</tbody>`;
     const lost = res.fields.filter(f => f.status === "lost").length, ad = res.fields.filter(f => f.status === "adapted").length, dep = res.fields.filter(f => f.status === "depends").length;
     document.getElementById("shpSummary").innerHTML = `<strong>Tool message: “Completed.”</strong> Reality: ${ad} field(s) adapted, <span style="color:var(--warn)"><strong>${lost} lost</strong></span>, ${dep} depend on the reader. None of this raised an error.`;
   }
-  ["recSel", "cpSel", "tsTyped", "utcFirst"].forEach(id => document.getElementById(id).addEventListener("change", runShp)); runShp();
+  ["recSel", "tsTyped", "utcFirst"].forEach(id => document.getElementById(id).addEventListener("change", runShp)); runShp();
 }
 </script>
 <?php require __DIR__ . '/../partials/end.php'; ?>

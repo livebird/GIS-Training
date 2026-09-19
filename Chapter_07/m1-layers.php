@@ -29,7 +29,7 @@
     <div class="result" id="stackNote">Pick an item above.</div>
   </div>
 
-  <div class="callout idea"><span class="label">Why a developer should care</span><p>Bugs get filed at the wrong layer. <em>“GeoJSON lost my Gujarati text”</em> is almost never a GeoJSON problem — JSON text is Unicode. It is usually a tool that saved the file in a non-UTF-8 code page, or a shapefile export that happened somewhere down the line. <em>“The service returns the wrong dates”</em> may be a service setting (which time zone was assumed when it was published — see 7.2) rather than a data-model fault. <strong>Name the layer before you debug.</strong></p></div>
+  <div class="callout idea"><span class="label">Why a developer should care</span><p>Bugs get filed at the wrong layer. <em>“My CSV lost the leading zero on the asset code”</em> is almost never a CSV problem — CSV is just text. It is usually a spreadsheet program that guessed the column was a number when it opened the file, or an export step that did not quote the value. <em>“The service returns the wrong dates”</em> may be a service setting (which time zone was assumed when it was published — see 7.2) rather than a data-model fault. <strong>Name the layer before you debug.</strong></p></div>
 
   <h2><span class="mod">7.1.2</span>A file extension proves almost nothing</h2>
   <p>An extension like <code>.gpkg</code> or <code>.shp</code> is a <em>hint about the encoding</em> — nothing more. Treat it as a claim made by whoever named the file. Claims get checked.</p>
