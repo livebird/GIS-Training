@@ -36,6 +36,52 @@
         "Chapter_03"
       ],
       "port": 8767
+    },
+    {
+      "name": "course-index",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8760"
+      ],
+      "port": 8760
+    },
+    {
+      "name": "chapter-04-tutorial",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8768",
+        "--directory",
+        "Chapter_04"
+      ],
+      "port": 8768
+    },
+    {
+      "name": "chapter-05-tutorial",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8769",
+        "--directory",
+        "Chapter_05"
+      ],
+      "port": 8769
+    },
+    {
+      "name": "chapter-06-tutorial",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8776",
+        "--directory",
+        "Chapter_06"
+      ],
+      "port": 8776
     }
   ]
 }

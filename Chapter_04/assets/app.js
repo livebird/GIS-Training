@@ -116,7 +116,7 @@ function svgEl(tag, attrs, parent) { const n = document.createElementNS(NS, tag)
 function renderRaster(el, r, opts = {}) {
   const o = Object.assign({ renderer: "none", showValues: true, nodata: "hatch", onCell: null, selected: null, axes: false, markers: [], caption: null, cellPx: null, rowLabels: false, flags: null, valueFormat: v => fmt(v, 2), dim: null }, opts);
   const cp = o.cellPx || Math.max(44, Math.min(90, 720 / Math.max(r.cols, r.rows)));
-  const padL = o.axes ? 70 : (o.rowLabels ? 60 : 8), padT = o.rowLabels ? 44 : 8, padR = 8, padB = o.axes ? 60 : 8;
+  const padL = o.axes ? 70 : (o.rowLabels ? 60 : 8), padT = o.rowLabels ? 44 : (o.axes ? 14 : 8), padR = o.axes ? 36 : 8, padB = o.axes ? 60 : 8;
   const W = padL + r.cols * cp + padR, H = padT + r.rows * cp + padB;
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `A grid of ${r.rows} rows and ${r.cols} columns of cells with values.` });
   const defs = svgEl("defs", {}, svg);
@@ -155,6 +155,7 @@ function renderRaster(el, r, opts = {}) {
     svgEl("circle", { cx: px, cy: py, r: Math.max(6, cp * .11), class: "marker" }, svg);
     const t = svgEl("text", { x: px + cp * .16, y: py - cp * .12, class: "marker-label" }, svg); t.textContent = m.label;
   });
+  svg.style.maxWidth = W + "px"; svg.style.margin = "0 auto";
   el.innerHTML = ""; el.appendChild(svg);
   if (o.caption) { const c = document.createElement("figcaption"); c.textContent = o.caption; el.appendChild(c); }
   return svg;

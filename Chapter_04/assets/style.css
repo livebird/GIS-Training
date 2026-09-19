@@ -421,3 +421,9 @@ pre.listing .nc { color: #ff9d7a; font-style: italic; }
 .check-table input { font-family: var(--font-mono); width: 6.5rem; padding: .25rem .4rem; border: 1.5px solid var(--rule); border-radius: 6px; }
 .check-table td.status { font-family: var(--font-mono); font-size: .85rem; }
 .section-card { background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 1rem 0; }
+.lab-steps { padding-left: 1.4rem; }
+.lab-steps > li { margin: .55rem 0; padding: .45rem .7rem; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
+.lab-steps > li::marker { font-family: var(--font-display); font-weight: 700; color: var(--accent); }
+.fig-panel { display: grid; grid-template-columns: minmax(0, 3fr) minmax(240px, 2fr); gap: 1rem; align-items: start; }
+.fig-panel .raster-fig { margin: 0; }
+@media (max-width: 720px) { .fig-panel { grid-template-columns: 1fr; } }

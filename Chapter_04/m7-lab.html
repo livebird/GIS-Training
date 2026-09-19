@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.7 Guided lab: inspect two rasters</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 4.7 · Guided lab · ArcGIS Pro (primary) or QGIS 3.44</div>
+    <h1>Lab: inspect two rasters</h1>
+    <p class="lead">Type two tiny raster files, load them, read their properties, change how they look without changing a value, resample copies two ways, and write down the numbers. Every expected number on this page was worked out by hand from the listings; your job is to make the software show them — and to <em>record</em> what it does where the documentation does not say.</p>
+    <div class="outcomes"><h4>Before you start</h4>
+      <ul><li>You have finished modules 4.1–4.6.</li>
+      <li>You have ArcGIS Pro (any licence level) <strong>or</strong> QGIS 3.44. No extension, no account, no credits.</li>
+      <li>No software? Steps 1–3 and the statistics can be done by hand; write your <em>predictions</em> for the resampling steps and the instructor will confirm them.</li></ul></div>
+  </div>
+  <div class="callout warn"><span class="label">Honesty note</span><p>The author has <strong>not run</strong> these steps in ArcGIS Pro or QGIS. The procedure boxes were written from the official documentation (ArcGIS Pro 3.7; QGIS 3.44 user guide; GDAL). If a button or label is not where the box says, use the idea, and note the difference in your discrepancy list — it helps fix the box.</p></div>
+
+  <h2><span class="mod">4.7.3</span>Step 0 — Create the two input files</h2>
+  <p>Both files use the <strong>Esri ASCII raster</strong> format: six header lines, then the values row by row, <strong>first row = top row</strong>. Make a folder without spaces in its path (e.g. <code>C:\GIS_Training\Ch04\</code>). Use a plain-text editor (Notepad, VS Code) — <em>not</em> Word. Do <strong>not</strong> create a <code>.prj</code> file; the lab depends on the coordinate system being unknown.</p>
+  <div class="file-box">
+    <div class="copybar"><h4>landcover_training.asc</h4><button class="btn small" data-copy="f5txt">Copy</button></div>
+    <pre class="listing" id="f5txt">NCOLS 10
+NROWS 10
+XLLCORNER 0
+YLLCORNER 0
+CELLSIZE 100
+NODATA_VALUE -1
+2 2 2 2 2 2 2 0 0 0
+2 2 2 2 2 2 2 0 0 0
+2 2 2 3 3 2 2 2 0 2
+2 2 3 3 3 3 2 2 2 2
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+2 2 1 1 2 2 2 3 3 2
+2 2 1 1 2 2 2 3 3 2
+-1 -1 2 2 2 2 2 2 2 2
+-1 2 2 2 2 2 2 2 2 2</pre>
+    <p class="small">16 lines; 100 values after the header. Codes: 0 Water, 1 Built-up, 2 Vegetation, 3 Bare ground; −1 = NoData.</p>
+  </div>
+  <div class="file-box">
+    <div class="copybar"><h4>elevation_training.asc</h4><button class="btn small" data-copy="f6txt">Copy</button></div>
+    <pre class="listing" id="f6txt">NCOLS 4
+NROWS 4
+XLLCORNER 0
+YLLCORNER 600
+CELLSIZE 100
+NODATA_VALUE -9999.0
+12.0 14.0 17.0 21.0
+11.0 13.0 15.0 18.0
+10.0 11.0 13.0 15.0
+9.0 -9999.0 12.0 13.0</pre>
+    <p class="small">10 lines; 16 values. Metres above the made-up datum TD-0. The decimal points matter: they make the software store the numbers as floating point.</p>
+  </div>
+  <div class="callout note"><span class="label">What to expect from a file with no coordinate system</span><p>Both programs will tell you the coordinate system is unknown and will draw the raster using its raw numbers (0–1000 m). Where that lands “in the world” is meaningless. <strong>Do not add a basemap</strong> — a basemap has an Earth coordinate system and the raster would be drawn at raw positions inside it, the silent guess Chapter 5 teaches you to refuse. In QGIS set the project to <em>No CRS</em>, under which “layers are drawn based on their raw coordinates”.</p></div>
+
+  <h2><span class="mod">4.7.4</span>The steps</h2>
+  <div class="tabs" role="tablist"><button role="tab">Route A · ArcGIS Pro 3.7</button><button role="tab">Route B · QGIS 3.44</button></div>
+  <div class="tabpanel">
+    <div class="section-card">
+      <p class="small"><strong>Procedure (version-specific; written from ArcGIS Pro 3.7 documentation; not execution-tested).</strong> Tools used — Copy Raster, Resample, Calculate Statistics — are listed as available at the Basic licence on their tool pages.</p>
+      <ol class="lab-steps">
+        <li><strong>Empty map.</strong> New project from the <em>Map</em> template. In <em>Contents</em>, right-click the basemap → <em>Remove</em>. Save the project in the lab folder.</li>
+        <li><strong>Add the land-cover file.</strong> <em>Map</em> tab → <em>Add Data</em> → browse to <code>landcover_training.asc</code>. ArcGIS Pro reads the ASCII Grid format directly (listed as read-only, <code>.asc</code>). Accept the “unknown coordinate system” warning. You should see a 10 × 10 block of coloured squares. Change nothing yet.</li>
+        <li><strong>Inspect and fill Table A.</strong> In <em>Contents</em>, right-click the layer → <em>Properties</em> → <em>Source</em>. Record columns × rows, bands, cell size, pixel type, NoData value, extent (left, right, bottom, top), spatial reference, and min/max/mean if shown.</li>
+        <li><strong>Read cells.</strong> With the <em>Explore</em> tool, click a cell: a pop-up shows the pixel value (Esri: “click on a pixel. Values for each visible band will be returned”). Use the coordinate readout at the bottom of the map to aim. Fill Table C for the five land-cover positions.</li>
+        <li><strong>Style without changing values — and prove it.</strong> <em>Symbology</em> → <em>Unique Values</em>; give each code the colour and label from the dictionary; set NoData to a loud colour (all renderers allow this). Then re-open <em>Properties → Source</em>: every entry in Table A must be unchanged. Re-read the five cells: unchanged. Write one sentence: what changed (the layer’s renderer) and what did not (the dataset).</li>
+        <li><strong>Add the elevation file</strong> and fill its Table A row. Expected: 4 × 4, 1 band, cell 100, <em>floating point</em>, NoData −9999, extent 0 / 400 / 600 / 1000, spatial reference undefined. If the pixel type says integer, see Troubleshooting. Style with <em>Stretch</em> → <em>Minimum Maximum</em>. Read (50, 950) → 12.0 and (150, 650) → NoData.</li>
+        <li><strong>Statistics under a stated rule.</strong> <em>Properties → Source</em> shows min / max / mean per band; if not, run <em>Calculate Statistics</em> (Data Management) with defaults. Expected for elevation with NoData excluded: min 9.0, max 21.0, <strong>mean 13.6</strong>. 12.75 → NoData counted as 0. About −612 → the marker was not recognised. Write the statistic as a sentence with rule and coverage.</li>
+        <li><strong>Resample copies (four runs).</strong> <em>Analysis → Tools → Resample</em> (Data Management). Output cell size <code>50 50</code>; save as TIFF in the lab folder:
+          <table class="mini-table"><thead><tr><th>Run</th><th>Input</th><th>Output</th><th>Technique</th></tr></thead><tbody>
+          <tr><td>1</td><td>elevation_training.asc</td><td>elevation_50m_nearest.tif</td><td>Nearest</td></tr>
+          <tr><td>2</td><td>elevation_training.asc</td><td>elevation_50m_bilinear.tif</td><td>Bilinear</td></tr>
+          <tr><td>3</td><td>landcover_training.asc</td><td>landcover_50m_nearest.tif</td><td>Nearest</td></tr>
+          <tr><td>4</td><td>landcover_training.asc</td><td>landcover_50m_bilinear.tif</td><td>Bilinear</td></tr></tbody></table>
+          The tool page says the extent does not change and the output’s lower-left corner equals the input’s, so expect 8 × 8 and 20 × 20 outputs. The originals are untouched.</li>
+        <li><strong>Inspect the copies and read the same positions</strong> (Tables A and C below). Rows marked <em>record</em> depend on the software — write down whatever appears.</li>
+        <li><strong>Compare statistics and counts</strong> (expected values in the checker below).</li>
+        <li><strong>Write the explanation:</strong> one paragraph per dataset on which resampling result is appropriate and why, citing your recorded numbers; then one sentence on what the 50 m outputs do <em>not</em> contain.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="tabpanel">
+    <div class="section-card">
+      <p class="small"><strong>Procedure (version-specific; written from the QGIS 3.44 user guide and GDAL docs; not execution-tested).</strong> Same inputs, tables, expected numbers and deliverables. Differences are stated, not assumed away.</p>
+      <ol class="lab-steps">
+        <li><strong>Project with no CRS.</strong> New project → <em>Project → Properties… → CRS</em> → choose <em>No CRS (or unknown/non-Earth projection)</em>. In <em>Settings → Options → CRS and Transforms</em>, the action for a layer without a CRS should be <em>Leave as unknown CRS</em> (or <em>Prompt</em>, then choose no CRS) — not “Use project CRS”. No basemap.</li>
+        <li><strong>Add the rasters.</strong> <em>Layer → Add Layer → Add Raster Layer</em> (Ctrl+Shift+R), <em>File</em>, browse to each <code>.asc</code>. QGIS reads it through GDAL’s AAIGrid driver, which keeps the file’s NoData value and detects floating point when the values carry a decimal point — that is why the elevation file has “.0” everywhere.</li>
+        <li><strong>Inspect.</strong> Right-click layer → <em>Properties → Information</em>: extent, width and height, data type, band statistics, pixel size, NoData values, CRS (will read unknown). Fill Table A.</li>
+        <li><strong>Read cells.</strong> Select the layer, <em>Identify Features</em> (Ctrl+Shift+I), click a cell: the <em>Identify Results</em> panel shows band and value and, under <em>Derived</em>, the clicked x, y and the column/row. Fill Table C.</li>
+        <li><strong>Style without changing values.</strong> <em>Properties → Symbology</em>: land cover → <em>Paletted/Unique values</em> with colour and label per code; elevation → <em>Singleband pseudocolor</em>. Under <em>Transparency</em>, note the reported <em>No data value</em> and set <em>Display no data as</em> a loud colour. Re-open <em>Information</em> and re-identify: unchanged. <strong>Leave the Symbology tab’s <em>Resampling</em> at Nearest neighbour</strong> — that setting is display-only (“when you zoom in and out”) and must not be confused with the data resampling below.</li>
+        <li><strong>Statistics.</strong> <em>Processing → Toolbox → Raster analysis → Raster layer statistics</em>, band 1. Reports min, max, range, sum, mean, std dev. <strong>Its documentation does not say whether NoData is excluded</strong> — read the mean and use 13.6 / 12.75 / −612 to work out which rule it applied. Record the rule.</li>
+        <li><strong>Resample copies.</strong> QGIS has no tool called “Resample”. Use <em>GDAL → Raster conversion → Translate (convert format)</em> and type in <em>Additional command-line parameters</em>: <code>-tr 50 50 -r nearest</code> for the nearest copies and <code>-tr 50 50 -r bilinear</code> for the bilinear copies (<code>-tr</code> = target cell size in the raster’s units; <code>-r</code> = resampling method). Save each as <code>.tif</code> with the Route A names. (If your rasters <em>had</em> a CRS, <em>Warp (reproject)</em> offers the same choices via “Resampling method to use” and “Output file resolution”; it is not used here because Warp’s target CRS defaults to EPSG:4326 and the fixture has none.)</li>
+        <li><strong>Inspect, read, compare</strong> exactly as in Route A steps 9–11. <em>Raster layer unique values report</em> gives per-value counts for the land-cover outputs. GDAL’s bilinear and Esri’s bilinear are the same arithmetic for interior cells at a 2× resample; edge and NoData-neighbour behaviour is software-specific in both — record, don’t assume.</li>
+      </ol>
+      <p class="small"><strong>What differs from ArcGIS Pro, in one breath:</strong> resampling is reached through a conversion tool with a command-line option; the display resampling control lives in Symbology and is a different thing; the statistics tool’s NoData rule is undocumented; method names differ; unknown-CRS handling is a project setting rather than a warning.</p>
+    </div>
+  </div>
+
+  <h2><span class="mod">4.7.5</span>Table A — inspection (expected values)</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Raster</th><th>Cols × rows</th><th>Bands</th><th>Cell size</th><th>Pixel type</th><th>NoData</th><th>Extent (L, R, B, T)</th><th>CRS</th><th>Min / max / mean</th></tr></thead>
+    <tbody>
+      <tr><td>landcover_training.asc</td><td>10 × 10</td><td>1</td><td>100, 100</td><td>integer</td><td>−1</td><td>0, 1000, 0, 1000</td><td>undefined</td><td>0 / 3 / (a mean of codes is meaningless)</td></tr>
+      <tr><td>elevation_training.asc</td><td>4 × 4</td><td>1</td><td>100, 100</td><td>floating point</td><td>−9999</td><td>0, 400, 600, 1000</td><td>undefined</td><td>9.0 / 21.0 / 13.6</td></tr>
+      <tr><td>elevation_50m_nearest.tif</td><td>8 × 8</td><td>1</td><td>50, 50</td><td>floating point</td><td>−9999 (or as written)</td><td>0, 400, 600, 1000</td><td>undefined</td><td>9.0 / 21.0 / 13.6</td></tr>
+      <tr><td>elevation_50m_bilinear.tif</td><td>8 × 8</td><td>1</td><td>50, 50</td><td>floating point</td><td>as written</td><td>0, 400, 600, 1000</td><td>undefined</td><td>within 9.0–21.0 / <em>record</em></td></tr>
+      <tr><td>landcover_50m_nearest.tif</td><td>20 × 20</td><td>1</td><td>50, 50</td><td>integer</td><td>−1 (or as written)</td><td>0, 1000, 0, 1000</td><td>undefined</td><td>0 / 3</td></tr>
+      <tr><td>landcover_50m_bilinear.tif</td><td>20 × 20</td><td>1</td><td>50, 50</td><td><em>record</em></td><td>as written</td><td>0, 1000, 0, 1000</td><td>undefined</td><td><em>record</em></td></tr>
+    </tbody></table></div>
+
+  <h2><span class="mod">4.7.5</span>Table C — cell readings, with a checker</h2>
+  <p>Type what your software showed. Rows with a hand-checked expectation are compared (a difference in the last decimal is fine; 0.1 or more is not). Rows marked <em>record</em> only need to be filled in. Your entries are saved in this browser.</p>
+  <div class="try">
+    <span class="tag">Checker</span>
+    <div class="table-wrap"><table class="check-table" id="checkTab">
+      <thead><tr><th>Raster</th><th>Position (x, y)</th><th>Output cell</th><th>Expected</th><th>Why</th><th>Observed</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="result" id="checkOut"></div>
+  </div>
+  <h3>Expected statistics of the copies</h3>
+  <ul>
+    <li><strong>elevation_50m_nearest.tif:</strong> min 9.0, max 21.0, mean <strong>13.6</strong> — unchanged, because every output value is a copy and each input is copied exactly four times (60 valid cells, sum 816). Four NoData cells.</li>
+    <li><strong>elevation_50m_bilinear.tif:</strong> min and max <em>within</em> 9.0–21.0; mean near but not necessarily 13.6; NoData count — <em>record</em>.</li>
+    <li><strong>landcover_50m_nearest.tif:</strong> only 0, 1, 2, 3 and NoData; counts 28, 96, 224, 40 and 12 (each source count × 4).</li>
+    <li><strong>landcover_50m_bilinear.tif:</strong> values outside {0, 1, 2, 3}, or codes at positions where the source had a different code. Record min, max and at least one offending cell.</li>
+  </ul>
+  <div class="callout idea"><span class="label">A correct submission…</span><ul style="margin:0">
+    <li>has Table A for all six rasters, with the outputs showing cell size 50 and <em>the same extents</em> as their sources;</li>
+    <li>shows every Table A property identical before and after the styling step;</li>
+    <li>reports the elevation mean as 13.6 with the rule stated, and names what 12.75 and −612 would have meant;</li>
+    <li>has every <em>record</em> row filled — an empty one is a fail, because the point of those rows is to observe;</li>
+    <li>names nearest neighbour (or majority) for land cover and an interpolating method for elevation, with the numerical reason for each;</li>
+    <li>states that the 50 m outputs contain no information the 100 m sources did not.</li></ul></div>
+
+  <h2><span class="mod">4.7.6</span>Troubleshooting</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td>The .asc file is not offered in the browse dialog</td><td>Wrong extension or a file filter</td><td>Rename to <code>.asc</code>; Esri’s Copy Raster page notes only <code>.asc</code> is recognised by default and recommends renaming</td></tr>
+      <tr><td>“Number of values does not match”</td><td>A missing/extra value or stray character</td><td>Count values per line; the file must hold exactly rows × columns values</td></tr>
+      <tr><td>Elevation pixel type is integer; values show 12, 14…</td><td>Decimal points lost, or an integer type chosen</td><td>Check every value has “.0” and NODATA_VALUE is −9999.0; if needed, Copy Raster to TIFF with a floating-point pixel type and use that copy</td></tr>
+      <tr><td>Mean is about −612</td><td>−9999 treated as a height</td><td>Check the NoData value in Properties; set it to −9999 per band; recompute</td></tr>
+      <tr><td>Mean is 12.75</td><td>NoData counted as 0 — by the tool, or a 0 was typed instead of −9999.0</td><td>Check the file, then the tool settings (Calculate Statistics has an <em>Ignore Values</em> parameter)</td></tr>
+      <tr><td>The pond does not display</td><td>NoData set to 0, or a transparency rule hides 0</td><td>NoData must be −1; check the layer’s NoData/transparency settings</td></tr>
+      <tr><td>The raster appears somewhere odd relative to a basemap</td><td>A basemap was left in</td><td>Remove it; the position is meaningless until Chapter 5</td></tr>
+      <tr><td>The top row of the listing appears at the bottom</td><td>Row order reversed somewhere</td><td>The pond (code 0) must be at the <em>top</em> right (y 900–1000); if not, tell the instructor (verification item V1)</td></tr>
+      <tr><td>Resample output is 9 × 9 or 21 × 21</td><td>Cell size not exactly 50, or an extent environment changed</td><td>Re-run with cell size 50 and default environments</td></tr>
+      <tr><td>Bilinear elevation shows NoData in a bigger patch than expected, or values there</td><td>Software-specific NoData treatment</td><td>Not an error — a <em>record</em> row. Write down the pattern</td></tr>
+    </tbody></table></div>
+
+  <h2><span class="mod">4.7.7</span>What you hand in</h2>
+  <ol>
+    <li><strong>Table A</strong> for all six rasters, with a “where did the meaning come from” note per raster (“this tutorial’s dictionary”; “none in the file”).</li>
+    <li><strong>Table C</strong> with every <em>observed</em> cell filled, including the four <em>record</em> rows (export the checker below or copy it by hand).</li>
+    <li><strong>Statistics log</strong>: min/max/mean for six rasters; for the two elevation rasters, the one-sentence statistic with rule and coverage.</li>
+    <li><strong>Before/after evidence</strong> for the styling step and the sentence about what changed.</li>
+    <li><strong>The explanation</strong> from the last step.</li>
+    <li><strong>A discrepancy list</strong>: every place a control, label or behaviour differed from the box, plus your software version (Help → About).</li>
+  </ol>
+  <p><button class="btn ghost" id="exportBtn">Copy my Table C entries as text</button></p>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  const KEY = "gis-ch4-lab-c";
+  const rows = [
+    ["elevation_50m_nearest.tif", "(75, 925)", "row 2, col 2", 12, "nearest input centre is (50, 950)"],
+    ["elevation_50m_nearest.tif", "(175, 625)", "row 8, col 4", "NoData", "nearest input centre is (150, 650), the NoData cell"],
+    ["elevation_50m_bilinear.tif", "(75, 925)", "row 2, col 2", 12.25, "0.5625×12 + 0.1875×14 + 0.1875×11 + 0.0625×13"],
+    ["elevation_50m_bilinear.tif", "(125, 925)", "row 2, col 3", 13.25, "0.1875×12 + 0.5625×14 + 0.0625×11 + 0.1875×13"],
+    ["elevation_50m_bilinear.tif", "(75, 875)", "row 3, col 2", 11.75, "0.1875×12 + 0.0625×14 + 0.5625×11 + 0.1875×13"],
+    ["elevation_50m_bilinear.tif", "(125, 875)", "row 3, col 3", 12.75, "0.0625×12 + 0.1875×14 + 0.1875×11 + 0.5625×13"],
+    ["elevation_50m_bilinear.tif", "(25, 975)", "row 1, col 1", null, "edge cell — fewer than four input centres around it; software-dependent"],
+    ["elevation_50m_bilinear.tif", "(175, 675)", "row 7, col 4", null, "one of its four neighbours is NoData; software-dependent"],
+    ["landcover_50m_nearest.tif", "(725, 875)", "row 3, col 15", 0, "nearest input centre (750, 850) = row 2, col 8 → Water"],
+    ["landcover_50m_bilinear.tif", "(725, 875)", "row 3, col 15", null, "maths gives 0.5 from neighbours 2, 0, 2, 0; if stored as integer, 0 or 1 — either way not observed ground"],
+    ["landcover_50m_nearest.tif", "(995, 510)", "row 10, col 20", 1, "unchanged from the source → Built-up"]
+  ];
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+  const tb = document.querySelector("#checkTab tbody");
+  rows.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3] === null ? "<em>record</em>" : r[3]}</td><td class="small">${r[4]}</td><td><input type="text" data-i="${i}" value="${saved[i] || ""}" placeholder="…"></td><td class="status"></td>`;
+    tb.appendChild(tr);
+  });
+  function check() {
+    let ok = 0, filled = 0;
+    tb.querySelectorAll("input").forEach(inp => {
+      const i = +inp.dataset.i, r = rows[i], v = inp.value.trim(), st = inp.parentElement.nextElementSibling;
+      saved[i] = v; if (v) filled++;
+      inp.parentElement.className = ""; st.textContent = "";
+      if (!v) return;
+      if (r[3] === null) { st.textContent = "recorded"; ok++; inp.parentElement.className = "match-ok"; return; }
+      if (r[3] === "NoData") { const m = /nodata|nd|none|null|blank|no data|-9999/i.test(v); st.textContent = m ? "matches" : "expected NoData"; inp.parentElement.className = m ? "match-ok" : "match-no"; if (m) ok++; return; }
+      const num = parseFloat(v); const m = !isNaN(num) && Math.abs(num - r[3]) < 0.06;
+      st.textContent = m ? "matches" : `expected ${r[3]}`; inp.parentElement.className = m ? "match-ok" : "match-no"; if (m) ok++;
+    });
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch {}
+    document.getElementById("checkOut").innerHTML = filled ? `${filled} of ${rows.length} filled; <strong>${ok}</strong> match or are recorded.` + (filled === rows.length && ok === rows.length ? " All hand-checked rows match and all record rows are filled." : "") : "Fill in the Observed column as you read the cells.";
+  }
+  tb.addEventListener("input", check); check();
+  document.getElementById("exportBtn").onclick = () => {
+    const txt = rows.map((r, i) => `${r[0]}\t${r[1]}\t${r[2]}\texpected: ${r[3] === null ? "record" : r[3]}\tobserved: ${saved[i] || ""}`).join("\n");
+    navigator.clipboard?.writeText(txt).then(() => alert("Copied to clipboard.")).catch(() => alert(txt));
+  };
+}
+</script>
+</body>
+</html>
