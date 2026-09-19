@@ -1,0 +1,122 @@
+<?php $page = ['title' => '1.2 What a GIS includes', 'chapter' => 1, 'module' => '1.2']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 1.2</div>
+    <h1>What a GIS includes</h1>
+    <p class="lead">A GIS is not one program. It is data, software, hardware, and people — doing four jobs.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Name the components of a GIS and its four functions.</li>
+      <li>Tell a GIS apart from a map image, a navigation app, and a table of addresses.</li>
+      <li>Learn the eight-step question-to-decision workflow used in the whole course.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">1.2.1</span>Components and functions</h2>
+  <p>The QGIS <em>Gentle Introduction to GIS</em> says a GIS consists of <strong>digital data</strong>, <strong>computer hardware</strong>, and <strong>computer software</strong>, and adds that “GIS is more than just software, it refers to all aspects of managing and using digital geographical data”. Most courses, including this one, add a fourth part: the <strong>people and processes</strong> that collect, check, maintain, and read the data. That fourth part is added because most GIS problems come from people and process (nobody updated the data; nobody wrote down what a code means), not from the software.</p>
+
+  <div class="grid-2">
+    <div class="card"><h4 style="margin-top:0">Geographic data</h4><p>Records that carry a location plus descriptive values.</p><p class="small">In our town: requests, assets, roads, wards.<br>Developer: tables with a location column.</p></div>
+    <div class="card"><h4 style="margin-top:0">Software</h4><p>Programs to view, edit, analyse, and output that data.</p><p class="small">In our town: desktop GIS, web maps, field apps, your code.<br>Developer: apps, libraries, services.</p></div>
+    <div class="card"><h4 style="margin-top:0">Hardware</h4><p>Machines that store, process, and display.</p><p class="small">In our town: laptops, servers, the phones field teams carry.<br>Developer: infrastructure.</p></div>
+    <div class="card"><h4 style="margin-top:0">People and processes</h4><p>Who collects, checks, updates, and reads the data — and the rules they follow.</p><p class="small">In our town: helpline staff, inspectors, the person responsible for the data, the manager who sets the rules.<br>Developer: operations and ownership.</p></div>
+  </div>
+
+  <h3>The four jobs</h3>
+  <p>The same source says that with a GIS application you can “open digital maps on your computer, create new spatial information to add to a map, create printed maps customised to your needs and perform spatial analysis”. We summarise that as four verbs:</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <p>Click a verb to see what it means in the municipal scenario.</p>
+    <div class="controls" id="verbBtns">
+      <button class="btn" data-v="capture">1 · Capture</button>
+      <button class="btn" data-v="store">2 · Store</button>
+      <button class="btn" data-v="analyse">3 · Analyse</button>
+      <button class="btn" data-v="communicate">4 · Communicate</button>
+    </div>
+    <div class="result" id="verbOut">Pick one.</div>
+  </div>
+
+  <div class="callout dev"><span class="label">Developer view</span><p>A GIS is a <strong>data platform</strong>, not one application: data comes in (capture), is stored, is queried and computed on (analysis), and is presented (communication), with an operations team around it.</p><p><strong>Where the analogy stops:</strong> in an ordinary platform, a value like 250 means the same thing everywhere. In a GIS the system must also know <em>how space is measured</em> — the units, which map system the numbers belong to, and whether an edge counts. Two tables that look identical can give different distances because their coordinates were measured differently. Ordinary tabular data has nothing like that.</p></div>
+
+  <h2><span class="mod">1.2.2</span>Four things that show locations — only one is a GIS</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Thing</th><th>Ask it a new question?</th><th>Change what is shown?</th><th>Links values to places?</th><th>Computes distance, containment?</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Static map image (PNG/PDF of the wards)</td><td class="no">No</td><td class="no">No</td><td>Only as printed text</td><td class="no">No</td><td>An <strong>output</strong> of a GIS</td></tr>
+      <tr><td>Navigation app (Google Maps, Ola/Uber map)</td><td>Only the questions it was built for</td><td>Limited</td><td>Internally, yes; you cannot add your own</td><td>Its own only</td><td>A GIS-<strong>powered product</strong></td></tr>
+      <tr><td>Spreadsheet of addresses</td><td>Yes for attributes, no for space</td><td class="yes">Yes</td><td>Yes — but the “place” is text</td><td class="no">No</td><td>An <strong>input</strong> to a GIS</td></tr>
+      <tr class="hl"><td>GIS</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td>—</td></tr>
+    </tbody></table></div>
+
+  <h3>How a table becomes a layer</h3>
+  <p>The <em>Gentle Introduction</em> shows a health worker’s table with longitude and latitude columns (the “geographical data”) and disease and date columns (the “non-geographical data”). Loaded into a GIS, the rows become a layer and patterns appear — for instance that “the mumps patients all live close to each other”. Our request table is the same idea: the <code>x</code> and <code>y</code> columns are the location; the rest describes the problem. Press the button.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls"><button class="btn accent" id="loadBtn">Load the table into a GIS →</button> <button class="btn ghost" id="resetBtn">Reset</button></div>
+    <div class="two-col">
+      <div id="loadTable"></div>
+      <figure class="map-fig" id="loadMap" style="opacity:.15;transition:opacity .6s"></figure>
+    </div>
+    <div class="result">Nothing about the rows changed. What changed is that the software now treats the <code>x</code> and <code>y</code> columns as <em>space</em>.</div>
+  </div>
+  <p>For a table to become GIS input, three things must be true:</p>
+  <ol>
+    <li><strong>Each row has a location that can become a position.</strong> Coordinates are the direct case. A street address is <em>not</em> yet a position; converting it is a separate, error-prone step called <dfn title="Turning an address into coordinates.">geocoding</dfn> (Chapter 9).</li>
+    <li><strong>Somebody knows what the numbers mean.</strong> Are they metres or degrees? Which map system do they belong to? Our practice data avoids this problem by saying up front “flat grid, metres”; real data cannot (Chapter 5).</li>
+    <li><strong>The other columns keep their meaning after import.</strong> Data types, empty values, and ID numbers must survive the load (Chapter 7).</li>
+  </ol>
+  <div class="callout warn"><span class="label">Misconception</span><p>“A PDF map of the wards is our GIS data.” It is a picture. It cannot be filtered, its positions cannot be measured reliably, and it has none of the values that produced it. If the PDF is all that exists, the wards will have to be captured again.</p></div>
+
+  <h2><span class="mod">1.2.3</span>The question-to-decision workflow</h2>
+  <p>This is the working method for the whole course. It is <strong>not</strong> a software design — every step can happen in different software or on paper. Click each step to see it applied to our six requests.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="workflow">
+      <div class="steps" id="steps"></div>
+      <div class="step-detail" id="stepDetail"></div>
+    </div>
+  </div>
+  <p>Step 6 is the one most often skipped, and the one this course insists on. Validation does not mean “the tool ran without error”. It means: Is the count roughly what I expected? Did I check at least one record by hand? Did a filter quietly drop rows? Would a colleague get the same answer from the same definitions?</p>
+
+  <div class="quiz" data-answer="1" data-fb="Every part is needed. The chapter’s point is that ‘GIS is more than just software’ — a great tool with stale data and no process for updating it will produce confident, wrong answers.">
+    <div class="q">A team buys a GIS application and loads last year’s ward boundaries. Nobody is assigned to update them. Which component of a GIS is missing?</div>
+    <div class="opts">
+      <button class="opt">Hardware</button>
+      <button class="opt">People and processes</button>
+      <button class="opt">Software</button>
+      <button class="opt">Nothing — they have a GIS now</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>Name the four functions of a GIS and give one concrete municipal action for each. Then explain in one sentence why a spreadsheet of addresses is not yet a GIS dataset.</p></div>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() {
+  const verbs = {
+    capture: "<strong>Capture</strong> — get location and description into the system. A resident taps the app at the pothole; a call-centre agent types the coordinates a caller reads out; an inspector logs a drain’s condition.",
+    store: "<strong>Store</strong> — keep it so that geometry and attributes stay linked. The six requests sit in one table with (x, y), status, dates, and channel, and can be fetched again tomorrow.",
+    analyse: "<strong>Analyse</strong> — compute new facts from stored ones. Distance from each request to Road R1 (P3 = 250 m); which ward contains P1 (Ward A); how many unresolved requests each ward has.",
+    communicate: "<strong>Communicate</strong> — present the result. A three-row list of tomorrow’s visits with the rules printed above it, or a map handed to the team lead with its limitations noted."
+  };
+  document.getElementById("verbBtns").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; document.getElementById("verbOut").innerHTML = verbs[b.dataset.v]; });
+
+  requestTable(document.getElementById("loadTable"), { cols: ["id", "xy", "category", "status"] });
+  const lm = document.getElementById("loadMap");
+  renderMap(lm, { layers: { wards: false, roads: false, requests: true, assets: false }, caption: "The x and y columns, drawn" });
+  document.getElementById("loadBtn").addEventListener("click", () => { lm.style.opacity = 1; renderMap(lm, { caption: "Now a layer — with wards and road added, patterns appear" }); });
+  document.getElementById("resetBtn").addEventListener("click", () => { lm.style.opacity = .15; renderMap(lm, { layers: { wards: false, roads: false, requests: true, assets: false }, caption: "The x and y columns, drawn" }); });
+
+  const steps = [
+    ["Decision", "What somebody will do differently.", "The inspection team lead will assign tomorrow’s first visits."],
+    ["Question", "An answerable spatial question with every term defined.", "“Which requests with status Open or Reopened, reported on or before 2026-09-15, lie within 300 m (boundary-inclusive) of Road R1 and inside Ward A or Ward B (boundary-inclusive)?”"],
+    ["Data inventory", "A list of the data you have: who owns it, when it was updated, what it leaves out.", "Requests (6 rows, reported 2026-08-15 to 2026-09-11, three channels); Road R1; Wards A and B. Known omission: P6 is a duplicate of a record not in this package."],
+    ["Selection rules", "Filters and spatial conditions written out with units and boundary treatment.", "status ∈ {Open, Reopened}; reported ≤ 2026-09-15; distance to R1 ≤ 300 m; inside A ∪ B with the shared edge counted as inside."],
+    ["Operation", "The computation.", "Status/date filter → P1, P3, P5. Distance test: P1 = 300 ✔, P3 = 250 ✔, P5 = 0 ✔. Ward test: P1 in A ✔, P3 in B ✔, P5 on the shared edge — inside by the stated rule ✔. <strong>Answer: P1, P3, P5.</strong>"],
+    ["Validation", "Does the answer look reasonable, and could someone else repeat it?", "3 of 6 — looks reasonable. Check by hand: P2 was excluded by <em>status</em>, not geometry; it is also 300 m from the road, so it enters the set if the status rule changes. P6 was excluded twice (status and ward). Another person applying these rules must get {P1, P3, P5}."],
+    ["Communication", "A map, table, or number with definitions and limits attached.", "A three-row table with the rules printed above it, plus a one-line note on P2 and P6. Not claimed: that P3 is more urgent than P1 (policy), that the team can reach any of them quickly (1.3.3), or that these six are all the requests that exist (1.4.3)."],
+    ["Decision (again)", "…and often a refined question.", "The team lead assigns P1, P3, P5 — and asks whether “In progress” should count next time."]
+  ];
+  const sEl = document.getElementById("steps"), dEl = document.getElementById("stepDetail");
+  steps.forEach((s, i) => { const d = document.createElement("div"); d.className = "step" + (i === 5 ? " validate" : ""); d.innerHTML = `<span class="n">${i + 1}</span><div><strong>${s[0]}</strong><br><span class="small">${s[1]}</span></div>`; d.addEventListener("click", () => show(i)); sEl.appendChild(d); });
+  function show(i) { sEl.querySelectorAll(".step").forEach((x, j) => x.classList.toggle("active", i === j)); dEl.innerHTML = `<div class="synthetic">Worked example · step ${i + 1}</div><h3 style="margin-top:.3rem">${steps[i][0]}</h3><p>${steps[i][2]}</p>`; }
+  show(0);
+}
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

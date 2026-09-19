@@ -1,0 +1,181 @@
+<?php $page = ['title' => '4.3 Resolution, extent and alignment', 'chapter' => 4, 'module' => '4.3']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 4.3 · General GIS principle · simple arithmetic</div>
+    <h1>Cell size, extent and finding a cell</h1>
+    <p class="lead">Four numbers in a header fix where every cell is: how many columns, how many rows, how big a cell is, and where one corner sits. From those you can compute the raster’s outline and find the cell under any point. And one warning that matters more than the arithmetic: <strong>a small cell size is not the same as accurate data.</strong></p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Watch a pond turn into squares as the cell size changes — and a streetlight vanish.</li>
+      <li>Compute extent = origin + count × cell size, then find the cell for any (x, y).</li>
+      <li>See why two grids with the same cell size may still not line up.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">4.3.1</span>Cell size, resolution — and why neither is accuracy</h2>
+  <p><strong>Cell size</strong> (pixel size) is how wide one cell is on the ground — 100 m in our fixtures. <strong>Spatial resolution</strong> is the level of detail the grid can show, and it is set by the cell size: smaller cells, finer detail. Esri’s docs put it plainly: if a pixel covers 5 m × 5 m, “the resolution is 5 meters”. So cell size and resolution are one idea with two names.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>A pond and a streetlight, at different cell sizes</h3>
+    <p>The blue blob is a made-up pond; the orange dot is a streetlight. Move the slider. Each cell gets the class that covers most of it.</p>
+    <div class="slider-row"><label for="cs">Cell size</label><input type="range" id="cs" min="1" max="6" step="1" value="3"><output id="csOut"></output></div>
+    <div class="fig-panel">
+      <figure class="raster-fig" id="pondFig"></figure>
+      <div class="result" id="pondOut"></div>
+    </div>
+    <p class="small">The area is 400 m × 400 m (made-up). The streetlight is about 1 m wide; the pond about 150 m across.</p>
+  </div>
+  <p>Three consequences:</p>
+  <ol>
+    <li><strong>Resolution decides what can exist in the raster.</strong> An object smaller than a cell is not represented — “if the pixel size is larger than the object of interest, that object may not exist in the raster dataset”. No styling brings the streetlight back.</li>
+    <li><strong>Resolution costs.</strong> Halve the cell size and you need four times as many cells for the same area. Higher resolution is not free and is not always wanted — the cloud map on the TV weather report is deliberately coarse.</li>
+    <li><strong>Cell size is not positional accuracy.</strong> A 1 m cell size says the grid is <em>divided</em> into 1 m squares. It does not say the values are <em>placed</em> within 1 m of where they belong. Accuracy comes from how the data was captured and georeferenced (Chapter 9), not from the grid spacing.</li>
+  </ol>
+  <div class="callout idea"><span class="label">Everyday picture</span><p>Cell size is like the number of decimal places on a printed figure. <strong>3.14159265</strong> has more digits than <strong>3.1</strong> — but if the measurement was made with a school ruler, the extra digits are noise. More digits = finer <em>precision</em>; closer to the truth = <em>accuracy</em>. A finer grid gives finer precision only.</p></div>
+  <div class="callout warn"><span class="label">Common mistake</span><p>“This raster is 1 m resolution, so I can locate the pipe to 1 m.” A digging crew opens the road in the wrong place because a 1 m grid made from a 10 m survey was trusted at face value. Ask <em>how the grid was made</em> — a metadata question (Chapter 7).</p></div>
+
+  <h2><span class="mod">4.3.2</span>Metre-grid arithmetic: extent and finding a cell</h2>
+  <p>The header of our text-file rasters carries four numbers: columns, rows, cell size, and the coordinate of the <strong>lower-left corner of the lower-left cell</strong>. This chapter’s fixtures have no coordinate system, so everything below is plain arithmetic on graph paper — it says nothing about the Earth.</p>
+  <p>Start with the blueprint’s own example: <strong>ten columns of ten-metre cells span one hundred metres</strong>. 10 × 10 m = 100 m. That is all “extent” is: <strong>count × cell size</strong>, added to the origin.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>From a header to an extent</h3>
+    <div class="inputs">
+      <label>NCOLS <input type="number" id="hC" value="10" min="1" max="200"></label>
+      <label>NROWS <input type="number" id="hR" value="10" min="1" max="200"></label>
+      <label>XLLCORNER <input type="number" id="hX" value="0"></label>
+      <label>YLLCORNER <input type="number" id="hY" value="0"></label>
+      <label>CELLSIZE <input type="number" id="hS" value="100" min="1"></label>
+      <button class="btn small ghost" id="hF5">F5</button><button class="btn small ghost" id="hF6">F6</button>
+    </div>
+    <div class="calc" id="hCalc"></div>
+  </div>
+  <h3>From a coordinate to a cell</h3>
+  <p>Given a point (x, y) inside the extent, with origin (x₀, y₀), cell size <em>c</em>, and <em>R</em> rows:</p>
+  <ol>
+    <li>Column from the left, counting from 0: <code>col = floor((x − x₀) ÷ c)</code></li>
+    <li>Row from the <strong>bottom</strong>, counting from 0: <code>rowFromBottom = floor((y − y₀) ÷ c)</code></li>
+    <li>Row from the <strong>top</strong>: <code>row = R − 1 − rowFromBottom</code> — because grids are listed top-down while y grows upward.</li>
+  </ol>
+  <p>Add 1 to each to get the “row 5, column 10” style used in this tutorial.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <p>Type a point or pick a preset. The land-cover grid (origin (0, 0), cell 100 m, 10 rows) is used.</p>
+    <div class="inputs">
+      <label>x <input type="number" id="px" value="995"></label>
+      <label>y <input type="number" id="py" value="510"></label>
+      <button class="btn small" id="pGo">Find the cell</button>
+      <button class="btn small ghost" data-pt="995,510">DR-0042 (995, 510)</button>
+      <button class="btn small ghost" data-pt="205,195">SL-0113 (205, 195)</button>
+      <button class="btn small ghost" data-pt="200,200">P1 (200, 200) — on a corner!</button>
+      <button class="btn small ghost" data-pt="1700,900">P4 (1700, 900)</button>
+    </div>
+    <div class="fig-panel">
+      <figure class="raster-fig" id="lookFig"></figure>
+      <div class="calc" id="lookCalc"></div>
+    </div>
+  </div>
+  <div class="callout warn"><span class="label">Boundary case — a point exactly on a cell corner</span><p>P1 at (200, 200) sits on the shared corner of four cells whose codes are 2, 1, NoData and 2. The formula above gives “row 8, column 3 → code 1 (built-up)” — but only because we chose <code>floor</code>, i.e. decided that a cell owns its left and bottom edges. Another program may decide differently. This is the raster twin of Chapter 1’s question about request P5 sitting exactly on the ward boundary: <strong>a point on an edge has no value until you state the tie-break rule</strong>, and that rule belongs to the software. The lab asks you to observe what your software does.</p></div>
+  <div class="callout warn"><span class="label">Common mistake</span><p>“Row 1 is at the bottom because y starts at 0 there.” Then every lookup is mirrored and DR-0042 lands in a vegetation cell. The listing’s first row is the <em>top</em> row; the header’s YLLCORNER is the <em>bottom</em> edge. Both are true at once.</p></div>
+
+  <h2><span class="mod">4.3.3</span>Same cell size, different grids</h2>
+  <p>Two rasters with the same cell size are not necessarily on the same grid. A grid is fixed by its <strong>origin</strong> as well as its cell size. If one origin is shifted from the other by anything other than a whole number of cells, the cell edges do not coincide, and there is no cell in one that matches a cell in the other.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <p>The elevation grid (edges at 0, 100, 200, 300, 400) is drawn in black. A second made-up grid “Rain_2026”, also 100 m cells, is drawn in orange. Slide its origin.</p>
+    <div class="slider-row"><label for="off">Rain_2026 x-origin</label><input type="range" id="off" min="0" max="200" step="10" value="50"><output id="offOut"></output></div>
+    <div class="fig-panel">
+      <figure class="raster-fig" id="alignFig"></figure>
+      <div class="result" id="alignOut"></div>
+    </div>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Case</th><th>Example</th><th>What it means</th></tr></thead>
+    <tbody>
+      <tr><td>Same cell size, origins differ by a whole number of cells</td><td>Land cover (origin 0, 0) and elevation (origin 0, 600); 600 = 6 × 100</td><td>The grids <strong>align</strong>. Cell-by-cell comparison is meaningful.</td></tr>
+      <tr><td>Same cell size, origin shifted by a fraction of a cell</td><td>Elevation and Rain_2026 at x-origin 50</td><td>They <strong>do not align</strong>. Comparing “this cell with that cell” needs resampling (4.5), which changes values.</td></tr>
+      <tr><td>Different cell sizes</td><td>100 m land cover and a 30 m classification</td><td>Neither lines up with the other; combining them needs a common cell size <em>and</em> origin — and the finer grid does not make the coarser one more detailed.</td></tr>
+    </tbody></table></div>
+  <p>Both platforms have settings for this when rasters are processed together (ArcGIS Pro’s <em>Cell Size</em>, <em>Extent</em> and <em>Snap Raster</em> environments; QGIS’s GDAL <em>Warp</em> target resolution and extent) — that is later training. For now, learn to <strong>notice</strong>: origins of 0 and 50, or cell sizes of 100 and 30, will not line up, and any cell-to-cell comparison between them hides a resampling step.</p>
+
+  <div class="quiz" data-answer="1" data-fb="Extent: x 1000 to 1000 + 40 × 25 = 2000; y 0 to 25 × 25 = 625. P4 is at y = 900, above the top edge, so it has no cell. The cell sizes differ (25 vs 100) and the extents only touch at x = 1000, so there is no cell-to-cell match with F5 — even though the grid lines happen to be compatible.">
+    <div class="q">A header reads NCOLS 40, NROWS 25, XLLCORNER 1000, YLLCORNER 0, CELLSIZE 25. Which statement is right?</div>
+    <div class="opts">
+      <button class="opt">Extent x 1000–2000, y 0–1000; P4 (1700, 900) is in row 4</button>
+      <button class="opt">Extent x 1000–2000, y 0–625; P4 (1700, 900) is outside the raster</button>
+      <button class="opt">Extent x 0–1000, y 0–625; P4 is in column 28</button>
+      <button class="opt">The extent cannot be known without a coordinate system</button>
+    </div><div class="fb"></div>
+  </div>
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>For the header above: (a) state the extent; (b) give the 1-based row and column of P4 (1700, 900) or explain why it has none; (c) does this raster align with the land-cover grid F5? Say why.</p></div>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() {
+  /* pond demo: 400 m square, pond = circle centre (250,240) r 75; streetlight at (90, 300) */
+  const sizes = [5, 10, 20, 40, 80, 100];
+  function pond() {
+    const cs = sizes[+document.getElementById("cs").value - 1];
+    document.getElementById("csOut").value = cs + " m";
+    const n = 400 / cs, g = [];
+    let pondCells = 0, lightCells = 0;
+    for (let i = 0; i < n; i++) { g.push([]); for (let j = 0; j < n; j++) {
+      const cx = (j + .5) * cs, cy = 400 - (i + .5) * cs;
+      let v = 2; if (Math.hypot(cx - 250, cy - 240) < 75) { v = 0; pondCells++; }
+      if (cs <= 1 && Math.abs(cx - 90) < .5 && Math.abs(cy - 300) < .5) { v = 1; lightCells++; }
+      g[i].push(v); } }
+    const r = { cols: n, rows: n, cell: cs, x0: 0, y0: 0, grid: g, dict: F5.dict, colors: F5.colors };
+    renderRaster(document.getElementById("pondFig"), r, { renderer: "unique", showValues: false, cellPx: Math.max(6, 560 / n), axes: false, markers: [{ x: 90, y: 300, label: "SL" }], caption: `${n} × ${n} cells of ${cs} m. Pond area from the grid: ${pondCells} cells × ${cs * cs} m² = ${(pondCells * cs * cs).toLocaleString("en-IN")} m² (true circle ≈ 17,671 m²).` });
+    document.getElementById("pondOut").innerHTML = `<strong>${n * n} cells</strong> to store this area at ${cs} m.<br>Streetlight: <strong>${cs > 1 ? "not in the raster" : "one cell"}</strong> — it is about 1 m wide, so at ${cs} m it is smaller than a cell and the cell shows what covers most of it (vegetation).<br>Pond edge: <strong>${cs >= 40 ? "a rough staircase" : cs >= 10 ? "a staircase of small steps" : "close to the real curve"}</strong>. The real pond is not square anywhere.`;
+  }
+  document.getElementById("cs").oninput = pond; pond();
+
+  /* header -> extent */
+  function hdr() {
+    const C = +document.getElementById("hC").value, R = +document.getElementById("hR").value, X = +document.getElementById("hX").value, Y = +document.getElementById("hY").value, S = +document.getElementById("hS").value;
+    document.getElementById("hCalc").innerHTML = `width  = NCOLS × CELLSIZE = ${C} × ${S} = <span class="hl">${C * S} m</span>
+height = NROWS × CELLSIZE = ${R} × ${S} = <span class="hl">${R * S} m</span>
+left   = XLLCORNER            = <span class="hl">${X}</span>      right = ${X} + ${C * S} = <span class="hl">${X + C * S}</span>
+bottom = YLLCORNER            = <span class="hl">${Y}</span>      top   = ${Y} + ${R * S} = <span class="hl">${Y + R * S}</span>
+cells  = ${C} × ${R} = <span class="hl">${C * R}</span>;  area of one cell = ${S} × ${S} = ${S * S} m²`;
+  }
+  ["hC", "hR", "hX", "hY", "hS"].forEach(id => document.getElementById(id).oninput = hdr);
+  document.getElementById("hF5").onclick = () => { setH(10, 10, 0, 0, 100); }; document.getElementById("hF6").onclick = () => { setH(4, 4, 0, 600, 100); };
+  function setH(c, r, x, y, s) { document.getElementById("hC").value = c; document.getElementById("hR").value = r; document.getElementById("hX").value = x; document.getElementById("hY").value = y; document.getElementById("hS").value = s; hdr(); }
+  hdr();
+
+  /* coordinate -> cell */
+  function look() {
+    const x = +document.getElementById("px").value, y = +document.getElementById("py").value;
+    const c = cellAt(F5, x, y);
+    let txt = `point (${x}, ${y});  origin (0, 0);  cell 100;  10 rows\n`;
+    let sel = null;
+    if (!c.inside) txt += `<span class="bad">x must be 0–1000 and y must be 0–1000. The point is OUTSIDE the raster → no cell, no value.</span>`;
+    else {
+      txt += `col           = floor((${x} − 0) ÷ 100) = floor(${(x / 100).toFixed(2)}) = ${c.col}   → column ${c.col + 1}\nrowFromBottom = floor((${y} − 0) ÷ 100) = floor(${(y / 100).toFixed(2)}) = ${c.rowFromBottom}\nrow           = 10 − 1 − ${c.rowFromBottom} = ${c.row}   → row ${c.row + 1} (from the top)\nvalue         = <span class="hl">${c.value === ND ? "NoData" : c.value + " = " + F5.dict[c.value]}</span>`;
+      if (c.onCorner) txt += `\n<span class="bad">⚠ (${x}, ${y}) is exactly on a cell CORNER. The four touching cells hold ${[[c.row, c.col - 1], [c.row, c.col], [c.row + 1, c.col - 1], [c.row + 1, c.col]].map(([i, j]) => (F5.grid[i] && F5.grid[i][j] !== undefined) ? (F5.grid[i][j] === ND ? "NoData" : F5.grid[i][j]) : "–").join(", ")}. Our floor rule picked one; your software may pick another.</span>`;
+      else if (c.onEdge) txt += `\n<span class="bad">⚠ the point is exactly on a cell edge — the answer depends on the software's tie-break rule.</span>`;
+      sel = [c.row, c.col];
+    }
+    document.getElementById("lookCalc").innerHTML = txt;
+    renderRaster(document.getElementById("lookFig"), F5, { renderer: "unique", showValues: true, cellPx: 52, axes: true, selected: sel, markers: c.inside ? [{ x, y, label: "" }] : [], caption: "Land-cover grid F5 with metre axes. Row 1 is at the top (y 900–1000)." });
+  }
+  document.getElementById("pGo").onclick = look;
+  document.querySelectorAll("[data-pt]").forEach(b => b.onclick = () => { const [x, y] = b.dataset.pt.split(","); document.getElementById("px").value = x; document.getElementById("py").value = y; look(); });
+  look();
+
+  /* alignment */
+  function align() {
+    const off = +document.getElementById("off").value; document.getElementById("offOut").value = off + " m";
+    const el = document.getElementById("alignFig");
+    const cp = 100, W = 800, H = 260;
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}` });
+    for (let j = 0; j < 4; j++) svgEl("rect", { x: 40 + j * cp, y: 30, width: cp, height: cp, fill: "#dbe7f3", stroke: "#1f2a44", "stroke-width": 2 }, svg);
+    let t = svgEl("text", { x: 40, y: 20, class: "axis" }, svg); t.textContent = "Elevation grid: edges at 0, 100, 200, 300, 400";
+    for (let j = 0; j < 4; j++) svgEl("rect", { x: 40 + off + j * cp, y: 140, width: cp, height: cp, fill: "#f6d9c8", stroke: "#d3541f", "stroke-width": 2 }, svg);
+    t = svgEl("text", { x: 40, y: 258, class: "axis" }, svg); t.textContent = `Rain_2026: edges at ${[0, 1, 2, 3, 4].map(k => off + k * 100).join(", ")}`;
+    for (let k = 0; k <= 4; k++) svgEl("line", { x1: 40 + k * cp, y1: 130, x2: 40 + k * cp, y2: 140, stroke: "#8b93a7", "stroke-dasharray": "3 3" }, svg);
+    el.innerHTML = ""; el.appendChild(svg);
+    const aligned = off % 100 === 0;
+    document.getElementById("alignOut").innerHTML = aligned ? `<strong>Aligned.</strong> The offset (${off} m) is a whole number of cells, so every orange edge sits on a black edge. Cell-by-cell comparison makes sense.` : `<strong>Not aligned.</strong> The offset (${off} m) is not a whole number of cells. Every orange cell overlaps two black cells (${off} % and ${100 - off} %). “Subtract one from the other” would silently compare each cell with a shifted neighbour.`;
+  }
+  document.getElementById("off").oninput = align; align();
+}
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

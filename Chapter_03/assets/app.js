@@ -206,112 +206,12 @@ function layerExtent(key, moved = {}) {
   return pts ? extentOf(pts) : null;
 }
 
-/* ---- navigation, progress ---- */
-const MODULES = [
-  { id: "3.1", file: "m1-representation.html", title: "Real thing vs its shape" },
-  { id: "3.2", file: "m2-geometry.html", title: "Point, line, polygon" },
-  { id: "3.3", file: "m3-structure.html", title: "Parts, holes, formats" },
-  { id: "3.4", file: "m4-attributes.html", title: "Attributes" },
-  { id: "3.5", file: "m5-layers.html", title: "Dataset, layer, map" },
-  { id: "3.6", file: "m6-inspect.html", title: "Extent, count, edits" },
-  { id: "3.7", file: "m7-lab.html", title: "Lab: inspect a town" },
-  { id: "3.8", file: "m8-check.html", title: "Independent check" },
-  { id: "3.9", file: "m9-media.html", title: "Recap & next" }
-];
-const PROG_KEY = "gis-ch3-progress";
-function getProgress() { try { return JSON.parse(localStorage.getItem(PROG_KEY) || "{}"); } catch { return {}; } }
-function setDone(id, v) { try { const p = getProgress(); if (v) p[id] = true; else delete p[id]; localStorage.setItem(PROG_KEY, JSON.stringify(p)); } catch {} }
-
-function buildChrome() {
-  const here = location.pathname.split("/").pop() || "index.html";
-  const idx = MODULES.findIndex(m => m.file === here);
-  const prog = getProgress();
-  const doneCount = MODULES.filter(m => prog[m.id]).length;
-  const bar = document.createElement("header");
-  bar.className = "topbar";
-  bar.innerHTML = `<div class="inner">
-    <a class="brand" href="index.html">GIS Phase 1 · <span>Chapter 3</span></a>
-    <nav class="modnav" aria-label="Modules">${MODULES.map((m, i) => `<a href="${m.file}" class="${i === idx ? "active" : ""} ${prog[m.id] ? "done" : ""}" title="${m.title}">${m.id}</a>`).join("")}<a href="glossary.html" class="${here === "glossary.html" ? "active" : ""}">Glossary</a></nav>
-  </div><div class="progress"><div style="width:${(doneCount / MODULES.length) * 100}%"></div></div>`;
-  document.body.prepend(bar);
-  if (idx >= 0) {
-    const m = MODULES[idx];
-    const pager = document.createElement("div");
-    pager.className = "pager";
-    const prev = idx > 0 ? MODULES[idx - 1] : { file: "index.html", title: "Chapter home", id: "" };
-    const next = idx < MODULES.length - 1 ? MODULES[idx + 1] : { file: "index.html", title: "Chapter home", id: "" };
-    pager.innerHTML = `<a href="${prev.file}">← ${prev.id} ${prev.title}</a>
-      <div class="done-wrap"><label><input type="checkbox" id="doneBox" ${prog[m.id] ? "checked" : ""}> I have finished module ${m.id}</label></div>
-      <a href="${next.file}">${next.id} ${next.title} →</a>`;
-    document.querySelector("main").appendChild(pager);
-    pager.querySelector("#doneBox").addEventListener("change", e => { setDone(m.id, e.target.checked); location.reload(); });
-  }
-}
-
-/* ---- quick-check quizzes ---- */
-function initQuizzes() {
-  document.querySelectorAll(".quiz").forEach(q => {
-    const ans = parseInt(q.dataset.answer, 10);
-    const fb = q.querySelector(".fb");
-    q.querySelectorAll(".opt").forEach((b, i) => {
-      b.addEventListener("click", () => {
-        q.querySelectorAll(".opt").forEach(x => x.classList.remove("right", "wrong"));
-        const ok = i === ans;
-        b.classList.add(ok ? "right" : "wrong");
-        if (!ok) q.querySelectorAll(".opt")[ans].classList.add("right");
-        fb.className = "fb show " + (ok ? "ok" : "no");
-        fb.textContent = (ok ? "Correct. " : "Not quite. ") + (q.dataset.fb || "");
-      });
-    });
-  });
-}
-
-/* ---- click-to-sort activity ---- */
-function initSorters() {
-  document.querySelectorAll(".sorter").forEach(s => {
-    const items = JSON.parse(s.dataset.items);
-    const wrap = s.querySelector(".items");
-    let active = null;
-    items.forEach((it, i) => {
-      const b = document.createElement("button"); b.className = "item"; b.textContent = it.t; b.dataset.i = i;
-      b.addEventListener("click", () => { if (b.classList.contains("placed")) return; wrap.querySelectorAll(".item").forEach(x => x.classList.remove("active")); b.classList.add("active"); active = i; });
-      wrap.appendChild(b);
-    });
-    s.querySelectorAll(".bin").forEach(bin => {
-      bin.addEventListener("click", () => {
-        if (active == null) return;
-        const it = items[active];
-        const ok = it.bin === bin.dataset.bin;
-        const d = document.createElement("div"); d.className = "placed-item " + (ok ? "ok" : "bad");
-        d.textContent = (ok ? "✓ " : "✗ ") + it.t + (ok ? "" : ` → belongs in “${it.bin}”`) + (it.why ? " — " + it.why : "");
-        bin.appendChild(d);
-        const btn = wrap.querySelector(`.item[data-i="${active}"]`); btn.classList.remove("active"); btn.classList.add("placed");
-        active = null;
-      });
-    });
-  });
-}
-
-/* ---- tabs ---- */
-function initTabs() {
-  document.querySelectorAll(".tabs").forEach(tabs => {
-    const btns = tabs.querySelectorAll("button"); const panels = tabs.parentElement.querySelectorAll(".tabpanel");
-    btns.forEach((b, i) => b.addEventListener("click", () => { btns.forEach(x => x.setAttribute("aria-selected", "false")); panels.forEach(p => p.classList.remove("show")); b.setAttribute("aria-selected", "true"); panels[i].classList.add("show"); }));
-    if (btns[0]) btns[0].click();
-  });
-}
+/* Navigation, progress, quizzes, sorters and tabs live in /assets/common.js (shared by every chapter). */
 
 /* ---- attribute table helper ---- */
 function requestRow(p, extra = "") {
   const g = p.x == null ? `<td class="nogeom">(no location)</td>` : `<td class="mono">(${p.x}, ${p.y})</td>`;
   return `<tr data-id="${p.id}" ${extra}><td class="mono">${p.id}</td>${g}<td>${p.category}</td><td>${p.priority}</td><td>${p.status}</td><td class="mono">${p.reported}</td></tr>`;
 }
-const REQ_HEAD = `<tr><th>request_id</th><th>geometry</th><th>category</th><th>priority</th><th>status</th><th>reported_on</th></tr>`;
 
-document.addEventListener("DOMContentLoaded", () => {
-  buildChrome();
-  initQuizzes();
-  initSorters();
-  initTabs();
-  if (window.pageInit) window.pageInit();
-});
+const REQ_HEAD = `<tr><th>request_id</th><th>geometry</th><th>category</th><th>priority</th><th>status</th><th>reported_on</th></tr>`;

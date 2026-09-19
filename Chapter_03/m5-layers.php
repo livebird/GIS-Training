@@ -1,0 +1,141 @@
+<?php $page = ['title' => '3.5 Dataset, layer, map', 'chapter' => 3, 'module' => '3.5']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 3.5 · General idea, platform names vary</div>
+    <h1>A dataset is stored; a layer uses it; a map stacks layers</h1>
+    <p class="lead">Software often shows all three with one icon and one name, which is why beginners delete data by mistake — or think they have. Learn the three words, see one dataset shown two ways, and watch how the order of layers can hide six of seven complaints.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Tell a <strong>dataset</strong> (stored rows) from a <strong>layer</strong> (a use of those rows in a map) from a <strong>map</strong> (a stack of layers).</li>
+      <li>Put two layers on one dataset, edit the dataset, and watch both change — then make a copy and watch it <em>not</em> change.</li>
+      <li>Reorder layers and see drawing order hide data without deleting anything.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">3.5.1</span>Three words</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Word</th><th>What it is</th><th>Where it lives</th><th>In the town</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Dataset</strong></td><td>The stored rows: shape + facts, one shape type, one set of columns</td><td>A file (GeoPackage, shapefile), a geodatabase feature class, a database table</td><td>The Requests table with 7 rows</td></tr>
+      <tr><td><strong>Layer</strong></td><td>A <em>use</em> of a dataset in a map: a pointer to the dataset plus colours, labels, a filter, visibility, a scale range</td><td>Inside a map</td><td>“Requests — by status”</td></tr>
+      <tr><td><strong>Map</strong></td><td>An ordered stack of layers with one shared view</td><td>A project (<code>.aprx</code>, <code>.qgz</code>) or a web map</td><td>“Chapter 3 Town”</td></tr>
+    </tbody></table></div>
+  <p>The defining fact, straight from Esri’s documentation: layers “reference a data source” — they point at data, they do not hold a copy — and “you can use the same imagery layer in every map you create”. Chapter 2 said the same about projects. Delete the layer: the dataset is untouched. Delete the dataset: every layer on it is broken.</p>
+  <h3>Same idea, different names</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Platform</th><th>The stored rows are called…</th><th>The use in a map is called…</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>ArcGIS Pro / geodatabase</td><td>feature class (or table)</td><td>feature layer</td><td>A layer file (<code>.lyrx</code>) saves layer <em>settings</em>, not data</td></tr>
+      <tr><td>ArcGIS Online</td><td>a <strong>hosted feature layer</strong> item — this one <em>does</em> hold data (a naming trap from Chapter 2)</td><td>a layer in a web map; a <em>hosted feature layer view</em> for a filtered use</td><td>The word “layer” is used for both</td></tr>
+      <tr><td>QGIS</td><td>often just “layer”</td><td>layer in the Layers panel</td><td>The <em>Information</em> tab separates the source path from the layer name</td></tr>
+      <tr><td>PostGIS</td><td>a table with a geometry column</td><td>whatever the client builds (a QGIS layer, a GeoServer layer, a SQL view)</td><td></td></tr>
+      <tr><td>GeoJSON file</td><td>the FeatureCollection</td><td>whatever the reading app makes of it</td><td></td></tr>
+    </tbody></table></div>
+  <p>When you read any documentation, translate the local word to <em>dataset</em> or <em>layer</em> before deciding what an operation will do to your data.</p>
+  <div class="callout dev"><span class="label">Developer view</span><p>Dataset : layer : map ≈ table : view-with-formatting : dashboard. <strong>Where the comparison stops:</strong> a database view is defined once in the database for every client; a GIS layer’s settings live in <em>one</em> map, so two colleagues’ maps of the same dataset can filter and colour it differently without either knowing.</p></div>
+  <div class="quiz" data-answer="2" data-fb="A layer references the dataset. Removing the layer removes the reference and its settings — nothing else. Saving the project (d) stores layer settings, not data, so it changes nothing about the answer.">
+    <div class="q">A map has layers L1 and L2, both on the dataset Roads (3 rows); L2 has the filter width_m ≥ 10. A user deletes L2 from the map. Afterwards Roads has…</div>
+    <div class="opts">
+      <button class="opt">1 row — the filtered rows went with the layer</button>
+      <button class="opt">2 rows — the rows matching the filter were deleted</button>
+      <button class="opt">3 rows — nothing was deleted; a layer only points at the dataset</button>
+      <button class="opt">It depends on whether the project was saved</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <h2><span class="mod">3.5.2</span>Two layers, one dataset — and a copy that drifts</h2>
+  <p>Because a layer is a pointer plus settings, one dataset can appear as several layers in one map, each set up differently. Below, both layer cards point at the same 7-row dataset. Change a value in the dataset and watch both cards follow. Then make an <em>exported copy</em> and watch it stop following.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="card" style="margin-top:.4rem"><h4 style="margin-top:0">The dataset <code>Requests</code> (7 rows) — edit it here</h4>
+      <div class="controls">
+        <label>P2 status <select id="p2s"><option>In progress</option><option>Resolved</option><option>Open</option></select></label>
+        <label>P4 priority <select id="p4p"><option>Low</option><option>High</option><option>Medium</option></select></label>
+        <button class="btn accent" id="mkCopy">Make an exported copy now</button>
+        <button class="btn ghost" id="resetDs">Reset</button>
+      </div>
+    </div>
+    <div class="grid-3" id="layerCards"></div>
+    <div class="result" id="lyrOut">Both layer cards are live views of the dataset. There is no copy yet.</div>
+  </div>
+  <h3>Filtered view or exported copy?</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th></th><th>Filtered view (definition query, provider filter, hosted view)</th><th>Exported copy (Copy Features, Export, Save Features As)</th></tr></thead>
+    <tbody>
+      <tr><th>What is created</th><td>Layer settings only</td><td>A <strong>new dataset</strong> with its own storage</td></tr>
+      <tr><th>Edit the source later</th><td>The view shows it</td><td>The copy does not change</td></tr>
+      <tr><th>Edit the copy</th><td>—</td><td>The source does not change</td></tr>
+      <tr><th>IDs</th><td>Same rows, same IDs</td><td>New table, new system IDs; business IDs copied as values</td></tr>
+      <tr><th>Use when</th><td>You want a live, repeatable subset for display, selection or analysis</td><td>You need a snapshot: an archive, a hand-off, a disposable copy to practise editing on</td></tr>
+      <tr><th>ArcGIS Pro</th><td>Definition query</td><td><em>Copy Features</em> — “if the input is a layer and has a selection, only the selected features are copied”</td></tr>
+      <tr><th>QGIS</th><td>Layer ▸ Filter… (Query Builder)</td><td>Export ▸ Save Features As…, with “Save only selected features”</td></tr>
+      <tr><th>ArcGIS Online</th><td>Hosted feature layer view — “edits made to the data in the source appear in the view”</td><td>Export item / download</td></tr>
+      <tr><th>PostGIS</th><td><code>CREATE VIEW</code></td><td><code>CREATE TABLE … AS SELECT</code></td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="label">A quiet trap</span><p>Many tools take the layer’s <em>current selection</em> and <em>filter</em> as their input. Copy Features copies only the selected rows when a selection exists; Get Count counts only the selected rows. A copy made from a filtered layer is a copy of the <em>filtered</em> set — which may be exactly what you wanted, or four rows silently lost. Record which you used, and for a copy, the date and the filter.</p></div>
+
+  <h2><span class="mod">3.5.3</span>Basemap, working layers, and drawing order</h2>
+  <p>Maps usually have two kinds of layer. A <strong>basemap</strong> is context — streets, terrain, satellite imagery — someone else’s data shown for orientation, not yours to edit. <strong>Operational layers</strong> (working layers) are the data you select, query and edit: requests, assets, wards. Our practice town has <em>no basemap</em>, because the grid has no place on the Earth for one to line up with (Chapters 5–6). Everything you see here is working data.</p>
+  <p>Layers draw from the <strong>bottom of the list upward</strong>: “the layer lowest in the list draws first … until the features in the topmost layer draw above all else”. A layer higher in the list <strong>covers</strong> whatever is beneath it. Reorder the list and count the visible complaints.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="map-with-panel">
+      <div>
+        <div class="stack" id="stack"><div class="hint">Drawing order — top draws last</div></div>
+        <div class="controls" style="margin-top:.6rem"><label><input type="checkbox" id="wardSolid" checked> Wards drawn with a solid fill</label></div>
+      </div>
+      <figure class="map-fig" id="orderFig"></figure>
+    </div>
+    <div class="result" id="orderOut"></div>
+  </div>
+  <div class="callout warn"><span class="label">Rule</span><p>When a map looks emptier than its table, check <strong>drawing order</strong> and <strong>filters</strong> before believing it. Nothing in the dataset changed at any point above — seven rows throughout.</p></div>
+  <div class="callout dev"><span class="label">Developer view</span><p>Drawing order is <code>z-index</code>. <strong>Where the comparison stops:</strong> there is no separate “pointer-events” — in most desktop GIS a covered feature can still be selected by clicking, which makes the confusion worse: the table selects a dot you cannot see.</p></div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>A colleague says “I deleted the Wards layer.” Write the two questions you must ask before you know whether any data was lost.</p></div>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() {
+  /* 3.5.2 live layers vs copy */
+  let copy = null;
+  const live = () => TOWN.requests.map(p => ({ ...p }));
+  function cards() {
+    const ds = live();
+    ds.find(p => p.id === "P2").status = document.getElementById("p2s").value;
+    ds.find(p => p.id === "P4").priority = document.getElementById("p4p").value;
+    const L1 = ds, L2 = ds.filter(p => p.priority === "High");
+    const mini = (rows, by, id) => `<figure class="map-fig" id="${id}"></figure>`;
+    document.getElementById("layerCards").innerHTML = `
+      <div class="card"><h4 style="margin-top:0">Layer 1 · “Requests — by status”</h4><p class="small">points at <code>Requests</code> · no filter · colour by status</p>${mini(L1, "status", "mini1")}<div class="tiles"><div class="tile"><div class="v">${L1.length}</div><div class="l">rows</div></div><div class="tile"><div class="v">${L1.filter(p => p.x != null).length}</div><div class="l">dots</div></div><div class="tile"><div class="v">${new Set(L1.map(p => p.status)).size}</div><div class="l">classes</div></div></div></div>
+      <div class="card"><h4 style="margin-top:0">Layer 2 · “Requests — High priority”</h4><p class="small">points at <code>Requests</code> · filter priority = High</p>${mini(L2, null, "mini2")}<div class="tiles"><div class="tile"><div class="v">${L2.length}</div><div class="l">rows</div></div><div class="tile"><div class="v">${L2.filter(p => p.x != null).length}</div><div class="l">dots</div></div><div class="tile"><div class="v mono" style="font-size:1rem">${L2.map(p => p.id).join(", ")}</div><div class="l">which</div></div></div></div>
+      <div class="card" style="${copy ? "" : "opacity:.45"}"><h4 style="margin-top:0">Exported copy · <code>Requests_High_copy</code></h4><p class="small">${copy ? "a separate dataset made at " + copy.at + " with filter priority = High" : "not made yet"}</p>${copy ? mini(copy.rows, null, "mini3") + `<div class="tiles"><div class="tile"><div class="v">${copy.rows.length}</div><div class="l">rows</div></div><div class="tile"><div class="v mono" style="font-size:1rem">${copy.rows.map(p => p.id).join(", ")}</div><div class="l">which</div></div></div>` : ""}</div>`;
+    const colorBy = (rows, by) => ({ by, filter: p => rows.some(r => r.id === p.id), label: null });
+    // draw minis using the edited rows: temporarily swap TOWN.requests
+    const orig = TOWN.requests; TOWN.requests = ds;
+    renderTown(document.getElementById("mini1"), { visible: ["wards", "requests"], axes: false, labels: false, reqStyle: { by: "status", label: null, size: 34 } });
+    renderTown(document.getElementById("mini2"), { visible: ["wards", "requests"], axes: false, labels: false, reqStyle: { filter: p => p.priority === "High", label: null, size: 34 } });
+    if (copy) { TOWN.requests = copy.rows; renderTown(document.getElementById("mini3"), { visible: ["wards", "requests"], axes: false, labels: false, reqStyle: { label: null, size: 34 } }); }
+    TOWN.requests = orig;
+    const diff = copy && (copy.rows.map(p => p.id).join() !== L2.map(p => p.id).join());
+    document.getElementById("lyrOut").innerHTML = (copy ? (diff ? "<strong>The copy has drifted.</strong> Layer 2 (a live filter) shows the dataset as it is now; the copy still shows the rows as they were when it was made. Neither is wrong — but only one is current, and the copy should say its date and filter in its name or metadata." : "The copy currently matches Layer 2 — because nothing has changed since it was made. Now edit the dataset above.") : "Both layer cards are live views of the dataset. There is no copy yet.") + " Dataset row count: <strong>7</strong> — unchanged by anything on this page.";
+  }
+  document.getElementById("p2s").addEventListener("change", cards); document.getElementById("p4p").addEventListener("change", cards);
+  document.getElementById("mkCopy").addEventListener("click", () => { const ds = live(); ds.find(p => p.id === "P2").status = document.getElementById("p2s").value; ds.find(p => p.id === "P4").priority = document.getElementById("p4p").value; copy = { at: new Date().toLocaleTimeString(), rows: ds.filter(p => p.priority === "High") }; cards(); });
+  document.getElementById("resetDs").addEventListener("click", () => { copy = null; document.getElementById("p2s").value = "In progress"; document.getElementById("p4p").value = "Low"; cards(); });
+  cards();
+
+  /* 3.5.3 drawing order */
+  let order = ["requests", "roads", "wards"]; // top → bottom as listed
+  const NAMES = { requests: "Requests (7 rows)", roads: "Roads", wards: "Wards" };
+  function drawOrder() {
+    const solid = document.getElementById("wardSolid").checked;
+    const st = document.getElementById("stack");
+    st.innerHTML = '<div class="hint">Drawing order — top draws last (on top)</div>' + order.map((k, i) => `<div class="lyr"><span class="nm">${NAMES[k]}</span><button data-k="${k}" data-d="-1" ${i === 0 ? "disabled" : ""}>▲</button><button data-k="${k}" data-d="1" ${i === order.length - 1 ? "disabled" : ""}>▼</button></div>`).join("");
+    renderTown(document.getElementById("orderFig"), { order: [...order].reverse(), visible: order, wardStyle: solid ? "solid" : "outline", labels: false, caption: "Layers drawn bottom of the list first. Dots under a solid ward fill are painted over." });
+    const wardsAboveReq = order.indexOf("wards") < order.indexOf("requests");
+    const hiddenByWards = solid && wardsAboveReq ? TOWN.requests.filter(p => p.x != null && TOWN.wards.some(w => inRing([p.x, p.y], w.ring))).map(p => p.id) : [];
+    const visible = 6 - hiddenByWards.length;
+    document.getElementById("orderOut").innerHTML = `<strong>${visible} of 6 located complaints visible</strong> (7 rows in the table; P7 has no location). ` + (hiddenByWards.length ? `Hidden under the ward fill: ${hiddenByWards.join(", ")}. Only P6, outside both wards, remains — the map now <em>suggests</em> “one complaint, outside our area”. A reader who trusts the picture is wrong by ${hiddenByWards.length}.` : "Nothing is hidden. Move Wards above Requests (with a solid fill) to see the problem.") + (order.indexOf("roads") < order.indexOf("requests") ? " Roads are above Requests too — P5, which sits exactly on R1, is partly covered by the road stroke." : "");
+  }
+  document.getElementById("stack").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const i = order.indexOf(b.dataset.k), j = i + (+b.dataset.d); [order[i], order[j]] = [order[j], order[i]]; drawOrder(); });
+  document.getElementById("wardSolid").addEventListener("change", drawOrder);
+  drawOrder();
+}
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

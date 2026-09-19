@@ -1,0 +1,126 @@
+<?php $page = ['title' => '1.3 Spatial thinking', 'chapter' => 1, 'module' => '1.3']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 1.3</div>
+    <h1>Spatial thinking</h1>
+    <p class="lead">Questions about “where” come in six shapes. Knowing the shape tells you what data you need.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Recognise the six kinds of spatial question.</li>
+      <li>Tell absolute location from relative descriptions, and define the extent.</li>
+      <li>See why “nearest in a straight line” is not “quickest by road”.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">1.3.1</span>Six kinds of spatial question</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Type</th><th>Asks</th><th>Example from our town</th><th>Data needed</th><th>Answer from the practice data</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Location</strong></td><td>Where is X?</td><td>Where is request P3?</td><td>The record’s position</td><td class="mono">(1200, 250), in Ward B</td></tr>
+      <tr><td><strong>Distribution</strong></td><td>How is X spread across the area?</td><td>How are unresolved requests spread between the wards?</td><td>All positions plus the areas</td><td>Counting Open/Reopened: A has P1; B has P3; P5 is on the shared edge — so you must decide which ward it counts in</td></tr>
+      <tr><td><strong>Proximity</strong></td><td>What is near Y? How far?</td><td>Which requests are within 300 m of Main Road?</td><td>Both positions, a distance rule, units</td><td class="mono">P1, P2, P3, P5, P6 (≤ 300 m)</td></tr>
+      <tr><td><strong>Containment</strong></td><td>Is X inside Y?</td><td>Is P6 inside the service area?</td><td>Position and boundary, plus a rule for “on the line”</td><td>No — 200 m outside Ward B</td></tr>
+      <tr><td><strong>Connectivity</strong></td><td>Can you get from X to Y, and how?</td><td>Can a field team at the west end of R1 reach P4 by road?</td><td>A connected road <em>network</em> (roads joined at junctions), not just lines on a map</td><td>Cannot be answered: we have one road and no side streets</td></tr>
+      <tr><td><strong>Change through time</strong></td><td>How has X changed?</td><td>Which requests were reopened after being closed?</td><td>Time fields and <em>history</em></td><td>P5 (closed 2026-09-05, reopened 2026-09-12)</td></tr>
+    </tbody></table></div>
+  <p>Two things to notice. <strong>Connectivity needs a different kind of data</strong> — a network where roads are joined at junctions; two lines that merely cross on the map are not joined. And <strong>change through time needs history</strong>: a table that stores only the current status cannot answer the P5 question. In our practice data a free-text note is doing that job, which is a hint that a proper design (Chapter 8) would store each status change as its own record.</p>
+
+  <div class="try sorter" data-items='[{"t":"Which requests lie within 200 m of R1?","bin":"proximity"},{"t":"Is streetlight SL-0113 inside Ward A?","bin":"containment"},{"t":"Has the number of potholes in Ward B risen since August?","bin":"change"},{"t":"Where is drain DR-0042?","bin":"location"},{"t":"Are there more requests in the north or the south?","bin":"distribution"},{"t":"Can the team drive from (0, 500) to P4 using only the roads we have?","bin":"connectivity"}]'>
+    <span class="tag">Try it</span>
+    <h3>Sort the questions</h3>
+    <p>Click a question, then click the type it belongs to.</p>
+    <div class="items"></div>
+    <div class="bins">
+      <div class="bin" data-bin="location"><h5>Location</h5></div>
+      <div class="bin" data-bin="distribution"><h5>Distribution</h5></div>
+      <div class="bin" data-bin="proximity"><h5>Proximity</h5></div>
+      <div class="bin" data-bin="containment"><h5>Containment</h5></div>
+      <div class="bin" data-bin="connectivity"><h5>Connectivity</h5></div>
+      <div class="bin" data-bin="change"><h5>Change</h5></div>
+    </div>
+  </div>
+  <div class="callout dev"><span class="label">Developer view</span><p>Question types are query patterns: a lookup by key (location), <code>GROUP BY area</code> (distribution), a <code>WHERE distance &lt;= n</code> condition (proximity), an “is inside” condition (containment), walking a graph (connectivity), an event log (change). The analogy holds well — except that spatial conditions have edge cases (a point exactly on a line) that ordinary <code>=</code> does not.</p></div>
+
+  <h2><span class="mod">1.3.2</span>Absolute location, relative location, extent</h2>
+  <div class="grid-3">
+    <div class="card"><h4 style="margin-top:0">Absolute location</h4><p>A position in a coordinate system: DR-0042 is at <code>(995, 510)</code>. You can compute with it — <em>if</em> the system is known (Chapter 5).</p></div>
+    <div class="card"><h4 style="margin-top:0">Relative location</h4><p>“The drain beside the ward boundary on Main Road.” “Opposite the temple.” “Near the bus stand.” This is how most complaints arrive. A GIS cannot compute with it until someone turns it into a position, and that step always involves a guess (which temple? which side?). Write the guess down.</p></div>
+    <div class="card"><h4 style="margin-top:0">Spatial extent</h4><p>Simply: the area you are looking at. It is a <strong>decision you make</strong>, not something the data tells you. Every count depends on it.</p></div>
+  </div>
+
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>Is P6 in the study area (the area we are looking at)?</h3>
+    <div class="controls">
+      <label><input type="radio" name="ext" value="wards" checked> Extent = Wards A and B</label>
+      <label><input type="radio" name="ext" value="rect"> Extent = rectangle (0, 0) to (2200, 1000)</label>
+    </div>
+    <figure class="map-fig" id="extMap"></figure>
+    <div class="result" id="extOut"></div>
+  </div>
+  <p><strong>Worked example.</strong> A caller rings the helpline: “blocked drain on Main Road near the Ward A/B border”. Which records could this be? Request P5 at (1000, 500) is a blocked drain; asset DR-0042 (the drain itself) at (995, 510) is about 11 m away (5 m across, 10 m up; √(5² + 10²) ≈ 11.2 m). The GIS can show that a request already exists there. It cannot decide whether this call is the <em>same</em> blockage or a new one. That is for the helpline process to decide — and it is exactly how P5 came to be “reopened”.</p>
+
+  <h2><span class="mod">1.3.3</span>Nearest by straight line versus quickest by road</h2>
+  <p>“Nearest” is the most misused word in map work. Straight-line distance (“as the crow flies”) is a simple <em>geometry</em> fact. Travel distance depends on the road network — one-way streets, railway crossings, a canal with one bridge — and can be much longer.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>Two requests, both 600 m away</h3>
+    <p>The field team’s depot (their base) sits at (800, 200) inside Ward A. P2 at (800, 800) is 600 m straight north. P1 at (200, 200) is 600 m straight west. Now add a made-up canal (just for illustration) with a single bridge, and switch on the team’s driving path.</p>
+    <div class="controls">
+      <label><input type="checkbox" id="canal" checked> Show the canal and bridge (made up)</label>
+      <label><input type="checkbox" id="path"> Show the team’s driving path to P2</label>
+    </div>
+    <figure class="map-fig" id="roadMap"></figure>
+    <div class="result" id="roadOut"></div>
+    <p class="small synthetic">Made-up obstacle and an assumed path — not calculated by any routing software.</p>
+  </div>
+  <p>What to take from this:</p>
+  <ol>
+    <li>A straight-line distance is a correct <em>geometry</em> answer and is often a good first filter (“candidates within 300 m”).</li>
+    <li>It is <strong>not</strong> a travel time. A map shaded “within 300 m of the road” must not be labelled “reachable in five minutes”.</li>
+    <li>Answering the travel question needs road-network data and a routing method — a later topic. Until then, say “straight-line” out loud whenever you mean it.</li>
+  </ol>
+  <div class="callout warn"><span class="label">Misconception</span><p>“The request closest on the map is the one to send the team to.” Only if closeness was the rule, and only if the team can travel in a straight line. Both need checking.</p></div>
+
+  <div class="quiz" data-answer="2" data-fb="Without road-network data (roads, junctions, obstacles) nothing about reaching time can be concluded. Being near a road is not the same as being reachable, and no GIS measures travel time by default.">
+    <div class="q">Two requests are each 600 m from a depot in a straight line. Which statement is best supported?</div>
+    <div class="opts">
+      <button class="opt">They are equally quick to reach.</button>
+      <button class="opt">The one nearer a road is quicker to reach.</button>
+      <button class="opt">Nothing about reaching time can be concluded without road-network data.</button>
+      <button class="opt">The GIS measures travel time by default, so both are 600 m of travel.</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>Classify each: (a) “Has the number of potholes in Ward B risen since August?” (b) “Is SL-0113 inside Ward A?” (c) “Which drain is nearest to P5?” (d) “Are there more requests in the north or the south?” Then say which one cannot be answered from tables that store only today’s status, and why.</p></div>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() {
+  // extent
+  function drawExt() {
+    const v = document.querySelector('input[name=ext]:checked').value;
+    const inside = v === "rect";
+    renderMap(document.getElementById("extMap"), { extent: v, hit: inside ? ["P6"] : [], dim: inside ? [] : ["P6"], caption: v === "wards" ? "Extent: Ward A ∪ Ward B (red dashed)" : "Extent: rectangle (0,0)–(2200,1000) (red dashed)" });
+    document.getElementById("extOut").innerHTML = inside ? "P6 at (2200, 500) is <strong>inside</strong> this extent — but still outside both wards. Extent and ward membership are different questions." : "P6 at (2200, 500) is <strong>outside</strong> this extent. Any count “per ward” would never include it. The data still contain it — the extent is your choice.";
+  }
+  document.querySelectorAll('input[name=ext]').forEach(r => r.addEventListener("change", drawExt)); drawExt();
+
+  // straight vs road
+  function drawRoad() {
+    const canal = document.getElementById("canal").checked, path = document.getElementById("path").checked;
+    renderMap(document.getElementById("roadMap"), {
+      layers: { wards: true, roads: true, requests: true, assets: false }, dim: ["P3", "P4", "P5", "P6"],
+      caption: "Depot (black square) at (800, 200). Dashed = straight line. Orange = assumed driving path.",
+      extra: (NS, svg, mk) => {
+        if (canal) { mk("rect", { x: SX(0), y: SY(665), width: 900, height: 30, class: "canal" }); const t = mk("text", { x: SX(300), y: SY(700), class: "note-text" }); t.textContent = "canal (made up, for illustration)"; const b = mk("text", { x: SX(905), y: SY(700), class: "note-text" }); b.textContent = "bridge"; }
+        mk("rect", { x: SX(800) - 22, y: SY(200) - 22, width: 44, height: 44, class: "depot" });
+        mk("line", { x1: SX(800), y1: SY(200), x2: SX(800), y2: SY(800), class: "dline" });
+        mk("line", { x1: SX(800), y1: SY(200), x2: SX(200), y2: SY(200), class: "dline" });
+        const t1 = mk("text", { x: SX(600), y: SY(380), class: "note-text" }); t1.textContent = "600 m straight-line";
+        const t2 = mk("text", { x: SX(330), y: SY(150), class: "note-text" }); t2.textContent = "600 m straight-line";
+        if (path) { mk("polyline", { points: `${SX(800)},${SY(200)} ${SX(950)},${SY(200)} ${SX(950)},${SY(800)} ${SX(800)},${SY(800)}`, class: "path" }); const t = mk("text", { x: SX(975), y: SY(760), class: "note-text" }); t.textContent = "path: 150 + 600 + 150 = 900 m"; }
+      }
+    });
+    document.getElementById("roadOut").innerHTML = path ? "To reach P2 the team drives east to the bridge, north over it, and back west: <strong>150 + 600 + 150 = 900 m</strong> — one and a half times the 600 m straight line, before traffic or turns. P1 has no obstacle drawn, so its driving distance in this sketch is also about 600 m. Two requests “equally near”; one is much quicker to reach." : "Both P1 and P2 are 600 m from the depot in a straight line. Turn on the path to see what the canal does.";
+  }
+  ["canal", "path"].forEach(id => document.getElementById(id).addEventListener("change", drawRoad)); drawRoad();
+}
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

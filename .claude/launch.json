@@ -2,86 +2,15 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "chapter-01-tutorial",
-      "runtimeExecutable": "python3",
+      "name": "gis-training",
+      "runtimeExecutable": "php",
       "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8765",
-        "--directory",
-        "Chapter_01"
-      ],
-      "port": 8765
-    },
-    {
-      "name": "chapter-02-tutorial",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8766",
-        "--directory",
-        "Chapter_02"
-      ],
-      "port": 8766
-    },
-    {
-      "name": "chapter-03-tutorial",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8767",
-        "--directory",
-        "Chapter_03"
-      ],
-      "port": 8767
-    },
-    {
-      "name": "course-index",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8760"
+        "-S",
+        "localhost:8760",
+        "-t",
+        "."
       ],
       "port": 8760
-    },
-    {
-      "name": "chapter-04-tutorial",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8768",
-        "--directory",
-        "Chapter_04"
-      ],
-      "port": 8768
-    },
-    {
-      "name": "chapter-05-tutorial",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8769",
-        "--directory",
-        "Chapter_05"
-      ],
-      "port": 8769
-    },
-    {
-      "name": "chapter-06-tutorial",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "8776",
-        "--directory",
-        "Chapter_06"
-      ],
-      "port": 8776
     }
   ]
 }

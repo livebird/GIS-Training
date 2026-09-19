@@ -1,0 +1,146 @@
+<?php $page = ['title' => '4.4 Treat NoData explicitly', 'chapter' => 4, 'module' => '4.4']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 4.4 · General GIS principle · the most important one in the chapter</div>
+    <h1>Zero is a value. NoData is “we don’t know.”</h1>
+    <p class="lead">They look alike in a listing. They can look alike on a map. They are opposites in meaning. Mix them up and every average, percentage and density you report is wrong — quietly.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Tell apart four things that all look “blank”: zero, NoData, a mask and a transparent cell.</li>
+      <li>Watch the mean of a grid change when “blank” is treated as 0 — and learn to state your rule.</li>
+      <li>Separate “no coverage” from “we looked and found nothing”.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">4.4.1</span>Four different things that all look empty</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Term</th><th>What it says</th><th>Where it lives</th><th>Example in the town</th><th>Counts in statistics?</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Zero</strong></td><td>“Measured; the amount is 0” — or “the class coded 0”</td><td>In the data: the number 0</td><td>F7 row 1, col 1 holds 0; land-cover code 0 = water</td><td><strong>Yes</strong> — it is a measurement</td></tr>
+      <tr><td><strong>NoData</strong></td><td>“There is no value here”</td><td>In the data: a reserved number that is never a real value (−9999 is common; our files use −1 and −9999.0), or a separate mask stored with the raster</td><td>The elevation cell at row 4, col 2; the three cloud-covered land-cover cells</td><td><strong>No</strong> — under any sensible rule (see 4.4.2 for what happens otherwise)</td></tr>
+      <tr><td><strong>Masked</strong></td><td>“Ignore these cells for this operation”</td><td>Not in the raster at all: a processing setting, often taken from another layer or a boundary</td><td>“Compute statistics for Ward A only” — cells outside the ward are masked</td><td>Left out of that operation; still present in the file</td></tr>
+      <tr><td><strong>Transparent</strong></td><td>“Do not paint these cells”</td><td>Layer styling only</td><td>NoData drawn as no colour — or the value 0 made transparent by mistake</td><td>Irrelevant — the values are untouched</td></tr>
+    </tbody></table></div>
+  <p>Two are properties of the <strong>data</strong> (zero, NoData); one belongs to a <strong>process</strong> (mask); one belongs to a <strong>layer</strong> (transparent). Confuse any two and a specific error follows:</p>
+  <ul>
+    <li><strong>Zero treated as NoData:</strong> the pond vanishes from the land-cover map and from its area totals; a rainfall grid loses every dry cell, so “average over the wet cells” gets reported as “average rainfall”.</li>
+    <li><strong>NoData treated as zero:</strong> the missing height becomes 0 m and drags the mean down; three unclassified hectares become “3 ha of water” if 0 is the water code — which is exactly why our land-cover file uses −1, not 0, for NoData.</li>
+    <li><strong>Transparent mistaken for NoData:</strong> a real value is overlooked because someone styled it invisible.</li>
+    <li><strong>NoData mistaken for “outside the study area”:</strong> see 4.4.3.</li>
+  </ul>
+  <div class="callout idea"><span class="label">Where zero is a perfectly good value</span><p>A height of 0.0 m means “exactly at the zero level”. Rainfall of 0 mm is the commonest valid value in a dry month. In a count-of-complaints grid, 0 means “we looked and found none”. In the land-cover file, 0 is the <em>code</em> for water. So using 0 to mean NoData is only safe when 0 can never be a real value — Esri’s docs warn that 0 “may also be used to define valid values”, in which case you need a mask instead.</p></div>
+  <div class="callout dev"><span class="label">Developer view</span><p>NoData is SQL <code>NULL</code>. <code>AVG(height)</code> ignores <code>NULL</code>; <code>AVG(COALESCE(height, 0))</code> does not, and the two answers differ. A mask is a <code>WHERE</code> clause. Transparency is <code>visibility: hidden</code> on a cell that is still in the DOM. <strong>Where the comparison stops:</strong> a database stores <code>NULL</code> as a distinct state; a raster file usually stores NoData as an ordinary number (−9999) that only the header declares special. Lose the header and “no data” becomes a very deep hole in the ground.</p></div>
+  <div class="callout note"><span class="label">Platform note</span><p><strong>ArcGIS Pro</strong> stores NoData either as a mask that is part of the dataset or as a reserved pixel value; the value can be seen and edited per band in the raster’s <em>Properties</em> (General → Raster Information → NoData Value), with a warning not to pick a value that is also valid data. <strong>QGIS</strong> shows the source’s NoData value in the layer’s <em>Transparency</em> tab, lets you add an <em>additional</em> NoData value for display, and lets you paint NoData in a colour instead of transparent. In both, setting a NoData value in layer properties says “read this number as absent” — it deletes nothing.</p></div>
+
+  <h2><span class="mod">4.4.2</span>Watch the mean change</h2>
+  <p>Every operation on a raster with NoData applies a <strong>missing-data rule</strong>, whether or not anyone chose it. Esri’s docs name three possibilities: return NoData no matter what; ignore NoData and compute from what is available; or estimate a value because NoData cannot be returned. Which one a tool uses is a property of that tool and its settings. Try the rules yourself.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>The blueprint’s 3 × 3 grid</h3>
+    <div class="toggle-row" id="polF7"></div>
+    <div class="fig-panel">
+      <figure class="raster-fig" id="f7nd"></figure>
+      <div>
+        <div class="stat-row" id="statF7"></div>
+        <div class="result" id="outF7"></div>
+      </div>
+    </div>
+  </div>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>The elevation grid — and what each wrong mean tells you</h3>
+    <div class="toggle-row" id="polF6"></div>
+    <div class="fig-panel">
+      <figure class="raster-fig" id="f6nd"></figure>
+      <div>
+        <div class="stat-row" id="statF6"></div>
+        <div class="result" id="outF6"></div>
+      </div>
+    </div>
+    <p class="small">Remember these three numbers — 13.6, 12.75 and about −612. In the lab, whichever one your software prints tells you which rule it applied.</p>
+  </div>
+  <p>Notice which way the error goes: treating absence as zero <strong>always pulls the mean toward zero</strong>, and pulls harder the more cells are missing. The <em>sum</em> does not change at all — which is why “the sum is the same” proves nothing. A statistic’s <strong>denominator</strong> is where NoData bites.</p>
+  <div class="callout warn"><span class="label">Rule</span><p>When you report a statistic, report the rule and the coverage with it: <em>“Mean height 13.6 m over the 15 valid cells; 1 cell (6 % of the extent) has no data.”</em></p></div>
+  <div class="try">
+    <span class="tag">Worked example</span>
+    <h3>A percentage, not a mean: how much of Ward A is vegetation?</h3>
+    <p>56 cells are vegetation. 97 cells are classified. 100 cells make the ward. Pick a denominator:</p>
+    <div class="toggle-row">
+      <button class="btn small" data-den="97">Out of the 97 classified cells</button>
+      <button class="btn small" data-den="100">Out of all 100 cells of the ward</button>
+      <button class="btn small" data-den="bad">NoData becomes code 0 (water)</button>
+    </div>
+    <div class="result" id="pctOut">Choose a denominator.</div>
+  </div>
+
+  <h2><span class="mod">4.4.3</span>“Not counted” is not “zero counted”</h2>
+  <p>A NoData cell says <em>we do not know</em>. A cell holding 0 in a count grid says <em>we looked and found none</em>. Different statements — and a map that paints both as blank makes them indistinguishable.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <h3>Complaints per cell, August 2026 (made-up)</h3>
+    <p>The office counted citizen requests per 100 m cell over Ward A — but the counting script only ran where the land-cover classification exists, so the three cloud cells got NoData. Switch how NoData is drawn.</p>
+    <div class="toggle-row">
+      <button class="btn small" id="ndHatch" aria-pressed="true">Draw NoData hatched (inspection)</button>
+      <button class="btn small" id="ndTrans" aria-pressed="false">Draw NoData transparent (presentation)</button>
+    </div>
+    <div class="fig-panel">
+      <figure class="raster-fig" id="cntFig"></figure>
+      <div class="result" id="cntOut">Click a cell — especially in the bottom-left corner.</div>
+    </div>
+  </div>
+  <p>Three habits enforce the distinction:</p>
+  <ol>
+    <li><strong>Render NoData visibly</strong> while inspecting (hatched or a loud colour); switch to transparent only for the final map.</li>
+    <li><strong>Report coverage</strong> with every raster statistic: how many cells, how much area, has no data.</li>
+    <li><strong>Never fill NoData with zero “to make the tool run”</strong> unless the thing really is zero there — and write that decision down. Zero is a claim.</li>
+  </ol>
+
+  <div class="quiz" data-answer="0" data-fb="12.75 × 16 = 204, the sum of the valid cells — so the denominator was 16, not 15: NoData was counted as 0. If the marker had not been recognised the mean would be about −612. The report sentence: “Mean height 13.6 m above TD-0 over the 15 valid cells; 1 cell (6 % of the extent) has no data and was excluded.”">
+    <div class="q">The elevation grid has 16 cells, one of them NoData. A tool reports mean = 12.75. What happened?</div>
+    <div class="opts">
+      <button class="opt">NoData was counted as 0 — 12.75 × 16 = 204, the valid sum</button>
+      <button class="opt">The −9999 marker was treated as a real height</button>
+      <button class="opt">The tool excluded NoData correctly</button>
+      <button class="opt">The tool used the median</button>
+    </div><div class="fb"></div>
+  </div>
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>(a) What rule did the tool apply, and how do you know? (b) What would it have reported if the NoData marker had not been recognised at all? (c) Write the one-sentence statistic for a report, including the rule and the coverage.</p></div>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() {
+  const POL = [["exclude", "Exclude NoData (the usual intention)"], ["zero", "Treat NoData as 0 (the usual mistake)"], ["raw", "Marker not recognised (−9999 read as a value)"]];
+  function wire(id, r, figId, statId, outId, nodataValue, explain) {
+    const box = document.getElementById(id); let pol = "exclude";
+    POL.forEach(([k, label]) => { if (k === "raw" && !nodataValue) return; const b = document.createElement("button"); b.className = "btn small"; b.textContent = label; b.dataset.k = k; b.onclick = () => { pol = k; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); draw(); }; box.appendChild(b); });
+    function draw() {
+      const s = statsOf(r.grid, pol, nodataValue);
+      const g = pol === "exclude" ? r : Object.assign({}, r, { grid: r.grid.map(row => row.map(v => v === ND ? (pol === "zero" ? 0 : nodataValue) : v)) });
+      renderRaster(document.getElementById(figId), g, { renderer: "none", rowLabels: true, cellPx: r.cols > 3 ? 78 : 96, caption: pol === "exclude" ? "NoData shown hatched and left out." : pol === "zero" ? "NoData replaced by 0 — the cell now looks like a measurement." : "The marker −9999 taken literally." });
+      document.getElementById(statId).innerHTML = [["cells counted", s.n], ["sum", fmt(s.sum)], ["mean", fmt(s.mean)], ["min", fmt(s.min)], ["max", fmt(s.max)]].map(([k, v]) => `<div class="stat"><div class="k">${k}</div><div class="v ${k === "mean" ? (pol === "exclude" ? "good" : "bad") : ""}">${v}</div></div>`).join("");
+      document.getElementById(outId).innerHTML = explain[pol];
+    }
+    box.querySelector("button").setAttribute("aria-pressed", "true"); draw();
+  }
+  wire("polF7", F7, "f7nd", "statF7", "outF7", null, {
+    exclude: "8 valid cells: 0 + 10 + 20 + 10 + 30 + 20 + 30 + 40 = 160. Mean = 160 ÷ 8 = <strong>20</strong>. Note the real 0 in row 1, col 1 <em>is</em> counted — it is a measurement.",
+    zero: "9 cells now. The sum is still 160 (we added a 0). Mean = 160 ÷ 9 = <strong>17.78</strong>. One missing cell out of nine understated the mean by 11 %." });
+  wire("polF6", F6, "f6nd", "statF6", "outF6", -9999, {
+    exclude: "15 valid cells, sum 204. Mean = 204 ÷ 15 = <strong>13.6 m</strong>. Min 9, max 21. This is the number to report — with its rule and coverage.",
+    zero: "16 cells, sum still 204. Mean = 204 ÷ 16 = <strong>12.75 m</strong>, and the minimum is now 0 m — a height that was never measured. If your software prints 12.75, it counted NoData as zero.",
+    raw: "The file's −9999.0 was read as a height. Mean = (204 − 9999) ÷ 16 ≈ <strong>−612 m</strong>. Absurd — and that is useful: this mistake announces itself. Check the NoData value in the layer properties." });
+
+  document.querySelectorAll("[data-den]").forEach(b => b.onclick = () => {
+    const d = b.dataset.den;
+    document.getElementById("pctOut").innerHTML = d === "97" ? "56 ÷ 97 = <strong>57.7 %</strong> of the <em>classified</em> cells. Honest, if you say so: “57.7 % of classified cells; 3 cells (3 %) unclassified.”" : d === "100" ? "56 ÷ 100 = <strong>56.0 %</strong> of the ward. Also honest, if you say so: “56 % of the ward; 3 % unclassified.”" : "The three cloud cells become code 0 = <strong>water</strong>. Vegetation is still 56 ÷ 100 = 56.0 % — the same number as the honest whole-ward figure — but water is now reported as 10 ha instead of 7 ha. Silently wrong, and nothing on the map shows it.";
+  });
+
+  /* count grid */
+  const cnt = { cols: 10, rows: 10, cell: 100, x0: 0, y0: 0, grid: F5.grid.map((row, i) => row.map((v, j) => v === ND ? ND : ((i * 7 + j * 3) % 11 === 0 ? 2 : (i + j) % 5 === 0 ? 1 : 0))) };
+  let ndMode = "hatch", cs = null;
+  const drawCnt = () => renderRaster(document.getElementById("cntFig"), cnt, { renderer: "ramp", showValues: true, cellPx: 44, nodata: ndMode === "hatch" ? "hatch" : "transparent", selected: cs, axes: false, onCell: (i, j, v) => { cs = [i, j]; drawCnt();
+    document.getElementById("cntOut").innerHTML = v === ND ? `<strong>Row ${i + 1}, col ${j + 1}: NoData.</strong> Answer: “<strong>not counted</strong>” — not “zero”. If P1 had been reported here it would have been silently lost.` : `<strong>Row ${i + 1}, col ${j + 1}: ${v}.</strong> ${v === 0 ? "A real zero: this cell was counted and had no requests." : v + " request(s) counted here."}`; },
+    caption: ndMode === "hatch" ? "Counts per cell. Hatched = not counted. Coverage: 97 of 100 cells." : "Same grid, NoData transparent. The three uncounted cells now look exactly like the 0 cells around them." });
+  drawCnt();
+  document.getElementById("ndHatch").onclick = () => { ndMode = "hatch"; press("ndHatch"); drawCnt(); };
+  document.getElementById("ndTrans").onclick = () => { ndMode = "trans"; press("ndTrans"); drawCnt(); };
+  function press(id) { ["ndHatch", "ndTrans"].forEach(x => document.getElementById(x).setAttribute("aria-pressed", x === id)); }
+}
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

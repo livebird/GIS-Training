@@ -1,0 +1,63 @@
+<?php $page = ['title' => '2.9 Recap, media brief and next chapter', 'chapter' => 2, 'module' => '2.9']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 2.9</div>
+    <h1>Recap, media notes, and what comes next</h1>
+    <p class="lead">Six ideas to carry forward, one diagram to keep, and the question that opens Chapter 3.</p>
+  </div>
+
+  <h2><span class="mod">Recap</span>Six things to remember</h2>
+  <div class="try">
+    <span class="tag">Self-test</span>
+    <p>Before opening each one, say it aloud in your own words.</p>
+    <details class="reveal"><summary>1 · Five jobs; the phone is not the database</summary><p>Desktop authoring, data storage, service delivery, content organisation, user applications. The machine running an app draws, caches and edits a <em>view</em> of the data; the storage system holds the data. “Authoritative” is a decision the office makes.</p></details>
+    <details class="reveal"><summary>2 · ArcGIS Pro and the project file</summary><p>ArcGIS Pro is the desktop authoring product. A <code>.aprx</code> stores maps, layer lists, symbols and <em>paths</em> to data — never the data. Changing the data and changing how it looks are different acts with different consequences.</p></details>
+    <details class="reveal"><summary>3 · ArcGIS Online items</summary><p>Esri operates it; you administer an organisation inside it. Items reference each other; usually only hosted layers hold data; a view reads the same data with its own settings. Visible ≠ editable ≠ reusable.</p></details>
+    <details class="reveal"><summary>4 · ArcGIS Enterprise</summary><p>Same content ideas, different responsibility: your organisation provides, upgrades, backs up and monitors Portal, Server, Data Store and Web Adaptor. Not ArcGIS Online installed locally. Using a platform is not operating one.</p></details>
+    <details class="reveal"><summary>5 · Configure, extend, build</summary><p>Builders arrange supported capabilities. The JavaScript SDK is the browser side, the Python API is the platform side, ArcPy is the desktop/server tool side — all over the same services. Decide from the requirement.</p></details>
+    <details class="reveal"><summary>6 · Other platforms by job</summary><p>OpenLayers is a browser library; Mapbox is a bundle of products; QGIS authors; PostGIS stores; GeoServer serves. Compare roles, notice the gaps — especially content organisation — and label what is shared knowledge and what is platform-specific.</p></details>
+  </div>
+
+  <h2><span class="mod">The one diagram</span>Product-to-role, dated</h2>
+  <p>What each company says its product can do changes over time. Everything below was checked against official documentation on <strong>19 September 2026</strong>.</p>
+  <figure class="map-fig" id="finalFig"></figure>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Product</th><th>Job</th><th>Documentation edition read</th></tr></thead>
+    <tbody>
+      <tr><td>ArcGIS Pro</td><td>R1</td><td>“Released version: ArcGIS Pro 3.7”</td></tr>
+      <tr><td>ArcGIS Online — hosted layers</td><td>R2, R3</td><td>Live service documentation</td></tr>
+      <tr><td>ArcGIS Online — organisation, items, groups</td><td>R4</td><td>Live service documentation</td></tr>
+      <tr><td>Portal for ArcGIS / ArcGIS Server / ArcGIS Data Store</td><td>R4 / R3 / R2</td><td>Enterprise “latest” introduction; base deployment 11.4</td></tr>
+      <tr><td>Instant Apps, Experience Builder, Dashboards, Field Maps</td><td>R5 (configured)</td><td>Product “latest” pages</td></tr>
+      <tr><td>ArcGIS Maps SDK for JavaScript</td><td>R5 (built)</td><td>5.1 (June 2026)</td></tr>
+      <tr><td>ArcGIS API for Python</td><td>Automation of R4 and services</td><td>2.4.3 (March 2026)</td></tr>
+      <tr><td>ArcPy</td><td>Automation of R1 (and server geoprocessing)</td><td>ArcGIS Pro 3.7; ArcGIS Server 11.0 page</td></tr>
+      <tr><td>OpenLayers</td><td>R5 (built)</td><td>Project home page</td></tr>
+      <tr><td>Mapbox</td><td>R5 (SDKs); R3/R2 for its hosted services and data</td><td>Vendor home page</td></tr>
+      <tr><td>QGIS Desktop</td><td>R1</td><td>Gentle Introduction 3.44; User Guide 3.40</td></tr>
+      <tr><td>PostGIS</td><td>R2</td><td>Project home page</td></tr>
+      <tr><td>GeoServer</td><td>R3</td><td>Project About page</td></tr>
+    </tbody></table></div>
+
+  <h2><span class="mod">Media notes</span>For the slides and the audio version</h2>
+  <div class="grid-2">
+    <div class="card"><h4 style="margin-top:0">Slides</h4><p>One group per module: the five jobs; the emailed project; “only one box holds data”; Online vs Enterprise responsibility bands; the configure/extend/build ladder; the two arrangements with the R4 gap. Every slide poses its question <em>before</em> revealing the answer.</p></div>
+    <div class="card"><h4 style="margin-top:0">Audio</h4><p>Every product and acronym is introduced exactly once, then the short form is used. Diagrams are read aloud box by box, left to right, top to bottom — never “this box” or “the red one”. Products not needed to explain a job are left out of the narration. No 3D scene: the ideas here are architectural, and a table teaches them better.</p></div>
+  </div>
+
+  <h2><span class="mod">Cross-references</span>Where these ideas go next</h2>
+  <ul>
+    <li>Storage formats, file and enterprise geodatabases, and why PostGIS is not automatically an Esri geodatabase — <strong>Chapter 7</strong>.</li>
+    <li>Coordinate references, which the S-2 build had to assign before publishing — <strong>Chapters 5–6</strong>.</li>
+    <li>Data models, identifiers, and the “related inspection table” behind the Field Maps form — <strong>Chapter 8</strong>.</li>
+    <li>Editing workflows and what “save edits” means in each product — <strong>Chapter 9</strong>.</li>
+    <li>Symbology and presentation choices — <strong>Chapter 12</strong>.</li>
+    <li>Service protocols, federation, security, backups, upgrades — the later Enterprise track.</li>
+  </ul>
+
+  <div class="callout idea"><span class="label">Transition to Chapter 3</span><p>You now know <em>where</em> data lives, <em>who</em> serves it, <em>who</em> organises it and <em>who</em> uses it. You have not yet looked closely at <em>what</em> flows through those systems: the shapes, the records, and the difference between a stored dataset and its appearance in a map. Chapter 3 opens the datasets and inspects features, geometry, attributes and layers.</p></div>
+  <p class="small">Sources for every product statement on these pages are listed in the chapter document <em>GIS_Phase_1_Chapter_02_Understanding_the_ArcGIS_Ecosystem.md</em> (reference list, access date 19 September 2026).</p>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() { renderResp(document.getElementById("finalFig"), { mode: "esri", caption: "Esri arrangement of the five jobs — schematic; products as examples." }); }
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

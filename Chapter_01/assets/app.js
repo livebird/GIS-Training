@@ -128,96 +128,7 @@ function renderMap(el, opts = {}) {
   return svg;
 }
 
-/* ---- navigation, progress ---- */
-const MODULES = [
-  { id: "1.1", file: "m1-decision.html", title: "Start with a decision" },
-  { id: "1.2", file: "m2-gis.html", title: "What a GIS includes" },
-  { id: "1.3", file: "m3-spatial.html", title: "Spatial thinking" },
-  { id: "1.4", file: "m4-data.html", title: "Data and its meaning" },
-  { id: "1.5", file: "m5-layers.html", title: "Layers and map interaction" },
-  { id: "1.6", file: "m6-limits.html", title: "Limits of a conclusion" },
-  { id: "1.7", file: "m7-lab.html", title: "Lab: problem brief" },
-  { id: "1.8", file: "m8-check.html", title: "Independent check" },
-  { id: "1.9", file: "m9-media.html", title: "Recap & next" }
-];
-const PROG_KEY = "gis-ch1-progress";
-function getProgress() { try { return JSON.parse(localStorage.getItem(PROG_KEY) || "{}"); } catch { return {}; } }
-function setDone(id, v) { try { const p = getProgress(); if (v) p[id] = true; else delete p[id]; localStorage.setItem(PROG_KEY, JSON.stringify(p)); } catch {} }
-
-function buildChrome() {
-  const here = location.pathname.split("/").pop() || "index.html";
-  const idx = MODULES.findIndex(m => m.file === here);
-  const prog = getProgress();
-  const doneCount = MODULES.filter(m => prog[m.id]).length;
-
-  const bar = document.createElement("header");
-  bar.className = "topbar";
-  bar.innerHTML = `<div class="inner">
-    <a class="brand" href="index.html">GIS Phase 1 · <span>Chapter 1</span></a>
-    <nav class="modnav" aria-label="Modules">${MODULES.map((m, i) => `<a href="${m.file}" class="${i === idx ? "active" : ""} ${prog[m.id] ? "done" : ""}" title="${m.title}">${m.id}</a>`).join("")}<a href="glossary.html" class="${here === "glossary.html" ? "active" : ""}">Glossary</a></nav>
-  </div><div class="progress"><div style="width:${(doneCount / MODULES.length) * 100}%"></div></div>`;
-  document.body.prepend(bar);
-
-  if (idx >= 0) {
-    const m = MODULES[idx];
-    const pager = document.createElement("div");
-    pager.className = "pager";
-    const prev = idx > 0 ? MODULES[idx - 1] : { file: "index.html", title: "Chapter home", id: "" };
-    const next = idx < MODULES.length - 1 ? MODULES[idx + 1] : { file: "index.html", title: "Chapter home", id: "" };
-    pager.innerHTML = `<a href="${prev.file}">← ${prev.id} ${prev.title}</a>
-      <div class="done-wrap"><label><input type="checkbox" id="doneBox" ${prog[m.id] ? "checked" : ""}> I have finished module ${m.id}</label></div>
-      <a href="${next.file}">${next.id} ${next.title} →</a>`;
-    document.querySelector("main").appendChild(pager);
-    pager.querySelector("#doneBox").addEventListener("change", e => { setDone(m.id, e.target.checked); location.reload(); });
-  }
-}
-
-/* ---- quick-check quizzes ----
-   <div class="quiz" data-answer="1"><div class="q">…</div><div class="opts"><button class="opt">…</button>…</div><div class="fb"></div></div>
-   data-fb-ok / data-fb-no on the quiz give feedback text. */
-function initQuizzes() {
-  document.querySelectorAll(".quiz").forEach(q => {
-    const ans = parseInt(q.dataset.answer, 10);
-    const fb = q.querySelector(".fb");
-    q.querySelectorAll(".opt").forEach((b, i) => {
-      b.addEventListener("click", () => {
-        q.querySelectorAll(".opt").forEach(x => x.classList.remove("right", "wrong"));
-        const ok = i === ans;
-        b.classList.add(ok ? "right" : "wrong");
-        if (!ok) q.querySelectorAll(".opt")[ans].classList.add("right");
-        fb.className = "fb show " + (ok ? "ok" : "no");
-        fb.textContent = (ok ? "Correct. " : "Not quite. ") + (q.dataset.fb || "");
-      });
-    });
-  });
-}
-
-/* ---- click-to-sort activity ----
-   .sorter with data-items='[{"t":"…","bin":"proximity"}]' and .bin[data-bin] elements */
-function initSorters() {
-  document.querySelectorAll(".sorter").forEach(s => {
-    const items = JSON.parse(s.dataset.items);
-    const wrap = s.querySelector(".items");
-    let active = null;
-    items.forEach((it, i) => {
-      const b = document.createElement("button"); b.className = "item"; b.textContent = it.t; b.dataset.i = i;
-      b.addEventListener("click", () => { if (b.classList.contains("placed")) return; wrap.querySelectorAll(".item").forEach(x => x.classList.remove("active")); b.classList.add("active"); active = i; });
-      wrap.appendChild(b);
-    });
-    s.querySelectorAll(".bin").forEach(bin => {
-      bin.addEventListener("click", () => {
-        if (active == null) return;
-        const it = items[active];
-        const ok = it.bin === bin.dataset.bin;
-        const d = document.createElement("div"); d.className = "placed-item " + (ok ? "ok" : "bad");
-        d.textContent = (ok ? "✓ " : "✗ ") + it.t + (ok ? "" : ` → belongs in “${it.bin}”`);
-        bin.appendChild(d);
-        const btn = wrap.querySelector(`.item[data-i="${active}"]`); btn.classList.remove("active"); btn.classList.add("placed");
-        active = null;
-      });
-    });
-  });
-}
+/* Navigation, progress, quizzes, sorters and tabs live in /assets/common.js (shared by every chapter). */
 
 /* ---- request table helper ---- */
 function requestTable(el, opts = {}) {
@@ -234,10 +145,3 @@ function requestTable(el, opts = {}) {
   }).join("");
   el.innerHTML = `<div class="table-wrap"><table><thead><tr>${cols.map(c => `<th>${head[c]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  buildChrome();
-  initQuizzes();
-  initSorters();
-  if (window.pageInit) window.pageInit();
-});

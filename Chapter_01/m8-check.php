@@ -1,0 +1,66 @@
+<?php $page = ['title' => '1.8 Independent check and progression gate', 'chapter' => 1, 'module' => '1.8']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 1.8 · Assessment</div>
+    <h1>Independent check and progression gate</h1>
+    <p class="lead">This is what you submit to your instructor. There are no answers on this page — the instructor holds the answer key.</p>
+    <div class="outcomes"><h4>Submit</h4>
+      <ul><li>The module 1.7 work (brief, sketch, observation log).</li>
+      <li>Written answers to Q1–Q6 and S1–S2.</li>
+      <li>The practical response (a)–(e).</li>
+      <li>Be available for the three-minute oral check.</li></ul></div>
+  </div>
+
+  <div class="callout note"><span class="label">Before you start</span><p>Write your answers in any document. The quick checks in modules 1.1–1.6 were practice; the items below are marked. Keep each concept answer to five sentences or fewer.</p></div>
+
+  <h2><span class="mod">1.8.1</span>Concept questions (30 marks, 5 each)</h2>
+  <div class="card"><p><strong>Q1.</strong> <span class="pill">1.2.1 · LO1</span><br>Name the four functions a GIS performs and give one action from the city scenario for each. Then explain why “we have a PDF map of the wards” does not mean the city office has GIS data for wards.</p></div>
+  <div class="card"><p><strong>Q2.</strong> <span class="pill">1.2.2 · LO1</span><br>A spreadsheet has columns <code>RequestID, Address, Category, ReportedDate</code>. State the three conditions that must hold before it can become a GIS layer, and say which of them the <code>Address</code> column fails as it stands.</p></div>
+  <div class="card"><p><strong>Q3.</strong> <span class="pill">1.3.1 · LO3</span><br>Classify each question by type (location, distribution, proximity, containment, connectivity, change): (a) “Which requests lie within 200 m of Road R1?” (b) “Can the field team drive from (0, 500) to P4 using only the roads in our data?” (c) “How many unresolved requests are in each ward?” (d) “How many requests were reopened in September?” For (b), say whether the practice data can answer it and why.</p></div>
+  <div class="card"><p><strong>Q4.</strong> <span class="pill">1.3.3 · LO3</span><br>Two requests are each 600 m from a depot in a straight line. Which statement is best supported? (A) They are equally quick to reach. (B) The one nearer to a road is quicker to reach. (C) Nothing about reaching time can be concluded without road-network data. (D) The GIS measures travel time by default, so both are 600 m of travel.</p></div>
+  <div class="card"><p><strong>Q5.</strong> <span class="pill">1.5.2 · LO5</span><br>After unchecking the Requests layer and saving the project, which is true? (A) The request records are deleted. (B) The request records are unchanged; only this map’s display changed. (C) The dataset is removed from disk but recoverable. (D) Other maps using the same dataset will no longer show requests.</p></div>
+  <div class="card"><p><strong>Q6.</strong> <span class="pill">1.6.1 · LO6</span><br>Ward A logs 40 requests and Ward B logs 15 in the same month. List three alternative explanations, other than “Ward A’s assets are in worse condition”, and name the additional data each would need.</p></div>
+
+  <h2><span class="mod">1.8.2</span>Scenario questions (20 marks, 10 each)</h2>
+  <div class="card"><p><strong>S1.</strong> <span class="pill">1.1.2, 1.2.3 · LO2</span><br>The manager who sets the rules writes: “Prioritise unresolved high-priority requests near Main Road inside our wards.” Rewrite this as a fully defined question for the Chapter 1 practice data: state the status set, the priority value, the distance value with unit and boundary treatment, and the ward-membership rule including the shared boundary. Apply it by hand to the request table and give the resulting IDs. Then state one thing your result does not establish.</p>
+  <details class="reveal"><summary>Show the request table</summary><div id="s1Table"></div></details></div>
+  <div class="card"><p><strong>S2.</strong> <span class="pill">1.4.2, 1.4.3 · LO4</span><br>The field team visits P5, finds that the real blockage is at drain DR-0042, clears it, and asks you to “update the map”. Say exactly which records should change, which should not, and what new record (if any) should be created. Then list two things about the request data’s origin that the Team Lead should know before using a map of “reopened requests” to judge the team’s performance.</p></div>
+
+  <h2><span class="mod">1.8.3</span>Independent practical task (20 marks) — unfamiliar inputs</h2>
+  <div class="card">
+    <p><span class="synthetic">Made-up scenario: school access.</span> A district education officer has a table of 14 primary schools with coordinates on a flat local grid in metres, a table of 300 pupil home locations for one intake year (each with a school ID assigned by the enrolment office), and a single polygon for the district boundary. The officer asks:</p>
+    <ol>
+      <li>“Can we have a map showing where pupils live relative to their schools?”</li>
+      <li>“Which pupils live more than 2 km from the school they are assigned to?”</li>
+      <li>“Should we move the catchment boundary between School 4 and School 7?”</li>
+    </ol>
+    <p><strong>Produce a short written response (no software) that:</strong></p>
+    <ol type="a">
+      <li>Labels each request as primarily a <strong>display</strong> question, an <strong>analysis</strong> question, or an <strong>operational decision</strong>, with one sentence saying why. <span class="pill">LO2</span></li>
+      <li>Picks <strong>one unclear word</strong> in request 2, gives it a clear, checkable meaning, and says whether the edge value counts. <span class="pill">LO2</span></li>
+      <li>Identifies <strong>one unsupported conclusion</strong> the officer might draw from the map in request 1 and explains why it is unsupported. <span class="pill">LO6</span></li>
+      <li>For request 2 lists the inputs, selection rules, output, and a validation method, as in the 1.7 card. <span class="pill">LO4</span></li>
+      <li>States one important limitation of the pupil home data that the officer should know before any request is answered. <span class="pill">LO4, LO6</span></li>
+    </ol>
+    <p class="small">No pupil, school, or district in this task is real, and no coordinates are supplied: the task is about asking the right question, not calculating.</p>
+  </div>
+
+  <h2><span class="mod">1.8.4</span>Oral explanation (10 marks) — three minutes, no notes, no software</h2>
+  <div class="card"><p>Explain to the instructor, for the recurring question “Which unresolved service requests should an inspection team investigate first?”: (1) the decision the Team Lead is making, (2) the evidence a GIS can supply and the definitions that evidence depends on, and (3) one important limitation of the answer. You may draw on paper.</p></div>
+
+  <h2><span class="mod">1.8.5</span>Scoring and the progression rule</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Component</th><th>Weight</th><th>What earns the marks</th></tr></thead>
+    <tbody>
+      <tr><td>Concept questions Q1–Q6</td><td class="mono">30</td><td>Correct, specific, uses the ideas from this chapter; multiple-choice items are all-or-nothing</td></tr>
+      <tr><td>Scenario questions S1–S2</td><td class="mono">20</td><td>Every unclear word defined; hand result right for the stated rules; record-change reasoning correct</td></tr>
+      <tr><td>Guided lab (1.7)</td><td class="mono">20</td><td>All six self-check items hold; sketch matches cards</td></tr>
+      <tr><td>Independent practical</td><td class="mono">20</td><td>Correct labels; an unclear word made clear; a real unsupported conclusion rejected with a reason; card complete</td></tr>
+      <tr><td>Oral explanation</td><td class="mono">10</td><td>Decision, evidence-with-definitions, and limitation stated clearly without a tool</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="label">Pass rule</span><p><strong>80 marks out of 100, and no critical misconception (a serious wrong idea).</strong> For this chapter the critical misconceptions are: treating a straight-line distance as travel time; claiming a hidden layer deletes data; asserting a cause from a concentration of reports without an alternative; and leaving P5 or P6 unaddressed in S1 or the lab. A critical misconception means remediation and a fresh exercise before Chapter 2, whatever the total.</p></div>
+  <div class="callout idea"><span class="label">Progression rule</span><p>You progress when you can explain the intended decision, the required evidence, and an important limitation <em>without a software demonstration</em>. The oral check tests exactly that.</p></div>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() { requestTable(document.getElementById("s1Table"), { cols: ["id", "xy", "category", "priority", "status", "reported", "closed", "channel", "dist"] }); }
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

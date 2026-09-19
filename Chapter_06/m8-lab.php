@@ -1,0 +1,145 @@
+<?php $page = ['title' => '6.8 Lab: combine two correctly referenced layers', 'chapter' => 6, 'module' => '6.8']; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 6.8 · Guided lab · ArcGIS Pro (primary) or QGIS</div>
+    <h1>Lab: two layers, two coordinate systems, one honest answer</h1>
+    <p class="lead">You receive the wards in <strong>degrees</strong> (EPSG:4326) and the requests in <strong>UTM metres</strong> (EPSG:32643). Inspect both, make an <em>analysis-ready</em> copy by transforming (not relabelling), measure one distance and one area with units, write a log, and get someone else to spot-check you.</p>
+    <div class="outcomes"><h4>Objective</h4>
+      <ul><li>Produce <code>wards_e6_utm</code> and <code>requests_e6_utm</code> in EPSG:32643, with the originals untouched.</li>
+      <li>Report Q1–Q2 distance and Ward A area (flat and geodesic) with method, units and rounding.</li>
+      <li>Fill the two worksheets, keep a log, and hand-check one number.</li></ul></div>
+  </div>
+
+  <div class="callout warn"><span class="label">Read this first</span><p>The software steps below were written from the official ArcGIS Pro 3.7 and QGIS 3.40 documentation and have <strong>not been run</strong> by the author. The expected numbers are formula results (module 6.7). Your instructor must reproduce them in the installed software before you rely on them (chapter document, Instructor Appendix I.3) — accept differences up to 0.01 m for lengths and 1 m² for areas.</p></div>
+
+  <h2><span class="mod">6.8.1–6.8.2</span>Prerequisites and software</h2>
+  <ul>
+    <li>Modules 6.1–6.7; Chapter 5’s CRS checklist; ability to create a text file.</li>
+    <li><strong>Primary route:</strong> ArcGIS Pro 3.x, any licence level. The tools used — XY Table To Point, Project, Define Projection (diagnostic only) and Calculate Geometry Attributes — are available at Basic, Standard and Advanced according to their pages. No ArcGIS Online sign-in, credits or downloads are needed.</li>
+    <li><strong>Alternative:</strong> QGIS Desktop 3.40 (section 6.8.8 below). No software at all: do the worksheet parts on paper and use the expected values.</li>
+  </ul>
+
+  <h2><span class="mod">6.8.3</span>Input data — copy these three files (made-up data)</h2>
+  <div class="tabs"><button>wards_e6.geojson</button><button>requests_e6.csv</button><button>provenance_e6.txt</button></div>
+  <div class="tabpanel">
+    <p class="small">WGS 84 (EPSG:4326). GeoJSON positions are <strong>longitude then latitude</strong>. No CRS member is written because RFC 7946 fixes WGS 84 as the CRS.</p>
+    <div class="copywrap"><pre>{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "ward": "A" },
+      "geometry": { "type": "Polygon", "coordinates": [[
+        [74.990, 23.000], [75.000, 23.000], [75.000, 23.010], [74.990, 23.010], [74.990, 23.000] ]] } },
+    { "type": "Feature", "properties": { "ward": "B" },
+      "geometry": { "type": "Polygon", "coordinates": [[
+        [75.000, 23.000], [75.010, 23.000], [75.010, 23.010], [75.000, 23.010], [75.000, 23.000] ]] } }
+  ]
+}</pre></div>
+  </div>
+  <div class="tabpanel">
+    <p class="small">WGS 84 / UTM zone 43N (EPSG:32643), metres.</p>
+    <div class="copywrap"><pre id="csvPre"></pre></div>
+  </div>
+  <div class="tabpanel">
+    <div class="copywrap"><pre>wards_e6.geojson  : Ward boundaries digitised for training. CRS WGS 84 (EPSG:4326).
+                    GeoJSON positions, longitude first (RFC 7946).
+requests_e6.csv   : Request locations exported from the training request tracker.
+                    CRS WGS 84 / UTM zone 43N (EPSG:32643). E_m, N_m in metres.
+Both files are synthetic training data and describe no real place.</pre></div>
+  </div>
+
+  <h2><span class="mod">6.8.4</span>Steps (ArcGIS Pro route — not execution-tested)</h2>
+  <p>Tick each step as you do it. Your ticks and notes are saved in this browser only.</p>
+  <div class="lab-card"><h4>Part A — Inspect before you transform anything (worksheet rows 1, 2, 5)</h4>
+    <div class="checklist">
+      <label><input type="checkbox" data-save="a1"><span><strong>1.</strong> Open the three files in a text editor. In the GeoJSON confirm each position is <code>[longitude, latitude]</code> (first number about 75, second about 23). In the CSV confirm the sizes fit UTM (eastings near 500,000; northings in the millions). Write your observations in the log <em>before</em> opening any GIS. The sizes agree with the provenance — they do not replace it.</span></label>
+      <label><input type="checkbox" data-save="a2"><span><strong>2.</strong> Start ArcGIS Pro, new map, add <code>wards_e6.geojson</code> (Map ▸ Add Data; if your version needs the <strong>JSON To Features</strong> tool first, do that and log it). Open <strong>Layer Properties ▸ Source</strong>; write down the spatial reference exactly as shown. Expected: GCS WGS 1984 / WKID 4326.</span></label>
+      <label><input type="checkbox" data-save="a3"><span><strong>3.</strong> Open <strong>Map Properties ▸ Coordinate Systems</strong> and record the map’s CRS. Expected: it adopted the first layer’s. That is worksheet row 2.</span></label>
+      <label><input type="checkbox" data-save="a4"><span><strong>4.</strong> Run <strong>XY Table To Point</strong>: Input Table = <code>requests_e6.csv</code>; X Field = <code>E_m</code>; Y Field = <code>N_m</code>; <strong>Coordinate System = WGS 1984 UTM Zone 43N (WKID 32643)</strong>. This parameter is essential — the tool’s default when left blank is WGS 84 degrees, the “quiet wrong label” of 6.2. Output <code>requests_e6_utm</code>. Log the parameters.</span></label>
+      <label><input type="checkbox" data-save="a5"><span><strong>5.</strong> Confirm the five points fall on and around the wards (Q1, Q2 on the shared edge; Q3 in A; Q4 in B; Q5 east of B). They line up because the map reprojects them on the fly (6.4). Write: “aligned on screen; stored coordinates unchanged; not yet analysis-ready”.</span></label>
+    </div></div>
+  <div class="lab-card"><h4>Part B — The wrong operation, on a throw-away copy (6.2)</h4>
+    <div class="checklist">
+      <label><input type="checkbox" data-save="b6"><span><strong>6.</strong> Copy <code>requests_e6_utm</code> to <code>requests_e6_DIAG</code>. On the <em>copy only</em>, run <strong>Define Projection</strong> with Coordinate System = WGS 1984 (WKID 4326). Observe: attribute values and shape coordinates unchanged; the layer vanishes from the town (its “degrees” are 500,000 and 2.5 million). Record what you saw, then delete the copy. This is to make the failure recognisable — it is never a repair.</span></label>
+    </div></div>
+  <div class="lab-card"><h4>Part C — Make the analysis-ready copy (worksheet rows 3, 4)</h4>
+    <div class="checklist">
+      <label><input type="checkbox" data-save="c7"><span><strong>7.</strong> Decide the analysis CRS with the 6.6 worksheet: <strong>EPSG:32643</strong> — study area inside the zone, property distance/area, flat measurement has a documented 0.04 % scale effect. Write the decision and reasons.</span></label>
+      <label><input type="checkbox" data-save="c8"><span><strong>8.</strong> Run <strong>Project</strong>: Input = <code>wards_e6</code>; Output = <code>wards_e6_utm</code>; Output Coordinate System = WGS 1984 UTM Zone 43N (WKID 32643). The <strong>Geographic Transformation</strong> box should show <em>no</em> list — both are on WGS 84. Log: “no datum transformation required (same GCS)”. Leave Preserve Shape unticked and note it.</span></label>
+      <label><input type="checkbox" data-save="c9"><span><strong>9.</strong> Open <strong>Layer Properties ▸ Source</strong> for <code>wards_e6_utm</code>; record its spatial reference and extent. Expected extent: E ≈ 498,975 to 501,025; N ≈ 2,543,520 to 2,544,627.</span></label>
+    </div></div>
+  <div class="lab-card"><h4>Part D — Measure (row 5; method from 6.6)</h4>
+    <div class="checklist">
+      <label><input type="checkbox" data-save="d10"><span><strong>10.</strong> With the map CRS set to EPSG:32643, use <strong>Measure Distance</strong> in <strong>Planar</strong> mode from Q1 to Q2 (Planar is only offered on a projected map). Expected ≈ <strong>664.20 m</strong>. Clicking is imprecise; for the exact figure subtract the northings in the table: 2,544,405.362 − 2,543,741.163 = 664.199 m (same easting, so the distance is the northing difference).</span></label>
+      <label><input type="checkbox" data-save="d11"><span><strong>11.</strong> On a <strong>copy</strong> of <code>wards_e6_utm</code> (the tool modifies its input), run <strong>Calculate Geometry Attributes</strong>: property <strong>Area</strong>, unit <strong>Square meters</strong>, Coordinate System blank (uses the input’s EPSG:32643). Expected Ward A: <strong>1,134,426 m²</strong> (± 1). Run again with <strong>Area (geodesic)</strong> into a second field. Expected: <strong>1,135,335 m²</strong> (± 1; instructor to confirm).</span></label>
+      <label><input type="checkbox" data-save="d12"><span><strong>12.</strong> Log: method (flat in EPSG:32643 / geodesic), units, both areas, their ratio (expected 0.9992 = 0.9996²) and why they differ (6.7).</span></label>
+    </div></div>
+  <div class="lab-card"><h4>Part E — Spot-check independently</h4>
+    <div class="checklist">
+      <label><input type="checkbox" data-save="e13"><span><strong>13.</strong> Without the GIS, hand-check one length and one area: Q1–Q2 from the northings (step 10); Ward A ≈ 1,025 m × 1,107 m ≈ 1,134,700 m² from the degree lengths in 6.5 — within 0.1 % of both computed areas (enough to catch a units mistake, not enough to separate flat from geodesic).</span></label>
+      <label><input type="checkbox" data-save="e14"><span><strong>14.</strong> Ask a colleague or the instructor to open your output layer and confirm its CRS and extent from the Source tab <em>without</em> seeing your log first. Their paragraph is deliverable 5.</span></label>
+    </div></div>
+
+  <h2><span class="mod">6.8.5</span>Expected results and checks</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Check</th><th>Expected</th><th>If it fails</th></tr></thead>
+    <tbody id="checks"></tbody></table></div>
+
+  <h2><span class="mod">6.8.6</span>Troubleshooting</h2>
+  <div class="grid-2">
+    <div class="card"><h4 style="margin-top:0">GeoJSON will not add directly</h4><p>Some versions add <code>.geojson</code> as a layer; others need <strong>JSON To Features</strong>. Either way, confirm the Source tab shows WGS 84 and log the route.</p></div>
+    <div class="card"><h4 style="margin-top:0">Points appear near the equator, far west</h4><p>The CSV was read as degrees (Coordinate System left blank). Delete the output and re-run step 4 with WKID 32643.</p></div>
+    <div class="card"><h4 style="margin-top:0">Wards shifted by tens of metres</h4><p>Check Map Properties ▸ <strong>Transformation</strong>: a transformation was applied where none belongs, or a layer’s label is not WGS 84. In this fixture there must be <em>none</em>.</p></div>
+    <div class="card"><h4 style="margin-top:0">Values differ by a few millimetres</h4><p>Different Transverse Mercator implementations differ at that level; accept up to 0.01 m. Larger differences mean a different CRS definition, zone or method.</p></div>
+    <div class="card"><h4 style="margin-top:0">Calculate Geometry refuses flat area</h4><p>The input is geographic or Web Mercator. Use <code>wards_e6_utm</code>, or pick the geodesic property.</p></div>
+    <div class="card"><h4 style="margin-top:0">Measure tool shows only Geodesic</h4><p>The map CRS is geographic; Planar needs a projected map. Set the map to EPSG:32643 for this measurement, or compute from the coordinates (step 10).</p></div>
+  </div>
+
+  <h2><span class="mod">6.8.7</span>Your deliverables (draft them here — saved in this browser)</h2>
+  <div class="lab-form">
+    <label>1. Log — worksheet 6.4 (5 rows) and worksheet 6.6 (6 rows), tool runs with parameters, CRS names and codes, transformation (“none required — same GCS”), units, rounding, the Part B observation, the reasons for EPSG:32643</label>
+    <textarea data-save="log" placeholder="Row 1 input CRS: … Row 2 display CRS: … Row 3 processing CRS: … Row 4 transformation: … Row 5 units: …"></textarea>
+    <label>2. Output datasets — names and where they are; confirm the originals are untouched</label>
+    <textarea data-save="outputs"></textarea>
+    <label>3. Results — Q1–Q2 distance (method, units); Ward A flat and geodesic areas; ratio and explanation</label>
+    <textarea data-save="results"></textarea>
+    <label>4. Hand-checks from step 13</label>
+    <textarea data-save="hand"></textarea>
+    <label>5. Independent spot-check — the colleague’s paragraph</label>
+    <textarea data-save="spot"></textarea>
+    <p class="saved">Saved automatically in this browser.</p>
+  </div>
+
+  <h2><span class="mod">6.8.8</span>QGIS alternative (equivalent exercise; not execution-tested)</h2>
+  <p>Same concepts, different tools — and one important difference in how the measurement method is chosen. Same expected values.</p>
+  <ol>
+    <li><strong>Inspect.</strong> Text editor first, as in step 1. Add <code>wards_e6.geojson</code> via <strong>Layer ▸ Data Source Manager ▸ Vector</strong>; check its CRS under <strong>Layer Properties ▸ Source</strong>. Note the project CRS in the status bar (a new project uses EPSG:4326 unless set to take the first layer’s CRS — record which applies).</li>
+    <li><strong>Load the CSV</strong> with <strong>Data Source Manager ▸ Delimited Text</strong>: Geometry = Point coordinates; X field <code>E_m</code>; Y field <code>N_m</code>; <strong>Geometry CRS = EPSG:32643</strong>. Confirm alignment; write the same “aligned, not analysis-ready” note.</li>
+    <li><strong>Diagnostic.</strong> On a duplicate of the points only, run <strong>Assign projection</strong> with Assigned CRS = EPSG:4326; watch it leave the town; delete it. (Not <em>Define Shapefile projection</em>, which writes to disk.)</li>
+    <li><strong>Transform.</strong> Run <strong>Reproject layer</strong> on the wards with Target CRS = EPSG:32643. Check the Coordinate Operation field shows no datum operation; log it. Save as <code>wards_e6_utm</code>.</li>
+    <li><strong>Measure — read the Info panel.</strong> Open <strong>Project ▸ Properties ▸ General ▸ Measurements</strong> and record the <strong>Ellipsoid</strong>. With the default (an ellipsoid), Measure Line gives the <em>ellipsoidal</em> distance even on a UTM layer: expected Q1–Q2 = <strong>664.46 m</strong>. Switch the dialog to <strong>Cartesian</strong>, or set the ellipsoid to <strong>None / Planimetric</strong> with the project in EPSG:32643, to get the flat value <strong>664.20 m</strong>. Copy the dialog’s Info text into your log. <em>This is the QGIS lesson: the project’s ellipsoid setting, not the layer, chooses the method.</em></li>
+    <li><strong>Area.</strong> Run <strong>Add geometry attributes</strong> on <code>wards_e6_utm</code> twice: Calculate using = <strong>Layer CRS</strong> (expected ≈ 1,134,426 m²) and <strong>Ellipsoidal</strong> (expected ≈ 1,135,335 m²). Log both, the ratio, and the reason.</li>
+    <li>Deliverables as above, with QGIS and PROJ versions recorded.</li>
+  </ol>
+  <p class="small"><strong>Not claimed:</strong> that QGIS and ArcGIS Pro give bit-identical numbers, or that QGIS’s ellipsoidal area matches Esri’s shape-preserving one beyond the 1 m² tolerance. The instructor records what was actually observed.</p>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() {
+  document.getElementById("csvPre").textContent = "request_id,category,E_m,N_m\n" + E6.requests.map(q => `${q.id},${q.cat},${fx(q.E)},${fx(q.N)}`).join("\n");
+  const [Q1, Q2] = E6.requests; const A = E6.wards[0], ring = wardRing(A);
+  const aEll = ellipsoidRectArea(A.lat[0], A.lat[1], A.lon[0], A.lon[1]);
+  const utmRing = ring.map(([lo, la]) => { const u = utm(la, lo, 43); return [u.E, u.N]; }); const aUtm = shoelace(utmRing);
+  const es = utmRing.map(p => p[0]), ns = utmRing.map(p => p[1]);
+  const rows = [
+    ["Request points’ Source tab after step 4", "WGS 1984 UTM Zone 43N (WKID 32643)", "Coordinate System was left blank (defaults to WGS 84); re-run step 4"],
+    ["Q1 and Q2 easting", "exactly 500,000.000", "wrong zone or false easting; open the full CRS definition"],
+    ["Project’s Geographic Transformation box (step 8)", "empty — no list", "a list means an input or output GCS is not WGS 84; re-check Source tabs"],
+    ["wards_e6_utm extent", `E ${fmtN(Math.min(...es), 0)} – ${fmtN(Math.max(...es), 0)}; N ${fmtN(Math.min(...ns), 0)} – ${fmtN(Math.max(...ns), 0)}`, "thousands of km off → relabelled instead of projected, or wrong zone"],
+    ["Q1–Q2 flat distance", `${(Q2.N - Q1.N).toFixed(2)} m ± 0.01`, "0.006 → measured in degrees; ~725.6 → Web Mercator map; 664.46 → geodesic mode (fine, but log it)"],
+    ["Ward A flat area", `${fmtN(aUtm, 0)} m² ± 1`, "≈1,346,000 → Web Mercator; 0.0001 → degrees; ≈1,000,000 → you used the Chapter 1 grid ward"],
+    ["Ward A geodesic area", `${fmtN(aEll, 0)} m² ± 1 (instructor to confirm)`, "large deviation → tool used a sphere or a different ellipsoid; record the tool’s stated method"],
+    ["Flat ÷ geodesic area", (aUtm / aEll).toFixed(4), "anything else → one value is not what the log claims"],
+    ["Original files", "unchanged (byte-identical)", "tools were run on originals; recreate from the text above"]
+  ];
+  document.getElementById("checks").innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td class="mono">${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+}
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>

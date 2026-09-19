@@ -1,0 +1,57 @@
+<?php $page = ['title' => 'Chapter 6 glossary', 'chapter' => 6]; require __DIR__ . '/../partials/head.php'; ?>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Chapter 6</div>
+    <h1>Glossary</h1>
+    <p class="lead">Terms as used in this chapter, in plain words. Tags: <span class="pill">Esri</span> <span class="pill">QGIS</span> <span class="pill">PostGIS</span> <span class="pill">EPSG</span> — untagged terms are general ideas.</p>
+  </div>
+  <input class="gloss-search" id="q" type="search" placeholder="Type to filter… e.g. datum, geodesic, define, zone" aria-label="Filter glossary">
+  <dl class="gloss" id="gloss"></dl>
+  <p style="margin-top:2rem"><a class="btn ghost" href="index.php">← Chapter home</a></p>
+<?php require __DIR__ . '/../partials/foot.php'; ?>
+<script>
+function pageInit() {
+  const E = ' <span class="pill">Esri</span>', Q = ' <span class="pill">QGIS</span>', P = ' <span class="pill">PostGIS</span>', G = ' <span class="pill">EPSG</span>';
+  const terms = [
+    ["Map projection", "The maths that turns positions on the round Earth model into positions on a flat sheet. Every projection stretches something."],
+    ["Distortion", "The unavoidable change of area, shape/angle, distance or direction caused by flattening. Small in some places, large in others."],
+    ["Conformal", "A projection property: angles (and so the shape of small things) are kept. Mercator and Web Mercator are conformal-type. Area is not kept."],
+    ["Equal-area", "A projection property: areas keep their true proportion everywhere. Shapes get squashed over large regions."],
+    ["Equidistant", "A projection property: distances are kept — but only from one centre or along particular lines, not between every pair of points."],
+    ["Scale factor", "Map length ÷ ground length at a point, in a direction. 0.9996 along a UTM central meridian; h (north–south) and k (east–west) for Web Mercator."],
+    ["Central meridian", "The line of longitude down the middle of a Transverse Mercator zone — 75° E for UTM zone 43N. Scale 0.9996 along it."],
+    ["UTM zone", "One of 60 strips, each 6° of longitude wide, with its own projected CRS per hemisphere. India’s mainland crosses zones 42–47."],
+    ["False easting / false northing", "Constants added to projected coordinates so they stay positive. 500,000 m and 0 m for northern UTM zones — which is why a point on the central meridian has easting exactly 500,000."],
+    ["Area of use", "The region a CRS or transformation is defined for, as written in the EPSG registry. Outside it the numbers are simply wrong." + G],
+    ["Assign a CRS (define projection)", "Write or overwrite the metadata that says which CRS a dataset’s numbers belong to — without changing the numbers. Only correct when the label is missing/wrong AND you have evidence."],
+    ["Define Projection", "The ArcGIS Pro tool that assigns a CRS label; “does not modify any geometry”." + E],
+    ["Assign projection / Define Shapefile projection", "QGIS algorithms that assign a CRS label (the second writes a .prj file to disk)." + Q],
+    ["ST_SetSRID", "PostGIS function that sets the SRID label; “does not transform the geometry coordinates in any way”." + P],
+    ["Transform / project (data)", "Compute new coordinate values in a destination CRS and write them to a new output. The numbers change."],
+    ["Project (tool)", "The ArcGIS Pro tool that transforms features to another CRS; Project Raster does it for rasters (with resampling)." + E],
+    ["Reproject layer", "The QGIS algorithm that transforms a vector layer to another CRS." + Q],
+    ["ST_Transform", "PostGIS function that returns a geometry with coordinates converted to another SRID." + P],
+    ["Datum", "The anchoring of an Earth-model ellipsoid to the real Earth. Different datums give different latitude/longitude numbers for the same place."],
+    ["Datum transformation (geographic transformation)", "A measured shift between two datums, with an area of use and an accuracy. Needed when source and target geographic CRSs differ. Esri says “geographic transformation”; QGIS says “datum transformation” or “coordinate operation”."],
+    ["Conversion vs transformation", "In the EPSG registry a conversion is exact maths within one datum (a projection is a conversion); a transformation changes datum and was measured, so it has an accuracy." + G],
+    ["Kalianpur 1975", "An older Indian survey datum (Everest 1830 ellipsoid). Its coordinates differ from WGS 84 by roughly 100 m at the practice town. Transformation EPSG:1156 to WGS 84 has accuracy 22 m." + G],
+    ["Grid file (NTv2, NADCON…)", "A data file some high-accuracy transformations need; may have to be installed separately (ArcGIS Coordinate Systems Data; QGIS/PROJ grids)."],
+    ["On-the-fly (display) reprojection", "Reprojecting layers for drawing only, so layers in different CRSs line up on screen. Stored coordinates unchanged. Not for analysis or editing."],
+    ["Map CRS / project CRS", "The CRS a map or QGIS project draws in — usually taken from the first layer added. A view setting, not a property of the data."],
+    ["Output Coordinate System (environment)", "An ArcGIS Pro setting that makes tools project inputs and process in a chosen CRS. Otherwise tools use the first input’s CRS." + E],
+    ["Planar (Euclidean) measurement", "Distance or area computed on the flat sheet of a projected CRS with ordinary geometry. Right on the ground only where the projection is."],
+    ["Geodesic", "The shortest path between two points along the surface of the reference ellipsoid; also the method that measures it. Works at any size; accepts degree input."],
+    ["Spherical / great-circle distance", "Distance on a perfect ball instead of the ellipsoid. Cheaper; differs from the geodesic by up to about 0.5 %."],
+    ["Ellipsoidal (measurement)", "QGIS’s word for measuring on the project’s ellipsoid rather than flat (cartesian/planimetric)." + Q],
+    ["geometry vs geography", "PostGIS types: geometry measures flat in the SRID’s units; geography measures geodesic in metres." + P],
+    ["Web Mercator (Pseudo-Mercator, EPSG:3857)", "A projected CRS in metres that applies spherical Mercator maths to WGS 84 coordinates. Scope “web mapping and visualisation”; not conformal; flat lengths stretched by h and k (about 9 % at 23° N)." + G],
+    ["WGS 84 (EPSG:4326)", "The geographic CRS used by GPS and GeoJSON; latitude/longitude in degrees on the WGS 84 ellipsoid (a = 6,378,137 m)." + G],
+    ["WGS 84 / UTM zone 43N (EPSG:32643)", "The projected CRS for 72–78° E in the northern hemisphere; central meridian 75° E; metres." + G],
+    ["Fixture E6", "This chapter’s made-up Earth-referenced practice data: two ward rectangles in degrees and five requests delivered in UTM 43N. Not a real place."]
+  ];
+  const dl = document.getElementById("gloss");
+  const render = f => { dl.innerHTML = terms.filter(t => !f || (t[0] + " " + t[1]).toLowerCase().includes(f)).map(t => `<dt>${t[0]}</dt><dd>${t[1]}</dd>`).join("") || "<dd>No matching term.</dd>"; };
+  document.getElementById("q").addEventListener("input", e => render(e.target.value.trim().toLowerCase()));
+  render("");
+}
+</script>
+<?php require __DIR__ . '/../partials/end.php'; ?>
