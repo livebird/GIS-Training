@@ -7,6 +7,11 @@ Options -Indexes -MultiViews
 DirectoryIndex index.php
 AddDefaultCharset UTF-8
 
+# Training material is not for search engines (robots.txt covers polite crawlers; this header covers the rest).
+<IfModule mod_headers.c>
+Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
