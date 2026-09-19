@@ -1,0 +1,29 @@
+# GIS training site — Apache / LiteSpeed (Hostinger) configuration.
+# URLs are extensionless: /Chapter_01/m1-decision serves Chapter_01/m1-decision.php,
+# and a direct request for a .php URL is redirected to the clean one.
+# Locally, `php -S` ignores this file; dev-router.php does the same job there.
+
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# 1. /path/index.php  ->  /path/          (301, external requests only)
+RewriteCond %{THE_REQUEST} ^[A-Z]+\s(.*/)index\.php[\s?] [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# 2. /path/page.php   ->  /path/page      (301, external requests only)
+RewriteCond %{THE_REQUEST} ^[A-Z]+\s(.+?)\.php[\s?] [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# 3. /path/page       ->  /path/page.php  (internal, when that file exists)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]
+</IfModule>
+
+# Nothing under partials/ or config/ is a page — never serve them directly.
+RedirectMatch 404 ^/(partials|config)/

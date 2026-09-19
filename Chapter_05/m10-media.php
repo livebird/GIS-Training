@@ -39,6 +39,6 @@
 
   <h2><span class="mod">Next</span>The question that opens Chapter 6</h2>
   <div class="callout idea"><span class="label">Transition</span><p>You can now <em>read</em> a reference. Chapter 6 <em>uses</em> it: it separates <strong>assigning</strong> a CRS (changing the label) from <strong>transforming</strong> coordinates (changing the numbers), chooses datum transformations with evidence, and measures distances and areas with a documented method — including why a Web Mercator metre is not a ground metre. Every Chapter 6 lab begins with the seven-point checklist from 5.7. The question to carry across: <strong>“Now that I know what the numbers mean — how do I change them safely, and how do I measure with them?”</strong></p></div>
-  <p><a class="btn primary" href="index.php">← Chapter home</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+  <p><a class="btn primary" href="./">← Chapter home</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
 <?php require __DIR__ . '/../partials/foot.php'; ?>
 <?php require __DIR__ . '/../partials/end.php'; ?>

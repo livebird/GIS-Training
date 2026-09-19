@@ -6,7 +6,7 @@
       </div>
       <h1 class="big">Start with a <em>decision</em>,<br>not a map.</h1>
       <p class="lead">This chapter teaches what a GIS (Geographic Information System) is, how to turn a business question into a question about <em>where</em>, and how to spot the limits of an answer. No GIS knowledge is assumed.</p>
-      <p><a class="btn primary" href="m1-decision.php">Begin module 1.1 →</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+      <p><a class="btn primary" href="m1-decision">Begin module 1.1 →</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
       <p class="small">No software is needed. Every map on these pages uses <span class="synthetic">made-up practice data</span> from the chapter document — a small imaginary town, not a real place. Your progress is saved in this browser only.</p>
     </div>
     <figure class="map-fig fade-up" id="heroMap"></figure>

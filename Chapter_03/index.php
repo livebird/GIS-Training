@@ -6,7 +6,7 @@
       </div>
       <h1 class="big">What is actually<br><em>inside</em> a map layer?</h1>
       <p class="lead">Chapter 2 showed you <em>where</em> data lives and <em>who</em> serves it. This chapter opens the box. You will see that a map layer is made of <strong>features</strong> — each one a <strong>shape</strong> (a point, a line or an area) plus a <strong>row of facts</strong> about it — and you will learn to tell the stored data apart from the way it is drawn.</p>
-      <p><a class="btn primary" href="m1-representation.php">Begin module 3.1 →</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+      <p><a class="btn primary" href="m1-representation">Begin module 3.1 →</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
       <p class="small">No software is needed for modules 3.1–3.6. The lab in 3.7 uses ArcGIS Pro or QGIS, with a paper route if you have neither. Every coordinate, name and date on these pages is <span class="synthetic">made-up practice material</span> on a flat grid measured in metres — no real town. Your progress is saved in this browser only.</p>
     </div>
     <figure class="map-fig fade-up" id="heroFig"></figure>

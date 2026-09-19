@@ -34,7 +34,7 @@
   </div>
 
   <div class="callout idea"><span class="label">You are ready for Chapter 2 when</span><p>You can explain the intended decision, the evidence a GIS supplies, and an important limitation — <em>without</em> a software demonstration. If you have submitted the 1.8 package, tick this module done and continue.</p></div>
-  <p><a class="btn primary" href="index.php">Back to the chapter home</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+  <p><a class="btn primary" href="./">Back to the chapter home</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
 <?php require __DIR__ . '/../partials/foot.php'; ?>
 <script>
 function pageInit() {

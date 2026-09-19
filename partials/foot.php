@@ -10,7 +10,7 @@
 </main>
 <footer class="sitefoot">
   <div class="inner">
-    <span>GIS &amp; ArcGIS training · <a href="<?= $ROOT ?>index.php">Course index</a><?php if ($chapter): ?> · <a href="index.php">Chapter <?= $chapter['n'] ?></a> · <a href="glossary.php">Glossary</a><?php endif; ?></span>
+    <span>GIS &amp; ArcGIS training · <a href="<?= $HOME ?>">Course index</a><?php if ($chapter): ?> · <a href="./">Chapter <?= $chapter['n'] ?></a> · <a href="glossary">Glossary</a><?php endif; ?></span>
     <span class="small">Practice data on these pages is made up. Progress is saved in this browser only.</span>
   </div>
 </footer>

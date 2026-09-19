@@ -8,6 +8,7 @@
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 
 $ROOT   = $ROOT ?? (isset($page['chapter']) ? '../' : '');
+$HOME   = $ROOT === '' ? './' : $ROOT;   // link to the course index (URLs are extensionless; see .htaccess)
 $PHASES = require __DIR__ . '/../config/chapters.php';
 $ALL_CHAPTERS = array_merge(...array_column($PHASES, 'chapters'));
 
@@ -26,7 +27,7 @@ if (isset($page['chapter'])) {
         foreach ($modules as $i => $m) {
             if ($m['id'] === $page['module']) {
                 $current = $m;
-                $home = ['file' => 'index.php', 'title' => 'Chapter home', 'id' => ''];
+                $home = ['file' => './', 'title' => 'Chapter home', 'id' => ''];
                 $prev = $i > 0 ? $modules[$i - 1] : $home;
                 $next = $i < count($modules) - 1 ? $modules[$i + 1] : $home;
             }

@@ -30,6 +30,6 @@
 
   <h2><span class="mod">Next</span>Chapter 7 — formats, sources and metadata</h2>
   <p>Every decision this chapter asked you to log — input CRS, transformation record and its accuracy, analysis CRS and why, measurement method, units, rounding, software version — is <strong>provenance</strong>. Chapter 7 shows where that lives inside a dataset: why a Shapefile keeps its CRS in a separate <code>.prj</code> file that can go missing (exactly Q2 of the check), and what a GeoPackage or a geodatabase records instead. <strong>Keep your 6.8 log</strong>; it becomes a Chapter 7 metadata example.</p>
-  <p><a class="btn primary" href="index.php">← Chapter home</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+  <p><a class="btn primary" href="./">← Chapter home</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
 <?php require __DIR__ . '/../partials/foot.php'; ?>
 <?php require __DIR__ . '/../partials/end.php'; ?>

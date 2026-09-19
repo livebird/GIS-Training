@@ -6,7 +6,7 @@
       </div>
       <h1 class="big">Where does each<br>part of the job <em>live</em>?</h1>
       <p class="lead">Chapter 1 gave you a working method: decision → question → data → operation → validation → communication. This chapter answers a practical question: <strong>which software does each step, and where does the data actually sit?</strong> You will meet the ArcGIS products by the <em>job</em> each one does — and see how the same jobs are done with QGIS, PostGIS, GeoServer, OpenLayers and Mapbox.</p>
-      <p><a class="btn primary" href="m1-responsibilities.php">Begin module 2.1 →</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+      <p><a class="btn primary" href="m1-responsibilities">Begin module 2.1 →</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
       <p class="small">No software, no account and no licence is needed. Nothing on these pages publishes anything or uses up credits (Esri’s pay-as-you-go usage units). Every deployment, file name, user and item shown is <span class="synthetic">made-up practice material</span>. Your progress is saved in this browser only.</p>
     </div>
     <figure class="map-fig fade-up" id="heroFig"></figure>

@@ -6,7 +6,7 @@
       </div>
       <h1 class="big">The Earth is round.<br>Your screen is <em>flat</em>.</h1>
       <p class="lead">Chapter 5 taught you to <em>read</em> a coordinate together with its coordinate system. This chapter is about <em>doing things</em> to coordinates: flattening the round Earth onto a map (a <strong>projection</strong>), moving data from one coordinate system to another (a <strong>transformation</strong>), and then measuring a distance or an area so that the number you report is actually true on the ground.</p>
-      <p><a class="btn primary" href="m1-distortion.php">Begin module 6.1 →</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+      <p><a class="btn primary" href="m1-distortion">Begin module 6.1 →</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
       <p class="small">No software is needed for modules 6.1–6.7; every demo runs in this page. The lab in 6.8 uses ArcGIS Pro or QGIS, with a paper route if you have neither. All places, wards and requests here are <span class="synthetic">made-up practice data</span> — no real town or office. Your progress is saved in this browser only.</p>
     </div>
     <figure class="map-fig fade-up" id="heroFig"></figure>

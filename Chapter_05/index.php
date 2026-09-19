@@ -6,7 +6,7 @@
       </div>
       <h1 class="big">Two numbers are<br>not a <em>place</em></h1>
       <p class="lead">Until now every coordinate in this course sat on a flat practice grid — graph paper, nothing more. This chapter answers the question we kept postponing: <strong>what do the numbers actually refer to?</strong> You will learn to read latitude and longitude, to tell a “degrees” system from a “metres” system, to write coordinates in the right order for each file format, and — most important — to stop and ask when a file does not say what its numbers mean.</p>
-      <p><a class="btn primary" href="m1-two-numbers.php">Begin module 5.1 →</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+      <p><a class="btn primary" href="m1-two-numbers">Begin module 5.1 →</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
       <p class="small">No software, no account and no licence is needed. Everything here runs in the browser. Every coordinate, file and record on these pages is <span class="synthetic">made-up practice material</span>. Your progress is saved in this browser only.</p>
     </div>
     <figure class="map-fig fade-up" id="heroFig"></figure>

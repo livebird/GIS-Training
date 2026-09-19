@@ -6,7 +6,7 @@
       </div>
       <h1 class="big">From <em>developer</em><br>to GIS delivery.</h1>
       <p class="lead">A 37-chapter curriculum for software developers with no GIS background: shared foundations first, then ArcGIS Pro, ArcGIS Online, custom development and ArcGIS Enterprise administration. Each chapter is a self-contained interactive tutorial — pick one below.</p>
-      <p style="display:flex;flex-wrap:wrap;gap:.6rem"><a class="btn primary" href="Chapter_01/index.php">Start with Chapter 1 →</a> <a class="btn ghost" href="#phase-1">Browse chapters</a></p>
+      <p style="display:flex;flex-wrap:wrap;gap:.6rem"><a class="btn primary" href="Chapter_01/">Start with Chapter 1 →</a> <a class="btn ghost" href="#phase-1">Browse chapters</a></p>
       <p class="small">No software is needed for Phase 1. Every map uses <span class="synthetic">made-up practice data</span> — a small imaginary town, not a real place. Your progress is saved in this browser only.</p>
       <div class="course-stats" id="courseStats"></div>
     </div>
@@ -76,7 +76,7 @@
     <div class="chcards">
 <?php foreach ($ph['chapters'] as $ch): ?>
 <?php if ($ch['status'] === 'ready'): ?>
-      <a class="chcard" href="<?= h($ch['dir']) ?>/index.php" data-chapter="<?= $ch['n'] ?>" data-modules="<?= h(implode(',', array_column($ch['modules'], 'id'))) ?>">
+      <a class="chcard" href="<?= h($ch['dir']) ?>/" data-chapter="<?= $ch['n'] ?>" data-modules="<?= h(implode(',', array_column($ch['modules'], 'id'))) ?>">
         <span class="done-badge">done</span>
         <div class="id">CHAPTER <?= $ch['n'] ?></div>
         <h3><?= h($ch['title']) ?></h3>

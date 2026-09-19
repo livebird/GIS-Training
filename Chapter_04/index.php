@@ -6,7 +6,7 @@
       </div>
       <h1 class="big">A map made of<br><em>numbers in a grid</em></h1>
       <p class="lead">Chapter 3 showed you points, lines and areas — good for things with edges, like a streetlight, a road or a ward. But how do you store something with <strong>no edges</strong>: how high the ground is, how much rain fell, what covers the land? The answer is a <strong>raster</strong>: cut the area into equal squares and put one number in each square. This chapter teaches you to read those numbers correctly — and not to be fooled by the colours.</p>
-      <p><a class="btn primary" href="m1-grid.php">Begin module 4.1 →</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+      <p><a class="btn primary" href="m1-grid">Begin module 4.1 →</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
       <p class="small">No account, no licence and no download is needed for modules 4.1–4.6. The lab (4.7) uses ArcGIS Pro or the free QGIS, and you can still do most of it on paper. Every grid, number and file name here is <span class="synthetic">made-up practice material</span>. Your progress is saved in this browser only.</p>
     </div>
     <figure class="raster-fig fade-up" id="heroFig"></figure>

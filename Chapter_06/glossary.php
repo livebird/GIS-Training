@@ -6,7 +6,7 @@
   </div>
   <input class="gloss-search" id="q" type="search" placeholder="Type to filter… e.g. datum, geodesic, define, zone" aria-label="Filter glossary">
   <dl class="gloss" id="gloss"></dl>
-  <p style="margin-top:2rem"><a class="btn ghost" href="index.php">← Chapter home</a></p>
+  <p style="margin-top:2rem"><a class="btn ghost" href="./">← Chapter home</a></p>
 <?php require __DIR__ . '/../partials/foot.php'; ?>
 <script>
 function pageInit() {

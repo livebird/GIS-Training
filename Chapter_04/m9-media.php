@@ -47,7 +47,7 @@
   <h2><span class="mod">Transition</span>Where is this raster?</h2>
   <div class="card">
     <p>Every raster in this chapter was placed by four numbers in a header, on a practice grid with no location on Earth. Ask “where is Ward A?” and the honest answer is: <em>nowhere in particular</em>. Chapter 5 supplies what the header lacked — the <strong>coordinate reference system</strong> that turns “x = 995, y = 510” into a real place, with its units, its axis order, and its horizontal and vertical references.</p>
-    <p><a class="btn primary" href="index.php">Back to chapter home</a> &nbsp; <a class="btn ghost" href="glossary.php">Glossary</a></p>
+    <p><a class="btn primary" href="./">Back to chapter home</a> &nbsp; <a class="btn ghost" href="glossary">Glossary</a></p>
   </div>
   <p class="small">Source: <em>GIS_Phase_1_Chapter_04_Raster_Data_and_Geographic_Surfaces.md</em>, revision 1.0 (19 September 2026). Reference pages (QGIS Gentle Introduction 3.44 — Raster Data; ArcGIS Pro — Introduction to image and raster data, NoData in raster datasets, Pixel size, Raster bands, Resample, Raster dataset properties, Hillshade function, Vertical coordinate systems; QGIS 3.44 user guide — raster properties and GDAL/raster-analysis algorithms; GDAL AAIGrid driver and gdal_translate) were read on that date; the full list with links is in the chapter document.</p>
 <?php require __DIR__ . '/../partials/foot.php'; ?>
