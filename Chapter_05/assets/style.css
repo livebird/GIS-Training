@@ -381,7 +381,7 @@ svg .grat { fill: none; stroke: var(--ink-faint); stroke-width: 2; }
 svg .grat.eq { stroke: var(--accent); stroke-width: 5; }
 svg .grat.pm { stroke: var(--ward-line); stroke-width: 5; }
 svg .gpt { fill: var(--select); stroke: var(--ink); stroke-width: 5; }
-svg .glabel { font-family: var(--font-mono); font-size: 26px; fill: var(--ink-soft); }
+svg .glabel { font-family: var(--font-mono); font-size: 24px; fill: var(--ink-soft); }
 svg .glabel.eq { fill: var(--accent); font-weight: 600; }
 svg .glabel.pm { fill: var(--ward-line); font-weight: 600; }
 svg .dial { fill: #fff; stroke: var(--ink); stroke-width: 4; }
@@ -389,7 +389,7 @@ svg .dial-ref { stroke: var(--ink-soft); stroke-width: 3; stroke-dasharray: 10 8
 svg .dial-ray { stroke: var(--accent); stroke-width: 7; }
 svg .dial-arc { fill: none; stroke: var(--accent); stroke-width: 5; }
 svg .dial-fill { fill: rgba(211,84,31,.18); }
-svg .dtitle { font-family: var(--font-display); font-size: 34px; font-weight: 700; fill: var(--ink); }
+svg .dtitle { font-family: var(--font-display); font-size: 30px; font-weight: 700; fill: var(--ink); }
 svg .dsub { font-family: var(--font-body); font-size: 24px; fill: var(--ink-soft); }
 svg .wgrid { fill: none; stroke: var(--ink-faint); stroke-width: 1.5; }
 svg .wframe { fill: #f4f7fb; stroke: var(--ink); stroke-width: 3; }
@@ -458,3 +458,4 @@ svg .hl.h { fill: var(--ok); } svg .hl.H { fill: var(--ward-line); } svg .hl.g {
 .case pre { background: var(--paper-2); border-radius: 6px; padding: .5rem .7rem; font-family: var(--font-mono); font-size: .8rem; overflow-x: auto; margin: .4rem 0; }
 .check-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin: .3rem 0; }
 .check-row .lab { font-family: var(--font-mono); font-size: .8rem; min-width: 150px; color: var(--ink-soft); }
+@media (max-width: 640px) { .zones { grid-template-columns: repeat(3, 1fr); } .ccard .row { grid-template-columns: 1fr; } }

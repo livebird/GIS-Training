@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.8 Lab: coordinate detective</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 5.8 · Guided lab</div>
+    <h1>Coordinate detective</h1>
+    <p class="lead">Four small files arrive with a note each. Your job: say what each one <em>is</em> — valid geographic, valid projected, swapped order, or “cannot be resolved from the numbers alone” — and show the evidence. You <strong>diagnose</strong>; you do not repair. Repair is Chapter 6, and only after diagnosis.</p>
+    <div class="outcomes"><h4>Objective and prerequisites</h4>
+      <ul><li>Modules 5.1–5.7: the DMS arithmetic (5.2), the CRS records (5.4), the contract table (5.5), the checklist (5.7).</li>
+      <li>Part A needs only this page and a calculator. Part B (optional) needs ArcGIS Pro or QGIS and is <em>not execution-tested</em>.</li>
+      <li>Your selections on this page are saved in this browser only.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">5.8.2</span>The four case files <span class="synthetic">made-up data — type them exactly as shown</span></h2>
+  <p>Each case comes with the <strong>public</strong> note that arrived with it. (The instructor holds a separate private note for Case D and releases it only at review.) The GIS lead has also told you the <strong>expected area</strong> for everything the office holds: “for Earth-referenced data, roughly latitude 22.9–23.1°N, longitude 72.5–72.7°E”.</p>
+  <div class="grid-2">
+    <div class="case"><h4>Case A — <code>caseA_requests.csv</code></h4><p class="small">Note: “Exported from the field app; the app’s settings screen says ‘WGS 84’.”</p><pre>id,lat,lon,category
+A1,23.0250,72.6000,Streetlight out
+A2,23.0375,72.5875,Pothole
+A3,23.0125,72.6125,Water leak</pre></div>
+    <div class="case"><h4>Case B — <code>caseB_survey.csv</code></h4><p class="small">Note: “Total-station export from a licensed surveyor; header sheet says ‘WGS 84 / UTM zone 43N (EPSG:32643), metres’.”</p><pre>pt,easting,northing
+B1,254318.4,2547906.2
+B2,254512.9,2548110.7
+B3,254101.0,2547650.5</pre></div>
+    <div class="case"><h4>Case C — <code>caseC_export.geojson</code></h4><p class="small">Note: “Generated from Case A by a script last week; the developer says ‘I copied the columns in order.’”</p><pre>{ "type": "FeatureCollection", "features": [
+ { "type": "Feature", "properties": { "id": "A1" },
+   "geometry": { "type": "Point",
+     "coordinates": [23.0250, 72.6000] } },
+ { "type": "Feature", "properties": { "id": "A2" },
+   "geometry": { "type": "Point",
+     "coordinates": [23.0375, 72.5875] } },
+ { "type": "Feature", "properties": { "id": "A3" },
+   "geometry": { "type": "Point",
+     "coordinates": [23.0125, 72.6125] } } ] }</pre></div>
+    <div class="case"><h4>Case D — <code>caseD_assets.csv</code></h4><p class="small">Note: “Found on a shared drive in a folder named <code>Assets_export</code>; the folder also has <code>Assets_export.dbf</code> and <code>Assets_export.shx</code> but <strong>no <code>.prj</code> file</strong>. Nobody remembers who made it.”</p><pre>asset_id,x,y,type
+SL-0113,205.0,195.0,Streetlight
+DR-0042,995.0,510.0,Drain
+TR-0301,2190.0,520.0,Tree</pre></div>
+  </div>
+
+  <h2><span class="mod">5.8.3</span>Part A — the diagnosis table</h2>
+  <p>Work through the steps, then fill the table. Press <strong>Check my table</strong> for feedback on the classification columns; the evidence and remaining-questions columns are yours to write and are checked by the instructor.</p>
+  <ol>
+    <li><strong>Case A.</strong> Which column is which? Are all values inside the expected area? Convert one point to DMS and back (5.2). Is “the app says WGS 84” plus the header enough to name a CRS <em>code</em>?</li>
+    <li><strong>Case B.</strong> Read the EPSG:32643 record (5.4). Check the eastings against the UTM band and the northings for hemisphere. Do the two rough estimates for one point and say what they do and do not prove.</li>
+    <li><strong>Case C.</strong> Apply the RFC 7946 rule (5.5) to the first position. Where does the file <em>actually</em> put it? Compare with the expected area and with Case A’s columns.</li>
+    <li><strong>Case D.</strong> Try each hypothesis in the panel below and record whether the numbers alone exclude it. Can the CRS be determined? What evidence would resolve it, and who would you ask?</li>
+    <li><strong>Confidence.</strong> <em>established</em> (a definition or contract), <em>plausible</em> (consistent with magnitudes and area, not proven), <em>unknown</em>. Every row needs at least one remaining question — even a confident one.</li>
+  </ol>
+  <div class="try">
+    <span class="tag">Diagnosis table</span>
+    <div class="table-wrap"><table class="diag" id="diag">
+      <thead><tr><th>Case</th><th>Order in the file</th><th>CRS</th><th>Units</th><th>Plausible extent?</th><th>Classification</th><th>Confidence</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="controls"><button class="btn primary" id="chkBtn">Check my table</button><button class="btn ghost" id="clrBtn">Clear</button><span class="saved" id="saved"></span></div>
+    <div class="result" id="diagOut">Fill every cell, then check.</div>
+  </div>
+
+  <h3>Helpers for the arithmetic</h3>
+  <div class="grid-2">
+    <div class="card"><h4 style="margin-top:0">Case B rough check (from 5.4.3)</h4>
+      <div class="controls"><label>Easting <input type="number" id="bE" value="254318.4" step="0.1" style="width:120px"></label><label>Northing <input type="number" id="bN" value="2547906.2" step="0.1" style="width:130px"></label></div>
+      <div class="calc" id="bCalc"></div></div>
+    <div class="card"><h4 style="margin-top:0">Case C — read a position by the RFC</h4>
+      <div class="controls"><label>[ <input type="number" id="cA" value="23.025" step="0.0001" style="width:100px"> , <input type="number" id="cB" value="72.6" step="0.0001" style="width:100px"> ]</label></div>
+      <div class="result" id="cOut"></div></div>
+  </div>
+  <div class="card"><h4 style="margin-top:0">Case D — test the hypotheses against the numbers 195 … 2190</h4>
+    <p class="small">For each, decide: does the range of the numbers <em>exclude</em> it, or is it still possible?</p>
+    <div id="hyp"></div>
+    <div class="result" id="hypOut"></div>
+  </div>
+
+  <h2><span class="mod">5.8.4</span>Part B — optional software inspection <span class="synthetic">not execution-tested</span></h2>
+  <p>Load <strong>Case A only</strong> (the case whose CRS you documented) and inspect data CRS versus map CRS. Do not transform anything. Do <strong>not</strong> load Case C or Case D: C would draw in the wrong place and tempt you to “fix” the numbers; D would prompt a CRS-assignment dialog — exactly the guess this chapter forbids. Both are repaired, with evidence, in Chapter 6.</p>
+  <div class="tabs"><button>ArcGIS Pro route</button><button>QGIS route</button></div>
+  <div class="tabpanel"><ol>
+    <li>Open a project with a new map that already has a web basemap. Before adding data, open <strong>Map Properties › Coordinate Systems</strong> and record the map CRS under <em>Current Map Coordinate Systems</em>. (Expected from the documentation: WGS 1984 Web Mercator (auxiliary sphere), WKID 3857, because the basemap was the first layer.)</li>
+    <li>Add <code>caseA_requests.csv</code> and run the <strong>XY Table To Point</strong> tool (available at all licence levels). <strong>X Field</strong> = <code>lon</code>, <strong>Y Field</strong> = <code>lat</code>, leave <strong>Z Field</strong> empty, <strong>Coordinate System</strong> = the geographic WGS 1984 system (WKID 4326) — the tool’s documented default. The tool itself labels X “longitude” and Y “latitude”; the column names are your evidence for the mapping.</li>
+    <li>Open the output layer’s <strong>Properties › Source › Spatial Reference</strong> and record the data CRS on a coordinate card.</li>
+    <li>Back in <strong>Map Properties › Coordinate Systems</strong>, expand the <strong>Layers</strong> folder and confirm the new layer sits under a different heading from the basemap.</li>
+    <li>Hover over one point and read the coordinate display at the bottom; change the display units from the arrow beside it and read again. Record both readings and explain in one line why neither changed the stored data.</li>
+  </ol></div>
+  <div class="tabpanel"><ol>
+    <li>Start a new project; note the project CRS on the status-bar button (it depends on the <em>CRS for projects</em> option and on whether a basemap was added first).</li>
+    <li><strong>Layer › Add Layer › Add Delimited Text Layer</strong>; under <em>Geometry Definition</em> choose <strong>Point coordinates</strong>, <strong>X field</strong> = <code>lon</code>, <strong>Y field</strong> = <code>lat</code>, <strong>Geometry CRS</strong> = EPSG:4326.</li>
+    <li>Right-click the layer › <strong>Properties › Source</strong> and read <em>Assigned Coordinate Reference System (CRS)</em>.</li>
+    <li>Open <strong>Project › Properties › CRS</strong> and compare with step 3.</li>
+    <li>Read the status-bar coordinate box while hovering over one point; record it together with the project CRS.</li>
+  </ol></div>
+
+  <h2><span class="mod">5.8.5</span>Before you submit — validation checks</h2>
+  <div class="card checklist">
+    <label><input type="checkbox"> <span>Exactly four classifications; exactly one is “unresolvable from the numbers alone”.</span></label>
+    <label><input type="checkbox"> <span>Cases A and C contain the same six numbers; my table explains why they describe different places, citing the RFC 7946 sentence.</span></label>
+    <label><input type="checkbox"> <span>Every projected case names a <strong>zone and hemisphere</strong>, not just “UTM”.</span></label>
+    <label><input type="checkbox"> <span>Every “established” is backed by a definition or contract; every “plausible” by a magnitude or extent check; nothing is “established” because it looks right on a map.</span></label>
+    <label><input type="checkbox"> <span>My DMS conversion reverses correctly.</span></label>
+    <label><input type="checkbox"> <span>Case D: each of the five hypotheses has a one-line reason; at least one is excluded by range and at least two remain possible.</span></label>
+    <label><input type="checkbox"> <span>Part B (if done): the map CRS and the data CRS I recorded are different, and the data CRS on the Source tab is what I set in the tool.</span></label>
+  </div>
+
+  <h3>Troubleshooting</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td>“Case B northing ÷ 111 km gives 22.95°, not 23.0° — is it wrong?”</td><td>The rule of thumb is approximate; scale factor and meridian length are ignored</td><td>Treat as <em>plausible</em>; 0.1° is inside the method’s error. Do not “correct” the data</td></tr>
+      <tr><td>“The app said WGS 84, so I wrote EPSG:4326 as established”</td><td>Datum name ≠ CRS (5.3)</td><td>Degrees in range plus labelled columns make 4326 a strong inference — mark it <em>plausible</em> unless the app’s documentation names the code. Record the gap</td></tr>
+      <tr><td>“Case C passes my validator”</td><td>Range check only (5.5)</td><td>Add an expected-area check; the file fails it</td></tr>
+      <tr><td>“Case D looks like the practice grid, so it has no CRS”</td><td>Guessing from resemblance</td><td>It <em>may</em> be; the numbers cannot prove it. Mark unknown; name the evidence that would decide</td></tr>
+      <tr><td>Part B: points appear near (0, 0)</td><td>X and Y fields swapped, or nulls</td><td>Check the field mapping; remember the tool treats 0 as a valid value</td></tr>
+      <tr><td>Part B (QGIS): a CRS prompt appears when adding Case A</td><td><em>Prompt for CRS</em> option active and Geometry CRS not set</td><td>Set Geometry CRS in the dialog; never accept a default you did not choose</td></tr>
+    </tbody></table></div>
+
+  <h3>Deliverables</h3>
+  <ol>
+    <li>The <strong>diagnosis table</strong> (four rows, seven columns) as a Markdown or spreadsheet file, with an <em>evidence</em> column and a <em>remaining questions</em> column added.</li>
+    <li>The <strong>hand arithmetic</strong> for one DMS/DD conversion and the two Case B estimates, step by step.</li>
+    <li>The <strong>Case D hypothesis list</strong> with one-line reasons and the evidence request.</li>
+    <li>A <strong>summary paragraph</strong>: which case cannot be resolved from numbers alone, and the difference between “consistent with” and “established”.</li>
+    <li><strong>Part B only:</strong> two coordinate cards (map CRS, data CRS), the two pointer readings with their display units, and the one-line explanation.</li>
+  </ol>
+  <p class="small">Scoring: reasoning 30 %, correctness 30 %, verification 25 %, documentation 15 %. A table with correct labels and no evidence column scores at most 45 %.</p>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  const KEY = "gis-ch5-lab";
+  const cases = ["A", "B", "C", "D"];
+  const opts = {
+    order: ["", "columns lat, lon (latitude first)", "columns easting, northing (x first)", "GeoJSON: index 0 = longitude", "columns x, y — meaning unknown"],
+    crs: ["", "WGS 84 geographic — EPSG:4326 (inferred)", "WGS 84 / UTM zone 43N — EPSG:32643 (as stated)", "fixed by the format: WGS 84 degrees (CRS84)", "unknown", "EPSG:3857"],
+    units: ["", "degree", "metre", "unknown"],
+    plaus: ["", "yes", "no", "cannot judge without a CRS"],
+    cls: ["", "valid geographic", "valid projected", "swapped order", "unresolvable from the numbers alone"],
+    conf: ["", "established", "plausible", "unknown"]
+  };
+  const answer = { A: [1, 1, 1, 1, 1, 2], B: [2, 2, 2, 1, 2, 2], C: [3, 3, 1, 2, 3, 1], D: [4, 4, 3, 3, 4, 3] };
+  const why = {
+    A: "Header names give the order; values are degrees inside the expected area; the app’s “WGS 84” makes EPSG:4326 a strong inference but not a stated code → plausible (accept ‘established’ for order and units by contract).",
+    B: "Header sheet names the CRS with its code; eastings sit in the UTM band, northings are positive, the rough back-estimates give ≈72.6°E, ≈23°N inside the zone → consistent with the claim = plausible, not proven.",
+    C: "RFC 7946 puts longitude at index 0, so the file asserts latitude 72.6°N, longitude 23.025°E — far outside the expected area; the numbers equal Case A’s lat, lon in that order → swapped, established by the contract.",
+    D: "No .prj, no metadata; 2190 > 180 excludes degrees, but a local grid in metres or feet remains possible → cannot be resolved from the numbers; only provenance can settle it."
+  };
+  const tb = document.querySelector("#diag tbody");
+  const keys = ["order", "crs", "units", "plaus", "cls", "conf"];
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+  tb.innerHTML = cases.map(c => `<tr data-c="${c}"><td><b>Case ${c}</b></td>${keys.map(k => `<td><select data-k="${k}">${opts[k].map((o, i) => `<option value="${i}" ${saved[c + k] == i ? "selected" : ""}>${o || "— choose —"}</option>`).join("")}</select></td>`).join("")}</tr>`).join("");
+  const save = () => { const s = {}; tb.querySelectorAll("tr").forEach(tr => tr.querySelectorAll("select").forEach(sel => { s[tr.dataset.c + sel.dataset.k] = sel.value; })); try { localStorage.setItem(KEY, JSON.stringify(s)); document.getElementById("saved").textContent = "saved in this browser"; } catch {} };
+  tb.querySelectorAll("select").forEach(s => s.addEventListener("change", save));
+  document.getElementById("chkBtn").addEventListener("click", () => {
+    let html = "", allOk = true, filled = true;
+    tb.querySelectorAll("tr").forEach(tr => {
+      const c = tr.dataset.c; const vals = [...tr.querySelectorAll("select")].map(s => +s.value);
+      if (vals.some(v => v === 0)) { filled = false; tr.classList.remove("ok", "bad"); return; }
+      const wrong = vals.map((v, i) => v !== answer[c][i] ? keys[i] : null).filter(Boolean);
+      // accept "established" for Case A order/units-driven reasoning too
+      const okA = c === "A" && wrong.length === 1 && wrong[0] === "conf" && vals[5] === 1;
+      const ok = wrong.length === 0 || okA;
+      tr.classList.toggle("ok", ok); tr.classList.toggle("bad", !ok); if (!ok) allOk = false;
+      html += `<p style="margin:.3rem 0"><b>Case ${c}:</b> ${ok ? "✓ consistent with the chapter’s reasoning." : "✗ re-check: " + wrong.join(", ") + "."} <span class="small">${why[c]}</span></p>`;
+    });
+    document.getElementById("diagOut").innerHTML = (filled ? "" : "<p><b>Some cells are still empty.</b> Fill every cell before checking.</p>") + html + (filled && allOk ? "<div class='verdict ok'>Table complete.</div>Now write the evidence and remaining-questions columns in your own file — those are what the instructor marks." : "");
+  });
+  document.getElementById("clrBtn").addEventListener("click", () => { tb.querySelectorAll("select").forEach(s => s.value = 0); tb.querySelectorAll("tr").forEach(tr => tr.classList.remove("ok", "bad")); save(); document.getElementById("diagOut").textContent = "Cleared."; });
+
+  const bCalc = document.getElementById("bCalc");
+  const b = () => { const e = +document.getElementById("bE").value || 0, n = +document.getElementById("bN").value || 0; const r = roughFromUtm(e, n, 43); bCalc.innerHTML = `500 000 − ${fmtInt(e)} = <b>${fmtInt(500000 - e)} m</b> ${e < 500000 ? "west" : "east"} of 75°E\n÷ (111.32 × cos ${fmt(r.lat, 1)}° ≈ ${fmt(kmPerDegLon(r.lat), 1)} km per degree) ≈ ${fmt(Math.abs(e - 500000) / 1000 / kmPerDegLon(r.lat), 2)}° → ≈ <b>${fmt(r.lon, 2)}°E</b>\n${fmtInt(n)} ÷ 111 000 ≈ <b>${fmt(r.lat, 2)}°N</b>\nInside 72–78°E, north hemisphere? ${r.lon >= 72 && r.lon <= 78 && n > 0 ? "<b>yes</b>" : "<b>no</b>"} — rough check; ignores scale factor and meridian curvature.`; };
+  ["bE", "bN"].forEach(id => document.getElementById(id).addEventListener("input", b)); b();
+
+  const cOut = document.getElementById("cOut");
+  const c = () => { const a = +document.getElementById("cA").value, bb = +document.getElementById("cB").value; const inBox = bb >= 22.9 && bb <= 23.1 && a >= 72.5 && a <= 72.7; cOut.innerHTML = `RFC 7946: index 0 = longitude → <b>longitude ${fmt(a, 4)}, latitude ${fmt(bb, 4)}</b>.<br>Range check: ${Math.abs(bb) <= 90 && Math.abs(a) <= 180 ? "<span class='chip yes'>PASS</span>" : "<span class='chip no'>FAIL</span>"} &nbsp; Expected area (22.9–23.1°N, 72.5–72.7°E): ${inBox ? "<span class='chip yes'>PASS</span>" : "<span class='chip no'>FAIL</span>"}`; };
+  ["cA", "cB"].forEach(id => document.getElementById(id).addEventListener("input", c)); c();
+
+  const hyps = [
+    ["EPSG:4326, degrees", "excluded", "2190 is bigger than 180, and 195/510/520 are bigger than 90 — these cannot be degrees."],
+    ["A UTM zone, metres", "excluded", "Eastings are far below the 166 000 m band; northings of 195–520 m would be within half a kilometre of the equator — not our service area."],
+    ["EPSG:3857 (Web Mercator), metres", "implausible", "Numbers this small are possible in principle (near 0, 0 in the Gulf of Guinea) but contradict the expected area. Not impossible from the numbers alone."],
+    ["A local flat grid in metres", "possible", "Fits perfectly — and resembles the Chapter 1 practice grid. But resemblance is not proof."],
+    ["A local flat grid in feet", "possible", "The numbers alone cannot distinguish metres from feet."]
+  ];
+  const hy = document.getElementById("hyp"), hout = document.getElementById("hypOut");
+  hy.innerHTML = hyps.map((h, i) => `<div class="check-row"><span class="lab" style="min-width:230px">${h[0]}</span><select data-i="${i}"><option value="">— your verdict —</option><option value="excluded">excluded by the numbers</option><option value="implausible">implausible but not excluded</option><option value="possible">still possible</option></select></div>`).join("");
+  const hcheck = () => { const sels = [...hy.querySelectorAll("select")]; if (sels.some(s => !s.value)) { hout.textContent = "Give a verdict for every hypothesis."; return; } hout.innerHTML = sels.map((s, i) => `<p style="margin:.3rem 0"><b>${hyps[i][0]}:</b> ${s.value === hyps[i][1] ? "✓" : "✗ (" + hyps[i][1] + ")"} <span class="small">${hyps[i][2]}</span></p>`).join("") + `<div class="verdict ${sels.every((s, i) => s.value === hyps[i][1]) ? "ok" : "no"}">${sels.every((s, i) => s.value === hyps[i][1]) ? "Conclusion: not determinable from the numbers. Ask for the source." : "Re-check the ones marked ✗."}</div>`; };
+  hy.querySelectorAll("select").forEach(s => s.addEventListener("change", hcheck));
+}
+</script>
+</body>
+</html>

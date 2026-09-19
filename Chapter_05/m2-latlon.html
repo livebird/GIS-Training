@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.2 Latitude and longitude</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 5.2 · General GIS idea</div>
+    <h1>Latitude and longitude: two angles on a round Earth</h1>
+    <p class="lead">The most common way to say “where” on the whole Earth is with two <em>angles</em>, not two distances. This module shows what the angles are, how to write them, how to convert between the two common ways of writing them, and how to get the signs right.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>Point to the equator, the prime meridian, a parallel and a meridian on a globe.</li>
+      <li>Convert degrees–minutes–seconds to decimal degrees and back — and check the answer.</li>
+      <li>Apply “north positive, east positive” as two separate checks.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">5.2.1</span>The globe: equator, prime meridian, angles</h2>
+  <p>A <dfn title="A CRS that stores positions as angles (latitude, longitude) on a rounded model of the Earth. Units are degrees.">geographic coordinate system</dfn> locates a point with angles measured from the centre of the Earth. Esri’s ArcGIS Pro documentation puts it this way: locations are “defined using angular measurements, usually in decimal degrees, measuring degrees of longitude (x-coordinates) and degrees of latitude (y-coordinates)”. Move the sliders and watch the point and the two dials.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls">
+      <label>Latitude <input type="range" id="latR" min="-90" max="90" step="0.5" value="23"> <b id="latV" style="font-family:var(--font-mono)"></b></label>
+      <label>Longitude <input type="range" id="lonR" min="-180" max="180" step="0.5" value="72.5"> <b id="lonV" style="font-family:var(--font-mono)"></b></label>
+      <button class="btn small" id="toG1">Reset to G1</button>
+    </div>
+    <figure class="map-fig" id="globeFig"></figure>
+    <div class="result" id="globeOut"></div>
+  </div>
+  <div class="grid-2" style="grid-template-columns:repeat(2,1fr)">
+    <div class="card"><h4 style="margin-top:0">Equator</h4><p>The circle midway between the poles. It is the line of <strong>zero latitude</strong>.</p></div>
+    <div class="card"><h4 style="margin-top:0">Prime meridian</h4><p>The line of <strong>zero longitude</strong>. For most systems it runs “from the North pole to the South pole through Greenwich, England” (QGIS introduction).</p></div>
+    <div class="card"><h4 style="margin-top:0">Latitude</h4><p>The angle north or south of the equator: 0° at the equator, 90° at the North Pole. Lines of equal latitude are <strong>parallels</strong> — they run east–west, like the rungs of a ladder.</p></div>
+    <div class="card"><h4 style="margin-top:0">Longitude</h4><p>The angle east or west of the prime meridian, up to 180° each way. Lines of equal longitude are <strong>meridians</strong> — they run pole to pole and meet at the poles, like the segments of an orange.</p></div>
+  </div>
+  <p>The net of parallels and meridians together is called the <strong>graticule</strong>. A point is in one north–south <strong>hemisphere</strong> and one east–west hemisphere; the equator and the prime meridian are the boundary lines — just as request P5 sat exactly on the shared ward boundary in Chapter 1.</p>
+  <div class="callout idea"><span class="label">Why angles and not metres?</span><p>On a ball there is no flat sheet to lay a ruler on. An angle from the centre of the Earth is the same kind of measurement everywhere, so it makes a clean system for the whole world. The price: a degree is <em>not</em> a fixed distance on the ground in every direction — the next section shows why.</p></div>
+
+  <h2><span class="mod">5.2.2</span>Two ways of writing an angle — and one checked conversion</h2>
+  <p>Angles are written in two common ways. <strong>Decimal degrees (DD)</strong>: one signed decimal number, e.g. <code>23.0250</code>. <strong>Degrees, minutes, seconds (DMS)</strong>: like a clock — “There are sixty minutes in a degree, and sixty seconds in a minute (3600 seconds in a degree)” (QGIS introduction), e.g. <code>23° 01′ 30″ N</code>. The converter below shows every step, and then converts back to prove it.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="tabs"><button>DMS → decimal degrees</button><button>Decimal degrees → DMS</button></div>
+    <div class="tabpanel">
+      <div class="controls">
+        <label>Degrees <input type="number" id="dD" value="23" min="0" max="180" style="width:80px"></label>
+        <label>Minutes <input type="number" id="dM" value="1" min="0" max="59" style="width:80px"></label>
+        <label>Seconds <input type="number" id="dS" value="30" min="0" max="59.999" step="0.001" style="width:90px"></label>
+        <label>Hemisphere <select id="dH"><option value="N">N (north)</option><option value="S">S (south)</option><option value="E">E (east)</option><option value="W">W (west)</option></select></label>
+      </div>
+      <div class="calc" id="dmsCalc"></div>
+    </div>
+    <div class="tabpanel">
+      <div class="controls">
+        <label>Decimal degrees <input type="number" id="ddV" value="72.6" step="0.0001" style="width:140px"></label>
+        <label>Axis <select id="ddA"><option value="lon">longitude (E/W)</option><option value="lat">latitude (N/S)</option></select></label>
+      </div>
+      <div class="calc" id="ddCalc"></div>
+    </div>
+  </div>
+  <p>Notice that the example uses only four decimal places. More digits would suggest a precision the data does not have. How much is one decimal place worth on the ground? The QGIS introduction gives a fixed figure for the equator — “one second of latitude or longitude = 30.87624 meters” — and one degree of latitude is about <strong>111 km</strong>. The GeoJSON standard (RFC 7946) says the same in another way: “6 decimal places … amounts to about 10 centimeters”. Move the slider.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls"><label>Decimal places <input type="range" id="dpR" min="0" max="6" value="4"> <b id="dpV" style="font-family:var(--font-mono)"></b></label></div>
+    <div class="result" id="dpOut"></div>
+  </div>
+  <div class="callout note"><span class="label">Degrees are not metres — first reason</span><p>“At the equator, and only at the equator, the distance represented by one line of longitude is equal to the distance represented by one degree of latitude. As you move towards the poles, the distance between lines of longitude becomes progressively less” (QGIS introduction). At about 23° north (where set E5 lives) one degree of longitude is roughly 102 km, not 111 km: 111.32 × cos 23° ≈ 111.32 × 0.9205 ≈ 102.5 km. Same degree difference, different distance, depending on where you are and which axis you are on. (All these figures are rounded approximations on a sphere.)</p></div>
+
+  <h2><span class="mod">5.2.3</span>Signs: check north/south and east/west separately</h2>
+  <p>In the usual signed convention, <strong>latitude is positive north</strong> of the equator and negative south; <strong>longitude is positive east</strong> of the prime meridian and negative west. Esri’s documentation states it the same way. Treat the two signs as <strong>two independent checks</strong>, because a mistake in one does not show up in the other.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>DMS with hemisphere letters</th><th>Signed decimal degrees</th><th>Check 1: N/S</th><th>Check 2: E/W</th></tr></thead>
+    <tbody>
+      <tr><td>23° 01′ 30″ N, 72° 36′ 00″ E (G1)</td><td class="mono">+23.0250, +72.6000</td><td class="yes">N → +</td><td class="yes">E → +</td></tr>
+      <tr><td>12° 30′ 00″ S, 45° 15′ 00″ W (made up)</td><td class="mono">−12.5000, −45.2500</td><td class="yes">S → −</td><td class="yes">W → −</td></tr>
+      <tr><td>33° 52′ 12″ S, 151° 12′ 36″ E (made up)</td><td class="mono">−33.8700, +151.2100</td><td class="yes">S → −</td><td class="yes">E → +</td></tr>
+    </tbody></table></div>
+  <p class="small">Hand check of row 2: 30 ÷ 60 = 0.5 → 12.5; 15 ÷ 60 = 0.25 → 45.25. Row 3: 52 ÷ 60 = 0.8667 and 12 ÷ 3600 = 0.0033 → 33.87; 12 ÷ 60 = 0.2 and 36 ÷ 3600 = 0.01 → 151.21.</p>
+  <p>“Usual” is deliberate. Some sources write hemisphere letters instead of signs (<code>72.6 E</code>); some GPS devices write west longitudes as positive numbers with a separate flag; some old survey tables count longitude west-positive. <strong>The CRS definition and the source’s own notes decide</strong> — the numbers do not.</p>
+  <div class="callout warn"><span class="label">Misconception</span><p>“If the number is between −90 and 90 it is a latitude; between −180 and 180 it is a longitude.” Every latitude is also inside the longitude range, and every longitude between −90 and 90 is also inside the latitude range. A range check can say a value <em>could</em> be a latitude; it cannot prove that it <em>is</em> one. Module 5.5 builds a whole exercise on this.</p></div>
+
+  <div class="quiz" data-answer="1" data-fb="18 + 57/60 + 36/3600 = 18 + 0.95 + 0.01 = 18.96; north is positive. Check back: 0.96 × 60 = 57.6 → 57′, 0.6 × 60 = 36″.">
+    <div class="q">Convert 18° 57′ 36″ N to decimal degrees.</div>
+    <div class="opts">
+      <button class="opt">+18.5736</button>
+      <button class="opt">+18.9600</button>
+      <button class="opt">−18.9600</button>
+      <button class="opt">+18.9536</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>Convert <code>18° 57′ 36″ N, 72° 49′ 48″ E</code> to signed decimal degrees, showing the arithmetic, then convert your answer back to DMS to prove it. State how many decimal places you kept and roughly what ground distance that corresponds to.</p></div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  const latR = document.getElementById("latR"), lonR = document.getElementById("lonR");
+  const draw = () => {
+    const lat = +latR.value, lon = +lonR.value;
+    document.getElementById("latV").textContent = `${fmt(Math.abs(lat), 1)}° ${lat >= 0 ? "N" : "S"}`;
+    document.getElementById("lonV").textContent = `${fmt(Math.abs(lon), 1)}° ${lon >= 0 ? "E" : "W"}`;
+    renderGlobe(document.getElementById("globeFig"), { lat, lon, label: "point" });
+    const hemNS = lat > 0 ? "northern hemisphere" : lat < 0 ? "southern hemisphere" : "exactly on the equator";
+    const hemEW = lon > 0 ? "eastern hemisphere" : lon < 0 ? "western hemisphere" : "exactly on the prime meridian";
+    document.getElementById("globeOut").innerHTML = `Signed decimal degrees: <b style="font-family:var(--font-mono)">latitude ${fmt(lat, 1)}, longitude ${fmt(lon, 1)}</b> — ${hemNS}; ${hemEW}. Both numbers are angles in <b>degrees</b>; neither is a distance.`;
+  };
+  latR.addEventListener("input", draw); lonR.addEventListener("input", draw);
+  document.getElementById("toG1").addEventListener("click", () => { latR.value = 23; lonR.value = 72.5; draw(); });
+  draw();
+
+  const dmsCalc = document.getElementById("dmsCalc");
+  const dms = () => {
+    const d = +document.getElementById("dD").value || 0, m = +document.getElementById("dM").value || 0, s = +document.getElementById("dS").value || 0, h = document.getElementById("dH").value;
+    const neg = h === "S" || h === "W"; const v = dmsToDd(d, m, s, neg);
+    const back = ddToDms(v);
+    dmsCalc.innerHTML = `Step 1  minutes ÷ 60   = ${m} ÷ 60   = <b>${fmt(m / 60, 6)}</b>
+Step 2  seconds ÷ 3600 = ${s} ÷ 3600 = <b>${fmt(s / 3600, 6)}</b>
+Step 3  add            = ${d} + ${fmt(m / 60, 6)} + ${fmt(s / 3600, 6)} = <b>${fmt(Math.abs(v), 6)}</b>
+Step 4  sign           = ${h} → ${neg ? "negative" : "positive"}   ⇒  <b>${fmt(v, 4)}</b>  (shown to 4 decimals)
+
+Check (back to DMS): whole degrees ${back.d}; remainder × 60 = ${fmt(back.mf, 4)} → ${back.m}′; remainder × 60 = ${fmt(back.s, 3)}″
+        ⇒ ${back.d}° ${String(back.m).padStart(2, "0")}′ ${fmt(back.s, 3)}″ ${h}  ${Math.abs(back.d - d) < 1e-9 && back.m === m && Math.abs(back.s - s) < 0.002 ? "<b>✔ matches the input</b>" : "(rounding — compare with the input)"}`;
+  };
+  ["dD", "dM", "dS", "dH"].forEach(id => document.getElementById(id).addEventListener("input", dms)); dms();
+
+  const ddCalc = document.getElementById("ddCalc");
+  const dd = () => {
+    const v = +document.getElementById("ddV").value || 0, axis = document.getElementById("ddA").value;
+    const r = ddToDms(v); const letter = axis === "lat" ? (v < 0 ? "S" : "N") : (v < 0 ? "W" : "E");
+    const a = Math.abs(v);
+    ddCalc.innerHTML = `Step 1  whole degrees          = <b>${r.d}</b>   (remainder ${fmt(a - r.d, 6)})
+Step 2  remainder × 60         = ${fmt(a - r.d, 6)} × 60 = ${fmt(r.mf, 4)} → minutes = <b>${r.m}</b>   (remainder ${fmt(r.mf - r.m, 4)})
+Step 3  remainder × 60 again   = ${fmt(r.mf - r.m, 4)} × 60 = seconds = <b>${fmt(r.s, 3)}</b>
+Step 4  sign → hemisphere      = ${v < 0 ? "negative" : "positive"} on the ${axis === "lat" ? "latitude" : "longitude"} axis → <b>${letter}</b>
+        ⇒ <b>${r.d}° ${String(r.m).padStart(2, "0")}′ ${fmt(r.s, 3)}″ ${letter}</b>
+
+Check (back to DD): ${r.d} + ${r.m}/60 + ${fmt(r.s, 3)}/3600 = ${fmt(dmsToDd(r.d, r.m, r.s, false), 6)} ${Math.abs(dmsToDd(r.d, r.m, r.s, false) - a) < 1e-6 ? "<b>✔ matches</b>" : ""}`;
+  };
+  ["ddV", "ddA"].forEach(id => document.getElementById(id).addEventListener("input", dd)); dd();
+
+  const dpR = document.getElementById("dpR");
+  const dp = () => {
+    const n = +dpR.value, step = Math.pow(10, -n), km = step * 111;
+    document.getElementById("dpV").textContent = n;
+    let dist = km >= 1 ? `≈ ${fmt(km, km >= 10 ? 0 : 1)} km` : km >= 0.001 ? `≈ ${fmt(km * 1000, km * 1000 >= 10 ? 0 : 1)} m` : `≈ ${fmt(km * 100000, 0)} cm`;
+    document.getElementById("dpOut").innerHTML = `Smallest step: <b style="font-family:var(--font-mono)">${step.toFixed(n)}°</b> of latitude ${dist} on the ground (using “about 111 km per degree”; a rounded approximation). Example written to ${n} decimals: <b style="font-family:var(--font-mono)">${(23.025).toFixed(n)}</b>. ${n >= 6 ? "Six decimals is about 10 cm — more than a phone GPS can honestly claim." : n <= 1 ? "Whole ward-sized steps: fine for a country map, useless for a streetlight." : ""}`;
+  };
+  dpR.addEventListener("input", dp); dp();
+}
+</script>
+</body>
+</html>

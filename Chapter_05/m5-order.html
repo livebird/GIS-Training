@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.5 Coordinate order</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head fade-up">
+    <div class="eyebrow">Module 5.5 · Format rules and API contracts</div>
+    <h1>Coordinate order: “lat, long” is not a file format</h1>
+    <p class="lead">People <em>say</em> “lat, long”. GeoJSON <em>writes</em> longitude first. Leaflet <em>takes</em> latitude first. The same two numbers, in the same order, mean different places under different contracts. This module gives you the rule, the verified contracts, and the swap that slips past every range check.</p>
+    <div class="outcomes"><h4>In this module you will</h4>
+      <ul><li>State the rule: coordinate order follows the actual interface contract.</li>
+      <li>Write a GeoJSON point correctly and say what its CRS is (you do not get to choose).</li>
+      <li>Detect a swapped pair that a range check cannot catch.</li></ul></div>
+  </div>
+
+  <h2><span class="mod">5.5.1</span>The rule, and the contracts that were checked</h2>
+  <div class="callout idea"><span class="label">The one rule</span><p><strong>Coordinate order follows the actual interface contract</strong> — the specification of the file format, the API, the library class or the database function you are using. Not the CRS record, not the prose, not your memory of the last project.</p></div>
+  <p>Why is there confusion at all? The formal EPSG record for 4326 lists its axes as “latitude, longitude”. Yet most GIS engines store geographic data as <strong>x = longitude, y = latitude</strong>, because x is the left–right axis of a screen. Neither side is wrong: one is a <em>conceptual</em> axis order, the other a <em>storage</em> convention. Each row below is a <em>different</em> contract, read from official documentation on 19 September 2026. None implies the others.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Interface</th><th>Order for geographic data</th><th>Documented wording</th></tr></thead>
+    <tbody>
+      <tr><td>RFC 7946 GeoJSON position</td><td class="mono">[longitude, latitude(, altitude)]</td><td>“The first two elements are longitude and latitude, or easting and northing, precisely in that order”</td></tr>
+      <tr><td>ArcGIS REST API (Esri JSON) point</td><td class="mono">{"x": longitude, "y": latitude}</td><td>Example <code>{"x": -118.15, "y": 33.80, "z": 10.0}</code>; in paths/rings arrays x is index 0, y index 1</td></tr>
+      <tr><td>ArcGIS Maps SDK for JavaScript <code>Point</code></td><td class="mono">x = easting, y = northing; also .longitude / .latitude</td><td>“In any geographic spatial reference, the longitude will equal the x coordinate”</td></tr>
+      <tr><td>PostGIS <code>ST_Point(x, y, srid)</code></td><td class="mono">x = longitude, y = latitude</td><td>“For geodetic coordinates, X is longitude and Y is latitude”; example <code>ST_Point(-71.104, 42.315, 4326)</code></td></tr>
+      <tr><td>Leaflet <code>L.latLng(lat, lng)</code></td><td class="mono"><strong>latitude first</strong></td><td>“Represents a geographical point with a certain latitude and longitude”; example <code>L.latLng(50.5, 30.5)</code></td></tr>
+      <tr><td>ArcGIS Pro <em>XY Table To Point</em> tool</td><td class="mono">X Field = longitude, Y Field = latitude</td><td>Tool parameter descriptions</td></tr>
+      <tr><td>CSV / spreadsheet</td><td class="mono">whatever the column names say</td><td>There is no rule — read the header and the source’s notes</td></tr>
+      <tr><td>EPSG:4326 formal definition</td><td class="mono">latitude, longitude</td><td>“Axes: latitude, longitude. Orientations: north, east.”</td></tr>
+    </tbody></table></div>
+  <p>Look at rows 1 and 5: the same developer can write GeoJSON (<code>[lng, lat]</code>) in the morning and a Leaflet marker (<code>(lat, lng)</code>) in the afternoon. That is normal. What is not acceptable is <em>not knowing which contract is in force</em>.</p>
+
+  <h3>Same numbers, different contract, different place</h3>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls">
+      <label>First number <input type="number" id="nA" value="23.025" step="0.001" style="width:110px"></label>
+      <label>Second number <input type="number" id="nB" value="72.6" step="0.001" style="width:110px"></label>
+      <label>Read it as <select id="contract">
+        <option value="geojson">GeoJSON position [a, b]</option>
+        <option value="leaflet">Leaflet L.latLng(a, b)</option>
+        <option value="esri">Esri JSON {x: a, y: b}</option>
+        <option value="postgis">PostGIS ST_Point(a, b, 4326)</option>
+        <option value="csv">CSV columns lat, lon = a, b</option>
+      </select></label>
+      <button class="btn small" id="swapBtn">Swap the two numbers</button>
+    </div>
+    <div class="result" id="ctOut"></div>
+    <figure class="map-fig" id="ctFig"></figure>
+  </div>
+
+  <h2><span class="mod">5.5.2</span>GeoJSON (RFC 7946): longitude, then latitude, on WGS 84 — no choice</h2>
+  <p>GeoJSON is the format developers meet first, so here are its rules exactly, from the standard:</p>
+  <ol>
+    <li><strong>Order.</strong> “A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element.” (§3.1.1)</li>
+    <li><strong>CRS is fixed.</strong> “The coordinate reference system for all GeoJSON coordinates is a geographic coordinate reference system, using the World Geodetic System 1984 (WGS 84) datum, with longitude and latitude units of decimal degrees.” (§4) The standard says this is equivalent to the OGC identifier <code>urn:ogc:def:crs:OGC::CRS84</code>, and that the old <code>crs</code> member “has been removed from this version of the specification because the use of different coordinate reference systems … has proven to have interoperability issues”.</li>
+    <li><strong>Third element.</strong> “An OPTIONAL third-position element SHALL be the height in meters above or below the WGS 84 reference ellipsoid.” (§4) — module 5.6 explains why “above the ellipsoid” matters.</li>
+    <li><strong>Precision.</strong> Six decimals is “about 10 centimeters”; implementations “should consider the cost of using a greater precision than necessary”. (§11.2)</li>
+  </ol>
+  <div class="try">
+    <span class="tag">Worked example</span>
+    <p>Write point G1 (latitude 23.0250, longitude 72.6000, EPSG:4326) as a GeoJSON Point. Rule 1 puts longitude first; rule 2 means no CRS member is written; G1 is already in WGS 84 degrees, so nothing needs converting.</p>
+    <pre class="listing">{ "type": "Point", "coordinates": [<span class="hl">72.6000</span>, <span class="hl">23.0250</span>] }
+                                   ↑ longitude   ↑ latitude</pre>
+    <p class="small">What this does <em>not</em> establish: if the source had been in EPSG:32643 metres, writing the numbers into GeoJSON would be wrong even with the order right — rule 2 fixes the CRS, so the values would first have to be converted (Chapter 6).</p>
+  </div>
+  <div class="callout note"><span class="label">The name clash to remember</span><p>GeoJSON’s CRS is <em>CRS84</em>: longitude, latitude on WGS 84. The formal EPSG:4326 record is latitude, longitude on WGS 84. Same datum, same units, opposite axis order. Many tools label GeoJSON output “EPSG:4326” because datum and units match — usually harmless, <em>unless</em> a consumer honours the formal EPSG axis order and swaps the values. If a library has a setting about “axis order” or “authority axis order”, this is the problem it exists for. Check its documentation; do not assume.</p></div>
+  <div class="callout dev"><span class="label">Developer view</span><p>A tuple <code>[a, b]</code> in an API has meaning only because the schema says index 0 is <code>a</code>. GeoJSON’s schema says index 0 is longitude. <strong>Where the analogy stops:</strong> a schema validator would reject a wrongly typed value; a GeoJSON validator <em>cannot</em> reject <code>[23.025, 72.6]</code>, because both numbers are legal decimals inside the allowed ranges. The error is in the meaning, not the syntax — which is the whole point of the next section.</p></div>
+
+  <h2><span class="mod">5.5.3</span>The swap that passes every range check</h2>
+  <p>A script exports G1 from a CSV whose columns are <code>lat, lon</code>. The developer builds the array in column order — a natural mistake — and writes <code>"coordinates": [23.0250, 72.6000]</code>. By the RFC, index 0 is longitude, so this point is at <strong>longitude 23.025°E, latitude 72.6°N</strong>: in the sea off northern Norway. And a range check accepts it: 72.6 is a legal latitude, 23.025 a legal longitude. Test it below with your own numbers and an expected area.</p>
+  <div class="try">
+    <span class="tag">Try it</span>
+    <div class="controls">
+      <label>GeoJSON position [ <input type="number" id="sA" value="23.025" step="0.001" style="width:100px"> , <input type="number" id="sB" value="72.6" step="0.001" style="width:100px"> ]</label>
+    </div>
+    <div class="controls">
+      <span class="lab" style="font-family:var(--font-mono);font-size:.8rem;color:var(--ink-soft)">Expected area:</span>
+      <label>lat <input type="number" id="eLat1" value="22" style="width:70px"> to <input type="number" id="eLat2" value="24" style="width:70px"></label>
+      <label>lon <input type="number" id="eLon1" value="72" style="width:70px"> to <input type="number" id="eLon2" value="73" style="width:70px"></label>
+    </div>
+    <div class="result" id="swOut"></div>
+    <figure class="map-fig" id="swFig"></figure>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Check</th><th>Result for the swapped G1</th><th>Why it works (or not)</th></tr></thead>
+    <tbody>
+      <tr><td>Range check only (lat within ±90, lon within ±180)</td><td class="no">Passes — the bug is invisible</td><td>Both values are legal numbers</td></tr>
+      <tr><td>Expected-area check (“all points must be near 22–24°N, 72–73°E”)</td><td class="yes">Fails — bug found</td><td>Uses knowledge of where the data <em>should</em> be — the plausibility line of the coordinate card</td></tr>
+      <tr><td>Compare with the source columns</td><td class="yes">Fails — bug found</td><td>The <code>lat</code> value appears at index 0</td></tr>
+      <tr><td>Draw it on a basemap</td><td class="yes">Fails — bug found</td><td>Point in the sea. Slow and manual, but decisive</td></tr>
+    </tbody></table></div>
+  <p><strong>When a range check <em>does</em> help.</strong> A pair like <code>[151.21, −33.87]</code> swapped to <code>[−33.87, 151.21]</code> fails the latitude range (151.21 &gt; 90) and is caught. Only pairs where <strong>both</strong> absolute values are ≤ 90 slip through — which includes all of India, most of Europe and most of the Americas. Do not rely on luck.</p>
+  <div class="callout warn"><span class="label">Misconception</span><p>“I use a library, so ordering is handled.” The library applies <em>its</em> contract to <em>your</em> input. Feed it (lat, lon) where it expects (x, y) and it will happily put your points in the sea. Libraries convert between CRSs on request; none of them can know which of your two columns is which.</p></div>
+
+  <div class="quiz" data-answer="1" data-fb="GeoJSON puts longitude first, so [72.6, 23.025] is longitude 72.6°E, latitude 23.025°N — western India (G1). Leaflet takes latitude first, so L.latLng(72.6, 23.025) is latitude 72.6°N, longitude 23.025°E — the sea north of Norway.">
+    <div class="q">Which is true of <code>L.latLng(72.6, 23.025)</code> and the GeoJSON position <code>[72.6, 23.025]</code>?</div>
+    <div class="opts">
+      <button class="opt">Both are the same place, because the numbers are the same.</button>
+      <button class="opt">GeoJSON: western India. Leaflet: the sea north of Norway. Different contracts.</button>
+      <button class="opt">Both are invalid because 72.6 is too large for a latitude.</button>
+      <button class="opt">Leaflet: western India. GeoJSON: the sea north of Norway.</button>
+    </div><div class="fb"></div>
+  </div>
+
+  <div class="callout note"><span class="label">Comprehension check (write it down)</span><p>A Leaflet call <code>L.latLng(72.6, 23.025)</code> and a GeoJSON position <code>[72.6, 23.025]</code> contain the same two numbers in the same order. State where each one is on the Earth, and explain which contract you used for each answer.</p></div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+function pageInit() {
+  const near = (lat, lon) => { if (Math.abs(lat) > 90 || Math.abs(lon) > 180) return "out of range — cannot be a place"; let best = null, bd = 1e9; WORLD_REFS.forEach(r => { const d = Math.hypot(r.lat - lat, (r.lon - lon) * Math.cos(lat * Math.PI / 180)); if (d < bd) { bd = d; best = r; } }); return bd < 3 ? `near ${best.name} (roughly)` : bd < 12 ? `in the general region of ${best.name} (a few hundred km away)` : "far from every reference place on the sketch"; };
+  const ctOut = document.getElementById("ctOut");
+  const ct = () => {
+    const a = +document.getElementById("nA").value, b = +document.getElementById("nB").value, c = document.getElementById("contract").value;
+    let lat, lon, rule;
+    if (c === "geojson") { lon = a; lat = b; rule = "RFC 7946: index 0 = longitude, index 1 = latitude"; }
+    else if (c === "leaflet") { lat = a; lon = b; rule = "Leaflet: L.latLng(latitude, longitude)"; }
+    else if (c === "esri") { lon = a; lat = b; rule = "Esri JSON: x = longitude, y = latitude"; }
+    else if (c === "postgis") { lon = a; lat = b; rule = "PostGIS ST_Point: X is longitude, Y is latitude"; }
+    else { lat = a; lon = b; rule = "CSV header says lat first — the header is the contract"; }
+    ctOut.innerHTML = `<b>${rule}</b><br>⇒ latitude <b style="font-family:var(--font-mono)">${fmt(lat, 3)}</b> (${lat >= 0 ? "N" : "S"}), longitude <b style="font-family:var(--font-mono)">${fmt(lon, 3)}</b> (${lon >= 0 ? "E" : "W"}) — ${near(lat, lon)}.`;
+    renderWorld(document.getElementById("ctFig"), { points: [{ lat, lon, label: `(${a}, ${b}) as ${c}`, cls: "good" }] });
+  };
+  ["nA", "nB", "contract"].forEach(id => document.getElementById(id).addEventListener("input", ct));
+  document.getElementById("swapBtn").addEventListener("click", () => { const A = document.getElementById("nA"), B = document.getElementById("nB"); const t = A.value; A.value = B.value; B.value = t; ct(); });
+  ct();
+
+  const swOut = document.getElementById("swOut");
+  const sw = () => {
+    const a = +document.getElementById("sA").value, b = +document.getElementById("sB").value;
+    const lat1 = Math.min(+document.getElementById("eLat1").value, +document.getElementById("eLat2").value), lat2 = Math.max(+document.getElementById("eLat1").value, +document.getElementById("eLat2").value);
+    const lon1 = Math.min(+document.getElementById("eLon1").value, +document.getElementById("eLon2").value), lon2 = Math.max(+document.getElementById("eLon1").value, +document.getElementById("eLon2").value);
+    const lon = a, lat = b;
+    const rangeOk = Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
+    const extentOk = lat >= lat1 && lat <= lat2 && lon >= lon1 && lon <= lon2;
+    const swappedOk = Math.abs(a) <= 90 && a >= lat1 && a <= lat2 && b >= lon1 && b <= lon2;
+    swOut.innerHTML = `Per RFC 7946 this position means <b>longitude ${fmt(lon, 3)}, latitude ${fmt(lat, 3)}</b> — ${near(lat, lon)}.<br>
+      <span class="chip ${rangeOk ? "yes" : "no"}">range check: ${rangeOk ? "PASS" : "FAIL"}</span> &nbsp; <span class="chip ${extentOk ? "yes" : "no"}">expected-area check: ${extentOk ? "PASS" : "FAIL"}</span><br>
+      ${!rangeOk ? "The range check caught it — because one value is bigger than 90 (or 180). That only happens when the numbers are large enough." : extentOk ? "Both checks pass. Either the point is genuinely inside the expected area, or the expected area is too wide to be useful." : swappedOk ? "<b>Range passes but the area check fails — and the numbers swapped would land inside the expected area. Classic swap.</b>" : "Range passes but the area check fails: wrong place. Investigate the source before touching the numbers."}`;
+    renderWorld(document.getElementById("swFig"), { points: [{ lat, lon, label: "as written", cls: extentOk ? "good" : "bad" }, ...(swappedOk && !extentOk ? [{ lat: a, lon: b, label: "if swapped", cls: "good" }] : [])], box: { latMin: lat1, latMax: lat2, lonMin: lon1, lonMax: lon2, label: "expected area" } });
+  };
+  ["sA", "sB", "eLat1", "eLat2", "eLon1", "eLon2"].forEach(id => document.getElementById(id).addEventListener("input", sw)); sw();
+}
+</script>
+</body>
+</html>
